@@ -1,14 +1,44 @@
+import Layout from "@/components/Layout";
 import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
-import type { AppProps } from "next/app";
+import type { AppContext, AppInitialProps, AppProps } from "next/app";
+import App from "next/app";
 
-export default function App({
+type AppOwnProps = { dashboard: boolean };
+
+export default function MyApp({
   Component,
   pageProps: { session, ...pageProps },
-}: AppProps) {
+  router,
+}: AppProps & AppOwnProps) {
+  const path = router.pathname;
+
+  if (path.startsWith("/admin") || path.startsWith("/seller")) {
+    return (
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
+    );
+  }
+
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </SessionProvider>
   );
 }
+
+// App.getInitialProps = async (
+//   context: AppContext
+// ): Promise<AppOwnProps & AppInitialProps> => {
+//   const ctx = await App.getInitialProps(context);
+//   const path = context.router.pathname;
+
+//   if (path.startsWith("/admin") || path.startsWith("/seller")) {
+//     return { ...ctx, dashboard: true };
+//   }
+
+//   return { ...ctx, dashboard: false };
+// };
