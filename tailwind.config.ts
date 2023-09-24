@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#FF5722",
-        secondary: "#2D4059",
+        primary: "#64CCC5",
+        secondary: "#176B87",
         dark: "#222831",
         light: "#F5F5F5",
       },
@@ -42,6 +42,7 @@ const config: Config = {
       },
     },
   },
+  darkMode: "class",
   variants: {
     extend: {},
   },

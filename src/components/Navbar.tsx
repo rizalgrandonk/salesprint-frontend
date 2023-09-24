@@ -16,27 +16,44 @@ import {
   RiTShirt2Line,
 } from "react-icons/ri";
 
+import { MdLightMode, MdModeNight } from "react-icons/md";
+
 export default function Navbar() {
   const [activeNavbar, setActiveNavbar] = useState(false);
-  // const { totalItems } = useCart();
-
-  const { asPath, locale } = useRouter();
-
-  const changeColor = () => {
-    if (window.scrollY >= 30) {
-      setActiveNavbar(true);
-    } else {
-      setActiveNavbar(false);
-    }
-  };
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
+    setIsDarkMode(
+      window?.localStorage?.getItem("theme") === "dark" ||
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+    );
+
+    const changeColor = () => {
+      if (window.scrollY >= 30) {
+        setActiveNavbar(true);
+      } else {
+        setActiveNavbar(false);
+      }
+    };
+
     window.addEventListener("scroll", changeColor);
 
     return () => {
       window.removeEventListener("scroll", changeColor);
     };
   }, []);
+
+  const toggleDarkMode = () =>
+    setIsDarkMode((prev) => {
+      const newTheme = isDarkMode ? "light" : "dark";
+      const root = window.document.documentElement;
+      root.classList.toggle("dark");
+      localStorage.setItem("theme", newTheme);
+      return !prev;
+    });
+  // const { totalItems } = useCart();
+
+  const { asPath, locale } = useRouter();
 
   return (
     <>
@@ -46,9 +63,13 @@ export default function Navbar() {
         }`}
       >
         <div className="container px-6 lg:px-16 h-full mx-auto flex justify-between items-center">
-          <div className="h-full py-1.5">
-            <Link href="/" className="block relative h-full w-24">
-              <img src="/logo.png" alt="" className="object-contain" />
+          <div className="h-full py-5">
+            <Link href="/" className="block h-full">
+              <img
+                src="/logo.svg"
+                alt=""
+                className="object-contain h-full w-auto"
+              />
             </Link>
           </div>
           <div className="hidden h-full w-1/2 lg:w-2/5 lg:flex items-center justify-between">
@@ -80,6 +101,14 @@ export default function Navbar() {
                   </span>
                 )}
             </Link> */}
+
+            <button
+              onClick={toggleDarkMode}
+              type="button"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-400 dark:hover:text-gray-500 p-2.5"
+            >
+              {isDarkMode ? <MdModeNight /> : <MdLightMode />}
+            </button>
 
             {/* <div className="flex justify-between items-center">
               <Link href="/" locale="en" className={`px-3 py-1 uppercase border border-white md:text-xl font-medium ${

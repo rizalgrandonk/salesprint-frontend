@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import type { AppContext, AppInitialProps, AppProps } from "next/app";
 import App from "next/app";
+import "react-multi-carousel/lib/styles.css";
 
 type AppOwnProps = { dashboard: boolean };
 

@@ -8,7 +8,7 @@ export default function Footer() {
 
   return (
     <>
-      <div className="w-full py-14 bg-gray-200 border-b border-gray-300">
+      <div className="w-full py-14 bg-gray-200 dark:bg-gray-700 border-b border-gray-300 text-dark dark:text-light">
         <div className="container px-6 lg:px-16 h-full mx-auto flex flex-col md:flex-row space-y-10 md:space-y-0 justify-between items-start">
           <div className="w-full md:w-1/4 flex justify-between items-start">
             <div>
@@ -46,14 +46,12 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="w-full py-6 bg-gray-200">
+      <div className="w-full py-6 bg-gray-200 dark:bg-gray-700 text-dark dark:text-light">
         <div className="container px-6 lg:px-16 h-full mx-auto flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between items-center md:items-start">
-          <p className="text-sm text-gray-500">
-            Copyright &copy; Rizal Grandonk
-          </p>
+          <p className="text-sm">Copyright &copy; Rizal Grandonk</p>
           <div className="flex items-center">
             <h4 className="font-semibold mr-4">Social Media</h4>
-            <div className="flex text-lg text-gray-500 space-x-3">
+            <div className="flex text-lg space-x-3">
               <FaTwitter />
               <FaFacebook />
               <FaInstagram />
