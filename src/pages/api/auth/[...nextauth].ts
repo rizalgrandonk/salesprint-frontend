@@ -7,7 +7,6 @@ const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export default NextAuth({
   providers: [
     CredentialsProviders({
-      name: "Log In",
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
@@ -19,7 +18,6 @@ export default NextAuth({
             BASE_URL + "/api/auth/login",
             credentials
           );
-          console.log("Response", res.status, res.data);
 
           const current_user = res.data?.user;
           const token = res.data?.access_token;
@@ -63,5 +61,13 @@ export default NextAuth({
       }
       return session;
     },
+  },
+  theme: {
+    brandColor: "#FF5722",
+    buttonText: "Login",
+    logo: "/logo.png",
+  },
+  pages: {
+    signIn: "/auth/login",
   },
 });
