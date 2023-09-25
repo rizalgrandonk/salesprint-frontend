@@ -6,8 +6,8 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
 
   if (pathname.startsWith("/auth/login")) {
     if (token) {
-      if (token.role) {
-        const url = new URL(`/${token.role}`, request.url);
+      if (token.user.role) {
+        const url = new URL(`/${token.user.role}`, request.url);
         return NextResponse.redirect(url);
       }
       const url = new URL(`/`, request.url);
@@ -21,15 +21,15 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   );
 
   if (matchesProtectedPath) {
-    if (!token) {
+    if (!token || token.user.error) {
       const url = new URL(`/auth/login`, request.url);
       url.searchParams.set("callbackUrl", encodeURI(request.url));
       return NextResponse.redirect(url);
     }
 
     if (
-      (pathname.startsWith("/admin") && token.role !== "admin") ||
-      (pathname.startsWith("/seller") && token.role !== "seller")
+      (pathname.startsWith("/admin") && token.user.role !== "admin") ||
+      (pathname.startsWith("/seller") && token.user.role !== "seller")
     ) {
       const url = new URL(`/403`, request.url);
       return NextResponse.rewrite(url);

@@ -1,8 +1,7 @@
-import axios from "axios";
+import { refreshToken } from "@/lib/api/auth";
+import axios from "@/lib/axios";
 import NextAuth from "next-auth";
 import CredentialsProviders from "next-auth/providers/credentials";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default NextAuth({
   providers: [
@@ -14,13 +13,11 @@ export default NextAuth({
       authorize: async (credentials) => {
         try {
           // console.log(credentials);
-          const res = await axios.post(
-            BASE_URL + "/api/auth/login",
-            credentials
-          );
+          const res = await axios.post("/api/auth/login", credentials);
 
           const current_user = res.data?.user;
           const token = res.data?.access_token;
+          const exp = res.data?.expires_in;
 
           if (res.status === 200 && current_user && token) {
             const user = {
@@ -29,6 +26,7 @@ export default NextAuth({
               email: current_user.email,
               role: current_user.role,
               access_token: token,
+              token_exp: Date.now() + exp * 1000,
             };
 
             return user;
@@ -46,18 +44,35 @@ export default NextAuth({
   },
   callbacks: {
     async jwt({ token, user, account, profile, isNewUser }) {
-      if (account && user) {
-        token.account = {
-          ...account,
-          access_token: user.access_token,
-        };
+      if (user) {
+        token.user = user;
         token.role = user.role;
+        token.token_exp = user.token_exp;
+        token.access_token = user.access_token;
+      }
+
+      const shouldRefreshTime = Math.round(
+        token.user.token_exp - 10 * 60 * 1000 - Date.now()
+      );
+
+      if (shouldRefreshTime > 0) {
+        return Promise.resolve(token);
+      }
+
+      // TODO refresh token
+      const data = await refreshToken(token.user.access_token);
+      const access_token = data.access_token;
+      if (access_token) {
+        token.user.access_token = access_token;
+        token.user.token_exp = Date.now() + data.expires_in * 1000;
+      } else {
+        token.user.error = "error_refresh_token";
       }
       return token;
     },
     async session({ session, token, user }) {
-      if (token.role) {
-        session.user.role = token.role;
+      if (token.user) {
+        session.user = token.user;
       }
       return session;
     },

@@ -1,9 +1,10 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
-import Layout from "@/components/Layout";
+import AppLayout from "@/components/Layout";
 import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import type { AppContext, AppInitialProps, AppProps } from "next/app";
 import App from "next/app";
+import { PropsWithChildren } from "react";
 import "react-multi-carousel/lib/styles.css";
 
 type AppOwnProps = { dashboard: boolean };
@@ -15,23 +16,39 @@ export default function MyApp({
 }: AppProps & AppOwnProps) {
   const path = router.pathname;
 
+  let layout: "app" | "dashboard" | "auth" = "app";
   if (path.startsWith("/admin") || path.startsWith("/seller")) {
-    return (
-      <SessionProvider session={session}>
-        <DashboardLayout>
-          <Component {...pageProps} />
-        </DashboardLayout>
-      </SessionProvider>
-    );
+    layout = "dashboard";
+  }
+  if (path.startsWith("/auth")) {
+    layout = "auth";
   }
 
   return (
-    <SessionProvider session={session}>
-      <Layout>
+    <SessionProvider
+      session={session}
+      refetchOnWindowFocus={true}
+      refetchInterval={5 * 60}
+    >
+      <WrapperLayout layout={layout}>
         <Component {...pageProps} />
-      </Layout>
+      </WrapperLayout>
     </SessionProvider>
   );
+}
+
+function WrapperLayout({
+  children,
+  layout,
+}: { layout: "app" | "dashboard" | "auth" } & PropsWithChildren) {
+  if (layout === "dashboard") {
+    return <DashboardLayout>{children}</DashboardLayout>;
+  }
+  if (layout === "auth") {
+    return children;
+  }
+
+  return <AppLayout>{children}</AppLayout>;
 }
 
 // App.getInitialProps = async (

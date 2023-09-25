@@ -1,7 +1,10 @@
+import axios from "@/lib/axios";
 import { signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const { data } = useSession();
+
   return (
     <div>
       <h1>Seller Dashboard</h1>

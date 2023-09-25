@@ -1,9 +1,19 @@
-import { PropsWithChildren } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { PropsWithChildren, useEffect } from "react";
 import DashboardFooter from "./DashboardFooter";
 import DashboardNav from "./DashboardNav";
 import DashboardSidebar from "./DashboardSidebar";
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
+  const { data: session } = useSession({ required: true });
+  console.log(session);
+
+  useEffect(() => {
+    if (session?.user.error === "error_refresh_token") {
+      signOut();
+    }
+  }, []);
+
   return (
     <>
       <DashboardNav />
