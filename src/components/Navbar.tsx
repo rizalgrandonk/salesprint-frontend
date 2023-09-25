@@ -17,17 +17,13 @@ import {
 } from "react-icons/ri";
 
 import { MdLightMode, MdModeNight } from "react-icons/md";
+import AppLogo from "./AppLogo";
+import DarkModeToggle from "./DarkModeToggle";
 
 export default function Navbar() {
   const [activeNavbar, setActiveNavbar] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
-    setIsDarkMode(
-      window?.localStorage?.getItem("theme") === "dark" ||
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-    );
-
     const changeColor = () => {
       if (window.scrollY >= 30) {
         setActiveNavbar(true);
@@ -42,15 +38,6 @@ export default function Navbar() {
       window.removeEventListener("scroll", changeColor);
     };
   }, []);
-
-  const toggleDarkMode = () =>
-    setIsDarkMode((prev) => {
-      const newTheme = isDarkMode ? "light" : "dark";
-      const root = window.document.documentElement;
-      root.classList.toggle("dark");
-      localStorage.setItem("theme", newTheme);
-      return !prev;
-    });
   // const { totalItems } = useCart();
 
   const { asPath, locale } = useRouter();
@@ -65,11 +52,7 @@ export default function Navbar() {
         <div className="container px-6 lg:px-16 h-full mx-auto flex justify-between items-center">
           <div className="h-full py-5">
             <Link href="/" className="block h-full">
-              <img
-                src="/logo.svg"
-                alt=""
-                className="object-contain h-full w-auto"
-              />
+              <AppLogo />
             </Link>
           </div>
           <div className="hidden h-full w-1/2 lg:w-2/5 lg:flex items-center justify-between">
@@ -102,13 +85,7 @@ export default function Navbar() {
                 )}
             </Link> */}
 
-            <button
-              onClick={toggleDarkMode}
-              type="button"
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-400 dark:hover:text-gray-500 p-2.5"
-            >
-              {isDarkMode ? <MdModeNight /> : <MdLightMode />}
-            </button>
+            <DarkModeToggle className="text-xl hover:bg-gray-50/10 hover:text-primary p-2 rounded" />
 
             {/* <div className="flex justify-between items-center">
               <Link href="/" locale="en" className={`px-3 py-1 uppercase border border-white md:text-xl font-medium ${
