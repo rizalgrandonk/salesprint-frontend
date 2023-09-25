@@ -4,8 +4,14 @@ import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import type { AppContext, AppInitialProps, AppProps } from "next/app";
 import App from "next/app";
+import { Poppins } from "next/font/google";
 import { PropsWithChildren } from "react";
 import "react-multi-carousel/lib/styles.css";
+
+const font = Poppins({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
 
 type AppOwnProps = { dashboard: boolean };
 
@@ -25,15 +31,24 @@ export default function MyApp({
   }
 
   return (
-    <SessionProvider
-      session={session}
-      refetchOnWindowFocus={true}
-      refetchInterval={5 * 60}
-    >
-      <WrapperLayout layout={layout}>
-        <Component {...pageProps} />
-      </WrapperLayout>
-    </SessionProvider>
+    <>
+      <style jsx global>
+        {`
+          html {
+            font-family: ${font.style.fontFamily};
+          }
+        `}
+      </style>
+      <SessionProvider
+        session={session}
+        refetchOnWindowFocus={true}
+        refetchInterval={5 * 60}
+      >
+        <WrapperLayout layout={layout}>
+          <Component {...pageProps} />
+        </WrapperLayout>
+      </SessionProvider>
+    </>
   );
 }
 

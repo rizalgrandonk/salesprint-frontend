@@ -34,12 +34,12 @@ export default function CategoriesItem({
   return (
     <Link
       href={`/categories/${category.slug}`}
-      className={`relative block w-full h-full transition-all duration-500 transform hover:scale-95 bg-cover bg-top ${span}`}
+      className={`relative block w-full lg:h-full transition-all duration-500 transform hover:scale-95 bg-cover bg-center ${span}`}
     >
       <img
         src={category.image}
         alt={category.name}
-        className="absolute w-full h-full object-cover object-top"
+        className="absolute w-full h-full object-cover object-center"
       />
       <div className="relative w-full h-full flex justify-center items-center bg-black/50">
         <h2 className="text-3xl md:text-5xl text-white text-center uppercase font-semibold">

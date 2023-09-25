@@ -6,12 +6,9 @@ import Meta from "@/components/Meta";
 import { Category } from "@/types/Category";
 import { Product } from "@/types/Product";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
-import { Inter, Poppins } from "next/font/google";
 import Link from "next/link";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import * as DummyData from "../../data";
-
-const fonts = Poppins({ weight: "400", subsets: ["latin"] });
 
 export default function Home({
   products,

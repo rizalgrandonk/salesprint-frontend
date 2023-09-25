@@ -51,8 +51,12 @@ export default function Navbar() {
       >
         <div className="container px-6 lg:px-16 h-full mx-auto flex justify-between items-center">
           <div className="h-full py-5">
-            <Link href="/" className="block h-full">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-3xl font-semibold h-full"
+            >
               <AppLogo />
+              Salesprint
             </Link>
           </div>
           <div className="hidden h-full w-1/2 lg:w-2/5 lg:flex items-center justify-between">
