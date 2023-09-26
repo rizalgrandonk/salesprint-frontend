@@ -1,8 +1,8 @@
 import AppLogo from "@/components/AppLogo";
 import Redirect from "@/components/Redirect";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function LognPage() {
   const [form, setForm] = useState({
@@ -13,9 +13,13 @@ export default function LognPage() {
 
   const { data: session } = useSession();
 
-  // const callbackURL = decodeURI((router.query?.callbackUrl as string) ?? "/");
+  useEffect(() => {
+    if (session?.user.error) {
+      signOut();
+    }
+  }, [session]);
 
-  if (session && session?.user?.role) {
+  if (session && !session?.user?.error && session?.user?.role) {
     const redirectURL = `/${session.user.role}`;
 
     return <Redirect to={redirectURL} />;

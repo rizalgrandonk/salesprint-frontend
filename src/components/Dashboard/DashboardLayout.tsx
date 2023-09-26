@@ -12,10 +12,10 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
     setMobileSidebarOpen((prev) => (value !== undefined ? value : !prev));
 
   useEffect(() => {
-    if (session?.user.error === "error_refresh_token") {
+    if (session?.user.error) {
       signOut();
     }
-  }, []);
+  }, [session]);
 
   return (
     <>

@@ -1,3 +1,4 @@
+import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 export async function middleware(request: NextRequest, _next: NextFetchEvent) {
@@ -5,7 +6,7 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   const token = await getToken({ req: request });
 
   if (pathname.startsWith("/auth/login")) {
-    if (token) {
+    if (token && !token.user.error) {
       if (token.user.role) {
         const url = new URL(`/${token.user.role}`, request.url);
         return NextResponse.redirect(url);
