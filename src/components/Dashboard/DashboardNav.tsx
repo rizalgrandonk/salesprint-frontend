@@ -17,7 +17,15 @@ import {
 import AppLogo from "../AppLogo";
 import DarkModeToggle from "../DarkModeToggle";
 
-export default function DashboardNav() {
+type DashboardNavProps = {
+  mobileSidebarOpen: boolean;
+  toggleSidebar: (val?: boolean) => void;
+};
+
+export default function DashboardNav({
+  mobileSidebarOpen,
+  toggleSidebar,
+}: DashboardNavProps) {
   const { data: session } = useSession();
 
   return (
@@ -26,13 +34,12 @@ export default function DashboardNav() {
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start">
             <button
-              id="toggleSidebarMobile"
+              onClick={() => toggleSidebar()}
               aria-expanded="true"
               aria-controls="sidebar"
               className="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
-              <MdMenu />
-              <MdClose />
+              {mobileSidebarOpen ? <MdClose /> : <MdMenu />}
             </button>
             <a href="/" className="flex items-center gap-2 ml-2 md:mr-24">
               <div className="h-8 lg:h-10">
@@ -57,24 +64,23 @@ export default function DashboardNav() {
                   type="text"
                   name="email"
                   id="topbar-search"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary outline-none"
                   placeholder="Search"
                 />
               </div>
             </form>
           </div>
-          <div className="flex items-center gap-1">
-            {/* Mobile */}
+          <div className="flex items-center gap-0.5">
             <button
+              onClick={() => toggleSidebar()}
               id="toggleSidebarMobileSearch"
               type="button"
               className="text-2xl p-2 text-gray-500 rounded-lg lg:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               <span className="sr-only">Search</span>
-              {/* Search Icon */}
               <MdSearch />
             </button>
-            {/* Notif */}
+
             <button
               type="button"
               data-dropdown-toggle="notification-dropdown"
@@ -115,7 +121,7 @@ export default function DashboardNav() {
                         </span>
                         : "Hey, what's up? All set for the presentation?"
                       </div>
-                      <div className="text-xs font-medium text-primary-700 dark:text-primary-400">
+                      <div className="text-xs font-medium text-primary dark:text-primary">
                         a few moments ago
                       </div>
                     </div>
