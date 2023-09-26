@@ -16,10 +16,12 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
 
   return (
     <div className="w-full h-screen relative block m-auto">
-      <img
+      <Image
         src={product.image}
         alt={product.name}
-        className="absolute w-full h-full object-cover object-center"
+        fill
+        loading="lazy"
+        className="object-cover object-center"
       />
       <div className="relative w-full h-full flex items-center bg-black/60">
         <div className="text-white z-10 p-6 md:p-0 md:pl-20 w-full md:w-7/12">

@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import {
   MdAccountCircle,
   MdApps,
@@ -96,11 +97,15 @@ export default function DashboardNav() {
                     className="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
                   >
                     <div className="flex-shrink-0">
-                      <img
-                        className="rounded-full w-11 h-11 object-cover"
-                        src="https://source.unsplash.com/random/?sales person"
-                        alt="Jese image"
-                      />
+                      <div className="w-11 h-11 relative">
+                        <Image
+                          src="https://source.unsplash.com/random/?sales person"
+                          alt=""
+                          fill
+                          loading="lazy"
+                          className="object-cover rounded-full"
+                        />
+                      </div>
                     </div>
                     <div className="w-full pl-3">
                       <div className="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
@@ -216,11 +221,15 @@ export default function DashboardNav() {
                 data-dropdown-toggle="dropdown-2"
               >
                 <span className="sr-only">Open user menu</span>
-                <img
-                  className="w-8 h-8 rounded-full"
-                  src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                  alt="user photo"
-                />
+                <div className="w-8 h-8 relative">
+                  <Image
+                    src="https://source.unsplash.com/random/?seller"
+                    alt=""
+                    fill
+                    loading="lazy"
+                    className="object-cover rounded-full"
+                  />
+                </div>
 
                 <div
                   className="z-50 hidden absolute right-0 top-full w-60 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"

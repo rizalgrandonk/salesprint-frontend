@@ -6,6 +6,7 @@ import Meta from "@/components/Meta";
 import { Category } from "@/types/Category";
 import { Product } from "@/types/Product";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import * as DummyData from "../../data";
@@ -52,9 +53,11 @@ export default function Home({
       <section className="w-full flex flex-col md:items-center md:flex-row space-y-10 mt-12 mb-12">
         <div className="relative w-5/6 md:w-1/2 h-100 bg-secondary">
           <div className="absolute w-[95%] h-[95%] -right-12 -bottom-12">
-            <img
-              src="https://source.unsplash.com/random/?banner"
+            <Image
+              src="https://source.unsplash.com/random/?mall"
               alt=""
+              fill
+              loading="lazy"
               className="object-cover"
             />
           </div>

@@ -24,10 +24,12 @@ const LatestProductsItem = ({
     <div className="block w-full h-[80vh] md:h-screen px-1 lg:px-8">
       <div className="relative w-full h-full shadow-md overflow-hidden group">
         <div className="w-full h-full transition-all duration-500 transform group-hover:scale-125 bg-cover bg-center relative">
-          <img
+          <Image
             src={product.image}
             alt={product.name}
-            className="object-cover object-center w-full h-full absolute"
+            fill
+            loading="lazy"
+            className="object-cover"
           />
         </div>
         <div className="absolute inset-0 bg-black bg-opacity-30 transition-all duration-500">
