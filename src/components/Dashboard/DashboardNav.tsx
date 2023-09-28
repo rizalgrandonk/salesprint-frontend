@@ -1,6 +1,7 @@
 import { Popover, Transition } from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { Fragment } from "react";
 import {
   MdAccountCircle,
@@ -18,6 +19,7 @@ import {
 } from "react-icons/md";
 import AppLogo from "../AppLogo";
 import DarkModeToggle from "../DarkModeToggle";
+import Redirect from "../Redirect";
 import SearchMenu from "./SearchMenu";
 
 type DashboardNavProps = {
@@ -30,6 +32,14 @@ export default function DashboardNav({
   toggleSidebar,
 }: DashboardNavProps) {
   const { data: session } = useSession();
+  const userRole = session?.user?.role;
+  console.log("userRole", userRole);
+
+  if (!userRole) {
+    return <Redirect to="/" />;
+  }
+
+  const dashboardUrl = `/${userRole.toLowerCase()}`;
 
   return (
     <nav className="fixed z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 text-gray-800 dark:text-gray-100">
@@ -44,7 +54,10 @@ export default function DashboardNav({
             >
               {mobileSidebarOpen ? <MdClose /> : <MdMenu />}
             </button>
-            <a href="/" className="flex items-center gap-2 ml-2 md:mr-24">
+            <Link
+              href={dashboardUrl}
+              className="flex items-center gap-2 ml-2 md:mr-24"
+            >
               <div className="h-8 lg:h-10">
                 <AppLogo />
               </div>
@@ -52,9 +65,9 @@ export default function DashboardNav({
                 Salesprint
               </span>
               <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white capitalize">
-                {session?.user.role}
+                {userRole}
               </span>
-            </a>
+            </Link>
 
             <SearchMenu className="hidden lg:block lg:pl-3.5" />
           </div>
@@ -69,14 +82,14 @@ export default function DashboardNav({
               <MdSearch />
             </button>
 
-            <NotificatiionPanel />
+            <NotificatiionPanel dashboardUrl={dashboardUrl} />
 
-            <AppsPanel />
+            <AppsPanel dashboardUrl={dashboardUrl} />
 
             <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded-lg sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700" />
 
             <div className="flex items-center ml-3">
-              <UserPanel />
+              <UserPanel dashboardUrl={dashboardUrl} />
             </div>
           </div>
         </div>
@@ -85,7 +98,7 @@ export default function DashboardNav({
   );
 }
 
-function UserPanel() {
+function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
   return (
     <Popover className="relative">
       <Popover.Button className="flex text-sm bg-gray-800 rounded-full hover:ring-4 hover:ring-gray-200 dark:hover:ring-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
@@ -127,40 +140,40 @@ function UserPanel() {
           </div>
           <ul className="py-1" role="none">
             <li>
-              <a
-                href="#"
+              <Link
+                href={dashboardUrl}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Dashboard
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                href={`${dashboardUrl}/settings`}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Settings
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                href={`${dashboardUrl}/report`}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
-                Earnings
-              </a>
+                Report
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <button
+                // href="#"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Logout
-              </a>
+              </button>
             </li>
           </ul>
         </Popover.Panel>
@@ -169,10 +182,10 @@ function UserPanel() {
   );
 }
 
-function AppsPanel() {
+function AppsPanel({ dashboardUrl }: { dashboardUrl: string }) {
   return (
     <Popover className="relative">
-      <Popover.Button className="hidden text-2xl p-2 text-gray-500 rounded-lg sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
+      <Popover.Button className="hidden text-2xl p-2 text-gray-500 rounded-lg sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none">
         <span className="sr-only">View notifications</span>
         <MdApps />
       </Popover.Button>
@@ -194,60 +207,57 @@ function AppsPanel() {
             Apps
           </div>
           <div className="grid grid-cols-3 gap-4 p-4">
-            <a
-              href="#"
+            <Link
+              href={`${dashboardUrl}/sales`}
               className="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
             >
               <MdShoppingBag className="text-3xl inline-block mb-1" />
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 Sales
               </div>
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href={`${dashboardUrl}/users`}
               className="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
             >
               <MdGroups2 className="text-3xl inline-block mb-1" />
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 Users
               </div>
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href={`${dashboardUrl}/profile`}
               className="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
             >
               <MdAccountCircle className="text-3xl inline-block mb-1" />
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 Profile
               </div>
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href={`${dashboardUrl}/settings`}
               className="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
             >
               <MdSettings className="text-3xl inline-block mb-1" />
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 Settings
               </div>
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href={`${dashboardUrl}/products`}
               className="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
             >
               <MdInventory className="text-3xl inline-block mb-1" />
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 Products
               </div>
-            </a>
-            <a
-              href="#"
-              className="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
+            </Link>
+            <button className="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
               <MdLogout className="text-3xl inline-block mb-1" />
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 Logout
               </div>
-            </a>
+            </button>
           </div>
         </Popover.Panel>
       </Transition>
@@ -255,10 +265,10 @@ function AppsPanel() {
   );
 }
 
-function NotificatiionPanel() {
+function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
   return (
     <Popover className="relative">
-      <Popover.Button className="text-2xl p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
+      <Popover.Button className="text-2xl p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none">
         <span className="sr-only">View notifications</span>
         <MdNotifications />
       </Popover.Button>
@@ -280,8 +290,8 @@ function NotificatiionPanel() {
             Notifications
           </div>
           <div>
-            <a
-              href="#"
+            <Link
+              href={`${dashboardUrl}`}
               className="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
             >
               <div className="flex-shrink-0">
@@ -303,17 +313,17 @@ function NotificatiionPanel() {
                   a few moments ago
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
-          <a
-            href="#"
+          <Link
+            href={`${dashboardUrl}/notifications`}
             className="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline"
           >
             <div className="inline-flex items-center gap-2">
               <MdVisibility className="text-2xl" />
               View all
             </div>
-          </a>
+          </Link>
         </Popover.Panel>
       </Transition>
     </Popover>

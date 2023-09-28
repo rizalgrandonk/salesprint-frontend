@@ -5,17 +5,23 @@ import DashboardNav from "./DashboardNav";
 import DashboardSidebar from "./DashboardSidebar";
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
-  const { data: session } = useSession({ required: true });
+  const { data: session, status } = useSession({ required: true });
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const toggleSidebar = (value?: boolean) =>
     setMobileSidebarOpen((prev) => (value !== undefined ? value : !prev));
 
+  const sessioinError = session?.user?.error;
+
   useEffect(() => {
-    if (session?.user.error) {
+    if (sessioinError) {
       signOut();
     }
-  }, [session]);
+  }, [sessioinError]);
+
+  if (status === "loading") {
+    return "Loading...";
+  }
 
   return (
     <>
