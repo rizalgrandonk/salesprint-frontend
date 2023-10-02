@@ -25,14 +25,19 @@ const LatestProductsItem = ({
       <div className="relative w-full h-full shadow-md overflow-hidden group">
         <div className="w-full h-full transition-all duration-500 transform group-hover:scale-125 bg-cover bg-center relative">
           <Image
-            src={product.image}
+            src={
+              product.product_images.find((image) => image.main_image)
+                ?.image_url ||
+              product.product_images[0].image_url ||
+              ""
+            }
             alt={product.name}
             fill
             loading="lazy"
             className="object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-black bg-opacity-30 transition-all duration-500">
+        <div className="absolute inset-0 bg-black/50 transition-all duration-500">
           <div className="absolute bottom-0 left-0 w-full">
             <div className="w-full lg:w-3/4 p-4 lg:p-6 text-white">
               <h2 className="text-4xl mb-3 uppercase font-semibold">

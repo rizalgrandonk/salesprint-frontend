@@ -3,6 +3,8 @@ import FeaturedProductsCarousel from "@/components/Home/FeaturedProductsCarousel
 import LatestProductsCarousel from "@/components/Home/LatestProductsCarousel";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Meta from "@/components/Meta";
+import { getAllCategories } from "@/lib/api/categories";
+import { getAllProducts } from "@/lib/api/products";
 import { Category } from "@/types/Category";
 import { Product } from "@/types/Product";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
@@ -15,11 +17,11 @@ export default function Home({
   products,
   categories,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const featuredProducts = products.filter(
-    (product) => product.featured === true
-  );
+  const featuredProducts = products
+    .sort((a, b) => b.average_rating - a.average_rating)
+    .slice(0, 6);
 
-  const latestProducts = products.length > 4 ? products.slice(0, 4) : products;
+  const latestProducts = products.length > 4 ? products.slice(0, 8) : products;
 
   if (!products || !categories) {
     return <LoadingSpinner />;
@@ -98,8 +100,8 @@ export default function Home({
 }
 
 export const getStaticProps = (async () => {
-  const products: Product[] = DummyData.products;
-  const categories: Category[] = DummyData.categories;
+  const products = (await getAllProducts()) || [];
+  const categories = (await getAllCategories()) || [];
 
   return {
     props: {
