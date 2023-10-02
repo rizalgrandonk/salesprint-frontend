@@ -29,14 +29,14 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         mobileSidebarOpen={mobileSidebarOpen}
         toggleSidebar={toggleSidebar}
       />
-      <div className="flex pt-20 overflow-hidden bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-screen">
+      <div className="flex pt-20 overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-screen">
         <DashboardSidebar
           mobileOpen={mobileSidebarOpen}
           toggleOpen={toggleSidebar}
         />
         <div
           id="main-content"
-          className="relative w-full h-full overflow-y-auto bg-gray-50 px-6 py-4 lg:ml-64 dark:bg-gray-900"
+          className="relative w-full h-full overflow-y-auto bg-gray-100 px-6 py-4 lg:ml-64 dark:bg-gray-900"
         >
           <main className="">{children}</main>
           {/* <DashboardFooter /> */}

@@ -33,7 +33,7 @@ export default function Home({
       <FeaturedProductsCarousel products={featuredProducts} />
 
       <div className="w-full py-16 flex flex-col justify-center items-center">
-        <h1 className="text-5xl md:text-7xl text-center font-light uppercase tracking-widest mb-2">
+        <h1 className="text-5xl md:text-7xl text-center font-gray-100 uppercase tracking-widest mb-2">
           Salesprint
         </h1>
         <span className="block w-1/2 h-2 bg-primary"></span>
@@ -61,6 +61,7 @@ export default function Home({
               fill
               loading="lazy"
               className="object-cover"
+              sizes="50vw"
             />
           </div>
         </div>
@@ -72,9 +73,9 @@ export default function Home({
             </h3>
             <Link
               href="/products"
-              className="flex items-center justify-center my-10 text-2xl space-x-2 text-primary hover:text-dark"
+              className="flex items-center justify-center my-10 text-2xl space-x-2 text-primary hover:text-gray-900"
             >
-              <span className="text-lg underline hover:text-dark">
+              <span className="text-lg underline hover:text-gray-900">
                 All Products
               </span>
               <FaAngleDoubleRight />

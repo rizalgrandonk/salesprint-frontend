@@ -12,7 +12,6 @@ export default NextAuth({
       },
       authorize: async (credentials) => {
         try {
-          // console.log(credentials);
           const res = await axios.post("/api/auth/login", credentials);
 
           const current_user = res.data?.user;
@@ -25,6 +24,7 @@ export default NextAuth({
               name: current_user.name,
               email: current_user.email,
               role: current_user.role,
+              image: current_user.image,
               access_token: token,
               token_exp: Date.now() + exp * 1000,
             };

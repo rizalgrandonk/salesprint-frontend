@@ -40,6 +40,7 @@ export default function CategoriesItem({
         src={category.image}
         alt={category.name}
         fill
+        sizes="(max-width: 768px) 100vw, 66vw"
         loading="lazy"
         className="object-cover object-center group-hover:scale-110 transition-all duration-500"
       />

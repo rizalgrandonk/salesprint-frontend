@@ -10,7 +10,6 @@ export default function DarkModeToggle({ className }: { className: string }) {
       ? localStorageTheme === "dark"
       : window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-    console.log("darkMode", darkMode);
     setIsDarkMode(darkMode);
 
     if (!darkMode) {

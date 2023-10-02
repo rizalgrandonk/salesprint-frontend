@@ -33,7 +33,6 @@ export default function DashboardNav({
 }: DashboardNavProps) {
   const { data: session } = useSession();
   const userRole = session?.user?.role;
-  console.log("userRole", userRole);
 
   if (!userRole) {
     return <Redirect to="/" />;
@@ -99,15 +98,18 @@ export default function DashboardNav({
 }
 
 function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
+  const { data: session } = useSession();
+  const userImage = session?.user?.image;
   return (
     <Popover className="relative">
       <Popover.Button className="flex text-sm bg-gray-800 rounded-full hover:ring-4 hover:ring-gray-200 dark:hover:ring-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
         <span className="sr-only">Open user menu</span>
         <div className="w-8 h-8 relative">
           <Image
-            src="https://source.unsplash.com/random/?seller"
+            src={userImage || ""}
             alt=""
             fill
+            sizes="2rem"
             loading="lazy"
             className="object-cover rounded-full"
           />
@@ -164,6 +166,15 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
                 role="menuitem"
               >
                 Report
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                role="menuitem"
+              >
+                Go to Homepage
               </Link>
             </li>
             <li>
@@ -300,6 +311,7 @@ function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
                     src="https://source.unsplash.com/random/?sales person"
                     alt=""
                     fill
+                    sizes="2.75rem"
                     loading="lazy"
                     className="object-cover rounded-full"
                   />
