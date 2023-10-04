@@ -17,8 +17,8 @@ import {
 } from "react-icons/ri";
 
 import { MdLightMode, MdModeNight } from "react-icons/md";
-import AppLogo from "./AppLogo";
-import DarkModeToggle from "./DarkModeToggle";
+import AppLogo from "./utils/AppLogo";
+import DarkModeToggle from "./utils/DarkModeToggle";
 
 export default function Navbar() {
   const [activeNavbar, setActiveNavbar] = useState(false);

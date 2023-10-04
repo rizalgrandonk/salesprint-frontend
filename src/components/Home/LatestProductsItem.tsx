@@ -44,14 +44,14 @@ const LatestProductsItem = ({
               <h2 className="text-3xl mb-3 uppercase font-semibold">
                 {product.name}
               </h2>
-              <span className="px-2 py-1 font-medium text-sm rounded-full border-2 border-primary">
+              <span className="px-3 py-1 font-medium rounded-full border-2 border-primary">
                 {`Price | ${formatPrice(product.price)}`}
               </span>
               <Link
                 href={`/products/${product.slug}`}
-                className="block mt-6 text-sm"
+                className="block mt-6 hover:text-primary"
               >
-                Click for detail
+                Click for detail{" >>"}
               </Link>
             </div>
             <div

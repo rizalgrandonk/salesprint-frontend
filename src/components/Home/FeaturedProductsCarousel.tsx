@@ -1,6 +1,6 @@
 import { Product } from "@/types/Product";
 import Carousel from "react-multi-carousel";
-import CustomCarouselDot from "../CustomCarouselDot";
+import CustomCarouselDot from "../utils/CustomCarouselDot";
 import FeaturedProductsItem from "./FeaturedProductsItem";
 
 type FeaturedProductsCarouselProps = {

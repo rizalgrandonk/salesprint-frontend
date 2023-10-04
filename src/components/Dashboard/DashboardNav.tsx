@@ -17,9 +17,9 @@ import {
   MdShoppingBag,
   MdVisibility,
 } from "react-icons/md";
-import AppLogo from "../AppLogo";
-import DarkModeToggle from "../DarkModeToggle";
-import Redirect from "../Redirect";
+import AppLogo from "../utils/AppLogo";
+import DarkModeToggle from "../utils/DarkModeToggle";
+import Redirect from "../utils/Redirect";
 import SearchMenu from "./SearchMenu";
 
 type DashboardNavProps = {

@@ -1,8 +1,8 @@
-import CategoryList from "@/components/Home/CategoryList";
-import FeaturedProductsCarousel from "@/components/Home/FeaturedProductsCarousel";
-import LatestProductsCarousel from "@/components/Home/LatestProductsCarousel";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import Meta from "@/components/Meta";
+import CategoryList from "@/components/home/CategoryList";
+import FeaturedProductsCarousel from "@/components/home/FeaturedProductsCarousel";
+import LatestProductsCarousel from "@/components/home/LatestProductsCarousel";
+import LoadingSpinner from "@/components/utils/LoadingSpinner";
+import Meta from "@/components/utils/Meta";
 import { getAllCategories } from "@/lib/api/categories";
 import { getAllProducts } from "@/lib/api/products";
 import { Category } from "@/types/Category";

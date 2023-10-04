@@ -1,7 +1,15 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { MdLightMode, MdModeNight } from "react-icons/md";
 
-export default function DarkModeToggle({ className }: { className: string }) {
+type DarkModeToggleProps = {
+  className: string;
+  children?: ReactNode | ((dark: boolean) => ReactNode);
+};
+
+export default function DarkModeToggle({
+  className,
+  children,
+}: DarkModeToggleProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
@@ -31,6 +39,18 @@ export default function DarkModeToggle({ className }: { className: string }) {
       }
       return !prev;
     });
+
+  if (children && typeof children === "function") {
+    <button onClick={toggleDarkMode} type="button" className={className}>
+      {children(isDarkMode)}
+    </button>;
+  }
+
+  if (children && typeof children !== "function") {
+    <button onClick={toggleDarkMode} type="button" className={className}>
+      {children}
+    </button>;
+  }
 
   return (
     <button onClick={toggleDarkMode} type="button" className={className}>
