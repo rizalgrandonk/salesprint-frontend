@@ -1,3 +1,4 @@
+import AuthLayout from "@/components/auth/AuthLayout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import AppLayout from "@/components/Layout";
 import "@/styles/globals.css";
@@ -60,7 +61,7 @@ function WrapperLayout({
     return <DashboardLayout>{children}</DashboardLayout>;
   }
   if (layout === "auth") {
-    return children;
+    return <AuthLayout>{children}</AuthLayout>;
   }
 
   return <AppLayout>{children}</AppLayout>;
