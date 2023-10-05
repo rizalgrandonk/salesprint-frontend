@@ -1,4 +1,4 @@
-import { refreshToken } from "@/lib/api/auth";
+import { loginUser, refreshToken } from "@/lib/api/auth";
 import axios from "@/lib/axios";
 import NextAuth from "next-auth";
 import CredentialsProviders from "next-auth/providers/credentials";
@@ -12,13 +12,12 @@ export default NextAuth({
       },
       authorize: async (credentials) => {
         try {
-          const res = await axios.post("/api/auth/login", credentials);
+          const data = await loginUser(credentials);
 
-          const current_user = res.data?.user;
-          const token = res.data?.access_token;
-          const exp = res.data?.expires_in;
-
-          if (res.status === 200 && current_user && token) {
+          if (data) {
+            const current_user = data?.user;
+            const token = data?.access_token;
+            const exp = data?.expires_in;
             const user = {
               id: current_user.id,
               name: current_user.name,

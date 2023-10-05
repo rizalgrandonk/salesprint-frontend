@@ -1,13 +1,19 @@
 import axios from "../axios";
 
-export function protectedRequest(
-  method: string = "GET",
-  url: string,
-  token: string,
-  data?: any
-) {
-  return axios(url, {
-    method: method,
+type RequestConfig = {
+  method?: string;
+  path: string;
+  data?: any;
+};
+
+export function protectedRequest({
+  method,
+  path,
+  token,
+  data,
+}: RequestConfig & { token: string }) {
+  return axios(path, {
+    method: method || "GET",
     data: data,
     headers: {
       Authorization: `Bearer ${token}`,
@@ -15,13 +21,9 @@ export function protectedRequest(
   });
 }
 
-export function publicRequest<T = any>(
-  method: string = "GET",
-  url: string,
-  data?: any
-) {
-  return axios<T>(url, {
-    method: method,
+export function publicRequest<T = any>({ method, path, data }: RequestConfig) {
+  return axios<T>(path, {
+    method: method || "GET",
     data: data,
   });
 }

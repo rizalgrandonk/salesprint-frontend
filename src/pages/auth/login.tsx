@@ -4,7 +4,7 @@ import FormInput from "@/components/utils/FormInput";
 import Redirect from "@/components/utils/Redirect";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type LoginInputs = {
@@ -13,10 +13,6 @@ type LoginInputs = {
 };
 
 export default function LoginPage() {
-  // const [form, setForm] = useState({
-  //   email: "",
-  //   password: "",
-  // });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -26,8 +22,6 @@ export default function LoginPage() {
   } = useForm<LoginInputs>({
     mode: "all",
   });
-
-  console.log(errors);
 
   const { data: session } = useSession();
 
@@ -55,18 +49,11 @@ export default function LoginPage() {
     setIsLoading(false);
   };
 
-  // const handleChage = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setForm((prev) => ({
-  //     ...prev,
-  //     [e.target.name]: e.target.value,
-  //   }));
-  // };
-
   return (
-    <div className="flex items-center w-full h-full max-w-md py-16 bg-white dark:bg-gray-900 text-gray-700 dark:text-white relative">
+    <div className="flex items-center w-full h-full max-w-xl py-16 bg-white dark:bg-gray-900 text-gray-700 dark:text-white relative">
       <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 absolute top-4 right-4" />
 
-      <div className="w-full max-h-full overflow-y-auto px-8">
+      <div className="w-full max-h-full overflow-y-auto px-16">
         <div className="flex flex-col gap-4 items-center">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-12">
@@ -124,12 +111,12 @@ export default function LoginPage() {
 
           <p className="mt-6 text-sm text-center text-gray-400">
             Don&#x27;t have an account yet?{" "}
-            <a
-              href="#"
+            <Link
+              href="/auth/register"
               className="text-primary focus:outline-none focus:underline hover:underline"
             >
               Sign up
-            </a>
+            </Link>
             .
           </p>
         </div>
