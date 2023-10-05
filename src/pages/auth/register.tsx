@@ -2,6 +2,7 @@ import AppLogo from "@/components/utils/AppLogo";
 import DarkModeToggle from "@/components/utils/DarkModeToggle";
 import FormInput from "@/components/utils/FormInput";
 import Redirect from "@/components/utils/Redirect";
+import { registerUser } from "@/lib/api/auth";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -41,8 +42,16 @@ export default function RegisterPage() {
   }
 
   const onSubmit: SubmitHandler<RegisterInputs> = async (data) => {
-    console.log(data);
-    // setIsLoading(true);
+    setIsLoading(true);
+
+    const result = await registerUser(data);
+    console.log(result);
+
+    if (result.error) {
+      setIsLoading(false);
+      setError(result.error.message);
+      return;
+    }
     // const result = await signIn("credentials", {
     //   ...data,
     //   redirect: false,
@@ -50,14 +59,14 @@ export default function RegisterPage() {
     // if (result?.error) {
     //   setError(result.error);
     // }
-    // setIsLoading(false);
+    setIsLoading(false);
   };
 
   return (
-    <div className="flex items-center w-full h-full max-w-4xl py-16 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-white relative">
+    <div className="flex items-center w-full h-full max-w-2xl py-16 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-white relative">
       <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 absolute top-4 right-4" />
 
-      <div className="w-full max-h-full overflow-y-auto px-8">
+      <div className="w-full max-h-full overflow-y-auto px-16">
         <div className="flex flex-col gap-4 items-center">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-12">

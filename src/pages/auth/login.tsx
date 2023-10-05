@@ -4,6 +4,7 @@ import FormInput from "@/components/utils/FormInput";
 import Redirect from "@/components/utils/Redirect";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -15,6 +16,7 @@ type LoginInputs = {
 export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { query } = useRouter();
   const {
     register,
     handleSubmit,
@@ -31,10 +33,23 @@ export default function LoginPage() {
     }
   }, [session]);
 
-  if (session && !session?.user?.error && session?.user?.role) {
-    const redirectURL = `/${session.user.role}`;
+  if (session && !session?.user?.error) {
+    console.log("query.callbackUrl", query.callbackUrl);
+    console.log("session?.user?.role", session?.user?.role);
 
-    return <Redirect to={redirectURL} />;
+    const redirectURL = query.callbackUrl
+      ? query.callbackUrl
+      : session?.user?.role === "admin"
+      ? `/admin`
+      : "/";
+
+    console.log("redirectURL", redirectURL);
+
+    return (
+      <Redirect
+        to={Array.isArray(redirectURL) ? redirectURL[0] : redirectURL}
+      />
+    );
   }
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {

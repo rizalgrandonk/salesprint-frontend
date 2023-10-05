@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   RiBillFill,
   RiBillLine,
@@ -11,45 +11,48 @@ import {
   RiHome3Line,
   RiLayoutMasonryFill,
   RiLayoutMasonryLine,
+  RiMoonLine,
   RiShoppingCartLine,
+  RiSunLine,
   RiTShirt2Fill,
   RiTShirt2Line,
 } from "react-icons/ri";
 
+import { Popover, Transition } from "@headlessui/react";
+import { signOut, useSession } from "next-auth/react";
 import { MdLightMode, MdModeNight } from "react-icons/md";
 import AppLogo from "./utils/AppLogo";
 import DarkModeToggle from "./utils/DarkModeToggle";
 
 export default function Navbar() {
-  const [activeNavbar, setActiveNavbar] = useState(false);
+  // const [activeNavbar, setActiveNavbar] = useState(false);
 
-  useEffect(() => {
-    const changeColor = () => {
-      if (window.scrollY >= 30) {
-        setActiveNavbar(true);
-      } else {
-        setActiveNavbar(false);
-      }
-    };
+  // useEffect(() => {
+  //   const changeColor = () => {
+  //     if (window.scrollY >= 30) {
+  //       setActiveNavbar(true);
+  //     } else {
+  //       setActiveNavbar(false);
+  //     }
+  //   };
 
-    window.addEventListener("scroll", changeColor);
+  //   window.addEventListener("scroll", changeColor);
 
-    return () => {
-      window.removeEventListener("scroll", changeColor);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("scroll", changeColor);
+  //   };
+  // }, []);
   // const { totalItems } = useCart();
+  const { data: session } = useSession();
 
   const { asPath, locale } = useRouter();
 
   return (
     <>
       <nav
-        className={`fixed z-20 w-full h-16 md:h-20 text-white transition-all ${
-          activeNavbar ? "bg-secondary" : ""
-        }`}
+        className={`fixed z-20 w-full h-16 md:h-20 transition-all bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm border-b border-gray-300 dark:border-gray-600`}
       >
-        <div className="container px-6 lg:px-16 h-full mx-auto flex justify-between items-center">
+        <div className="container h-full mx-auto flex justify-between items-center">
           <div className="h-full py-5">
             <Link href="/" className="flex items-center gap-2 h-full">
               <AppLogo />
@@ -59,9 +62,6 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="hidden h-full w-1/2 lg:w-2/5 lg:flex items-center justify-between">
-            <Link href="/" className="hover:text-primary font-medium uppercase">
-              Home
-            </Link>
             <Link
               href="/products"
               className="hover:text-primary font-medium uppercase"
@@ -76,38 +76,54 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="flex justify-between items-center gap-6">
-            {/* <Link href="/cart" className="hidden lg:inline relative p-2 rounded-full hover:bg-white/10">
-                <span className="text-4xl">
-                  <RiShoppingCartLine />
-                </span>
-                {totalItems > 0 && (
+          <div className="flex justify-between items-center gap-4">
+            <Link
+              href="/cart"
+              className="hidden lg:inline relative p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
+            >
+              <span className="text-2xl">
+                <RiShoppingCartLine />
+              </span>
+              {/* {totalItems > 0 && (
                   <span className="absolute right-0 top-1 block h-5 w-5 text-sm text-center bg-red-600 rounded-full">
                     {totalItems}
                   </span>
-                )}
-            </Link> */}
+                )} */}
+            </Link>
 
-            <DarkModeToggle className="text-xl hover:bg-gray-50/10 hover:text-primary p-2 rounded" />
+            <DarkModeToggle className="text-2xl hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded">
+              {(dark) => (dark ? <RiMoonLine /> : <RiSunLine />)}
+            </DarkModeToggle>
 
-            {/* <div className="flex justify-between items-center">
-              <Link href="/" locale="en" className={`px-3 py-1 uppercase border border-white md:text-xl font-medium ${
-                    locale == "en" ? "text-secondary bg-white" : ""
-                  }`}
+            {!session?.user && (
+              <div className="flex items-center gap-2 pl-4 py-1 border-l border-gray-400 dark:border-gray-500">
+                <Link
+                  href="/auth/register"
+                  locale="en"
+                  className="px-3 py-1 border border-secondary text-sm font-medium text-gray-100 bg-secondary hover:bg-secondary/95 rounded"
                 >
-                  en
-              </Link>
-              <Link href="/" locale="id" className={`px-3 py-1 uppercase border border-white md:text-xl font-medium ${
-                    locale == "id" ? "text-secondary bg-white" : ""
-                  }`}
+                  Sign Up
+                </Link>
+                <Link
+                  href="/auth/login"
+                  locale="id"
+                  className="px-3 py-1 border border-secondary text-sm font-medium hover:bg-secondary hover:text-gray-100 rounded"
                 >
-                  id
-              </Link>
-            </div> */}
+                  Sign In
+                </Link>
+              </div>
+            )}
+
+            {!!session?.user && (
+              <div className="pl-4 border-l border-gray-400 dark:border-gray-500">
+                <UserPanel />
+              </div>
+            )}
           </div>
         </div>
       </nav>
 
+      {/* Mobile Nav */}
       <nav
         className="lg:hidden block fixed inset-x-0 -bottom-0.5 z-10 bg-white text-secondary"
         style={{ boxShadow: "0 -2px 20px rgba(0, 0, 0, 0.1)" }}
@@ -137,16 +153,19 @@ export default function Navbar() {
           </Link>
 
           <div className="w-full flex flex-col justify-center items-center">
-            {/* <Link href="/cart" className="w-16 h-16 bg-secondary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95">
-                <span className="text-4xl text-white relative focus:text-primary hover:text-primary">
-                  <RiShoppingCartLine />
-                  {totalItems > 0 && (
+            <Link
+              href="/cart"
+              className="w-16 h-16 bg-secondary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95"
+            >
+              <span className="text-4xl text-white relative focus:text-primary hover:text-primary">
+                <RiShoppingCartLine />
+                {/* {totalItems > 0 && (
                     <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center bg-red-600 rounded-full text-white">
                       {totalItems}
                     </span>
-                  )}
-                </span>
-            </Link> */}
+                  )} */}
+              </span>
+            </Link>
           </div>
 
           <Link
@@ -173,5 +192,91 @@ export default function Navbar() {
         </div>
       </nav>
     </>
+  );
+}
+
+function UserPanel() {
+  const { data: session } = useSession();
+
+  if (!session?.user) {
+    return null;
+  }
+
+  const { user } = session;
+  return (
+    <Popover className="relative">
+      <Popover.Button className="flex items-center gap-2 py-1.5 px-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded">
+        <span className="sr-only">Open user menu</span>
+        <div className="w-9 h-9 relative rounded-full">
+          <Image
+            src={user.image || ""}
+            alt=""
+            fill
+            sizes="2rem"
+            loading="lazy"
+            className="object-cover rounded-full"
+          />
+        </div>
+        <span className="inline-block max-w-[3rem] overflow-hidden truncate">
+          {user.name}asdasdasdasdasdasdadadsasdas
+        </span>
+      </Popover.Button>
+
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-200"
+        enterFrom="opacity-0 translate-x-1"
+        enterTo="opacity-100 translate-x-0"
+        leave="transition ease-in duration-150"
+        leaveFrom="opacity-100 translate-x-0"
+        leaveTo="opacity-0 translate-x-1"
+      >
+        <Popover.Panel
+          as="div"
+          className="z-50 absolute right-0 top-full w-60 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+        >
+          <div className="px-4 py-3" role="none">
+            <p className="text-sm text-gray-900 dark:text-white" role="none">
+              {user.name || ""}
+            </p>
+            <p
+              className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
+              role="none"
+            >
+              {user.email || ""}
+            </p>
+          </div>
+          <ul className="py-1" role="none">
+            <li>
+              <Link
+                href={"/user/orders"}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                role="menuitem"
+              >
+                Orders
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={`/user/settings`}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                role="menuitem"
+              >
+                Settings
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={() => signOut()}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                role="menuitem"
+              >
+                Sign Out
+              </button>
+            </li>
+          </ul>
+        </Popover.Panel>
+      </Transition>
+    </Popover>
   );
 }

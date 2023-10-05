@@ -9,7 +9,7 @@ export default function Footer() {
   return (
     <>
       <div className="w-full py-14 bg-gray-200 dark:bg-gray-700 border-b border-gray-300 text-gray-900 dark:text-gray-100">
-        <div className="container px-6 lg:px-16 h-full mx-auto flex flex-col md:flex-row space-y-10 md:space-y-0 justify-between items-start">
+        <div className="container h-full flex flex-col md:flex-row space-y-10 md:space-y-0 justify-between items-start">
           <div className="w-full md:w-1/4 flex justify-between items-start">
             <div>
               <h4 className="text-xl font-semibold mb-6">Navigate</h4>
@@ -59,7 +59,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="w-full py-6 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-        <div className="container px-6 lg:px-16 h-full mx-auto flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between items-center md:items-start">
+        <div className="container h-full flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between items-center md:items-start">
           <p className="text-sm">Copyright &copy; Rizal Grandonk</p>
           <div className="flex items-center">
             <h4 className="font-semibold mr-4">Social Media</h4>

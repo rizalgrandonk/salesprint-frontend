@@ -41,15 +41,19 @@ export default function DarkModeToggle({
     });
 
   if (children && typeof children === "function") {
-    <button onClick={toggleDarkMode} type="button" className={className}>
-      {children(isDarkMode)}
-    </button>;
+    return (
+      <button onClick={toggleDarkMode} type="button" className={className}>
+        {children(isDarkMode)}
+      </button>
+    );
   }
 
   if (children && typeof children !== "function") {
-    <button onClick={toggleDarkMode} type="button" className={className}>
-      {children}
-    </button>;
+    return (
+      <button onClick={toggleDarkMode} type="button" className={className}>
+        {children}
+      </button>
+    );
   }
 
   return (

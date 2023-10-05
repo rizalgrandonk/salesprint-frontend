@@ -10,7 +10,7 @@ type FormInputType = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 const FormInput = forwardRef<HTMLInputElement, FormInputType>(
-  (props: FormInputType, ref) => {
+  function FormInput(props: FormInputType, ref) {
     return (
       <div className="space-y-1">
         <label htmlFor={props.id} className="text-gray-600 dark:text-gray-200">

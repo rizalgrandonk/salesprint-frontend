@@ -14,7 +14,7 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       />
 
       <div className="w-full h-full flex">
-        <div className="hidden lg:flex lg:flex-grow w-full h-full items-center bg-black/20 px-8"></div>
+        <div className="hidden lg:flex lg:flex-grow h-full items-center bg-black/20 px-8"></div>
         {children}
       </div>
     </div>

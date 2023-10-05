@@ -41,10 +41,7 @@ export default function Home({
 
       <div className="relative">
         <span className="block w-2/5 h-1/4 absolute right-0 top-0 bg-secondary" />
-        <section
-          id="category"
-          className="container mx-auto px-6 lg:px-16 pt-10 pb-10"
-        >
+        <section id="category" className="container pt-10 pb-10">
           <h2 className="text-3xl md:text-5xl w-1/2 mb-10 font-semibold tracking-wide uppercase">
             Categories
           </h2>
@@ -86,10 +83,7 @@ export default function Home({
 
       <div className="relative">
         <span className="block w-1/5 h-2/4 absolute -right-0 top-0 md:top-16 bg-secondary" />
-        <section
-          id="latest-product"
-          className="container mx-auto px-6 lg:px-16 pt-16 md:pt-24 pb-10"
-        >
+        <section id="latest-product" className="container pt-16 md:pt-24 pb-10">
           <h2 className="text-3xl md:text-5xl w-1/2 mb-10 font-semibold tracking-wide uppercase">
             Latest Products
           </h2>
