@@ -23,6 +23,7 @@ export default NextAuth({
               name: current_user.name,
               email: current_user.email,
               role: current_user.role,
+              username: current_user.username,
               image: current_user.image,
               access_token: token,
               token_exp: Date.now() + exp * 1000,

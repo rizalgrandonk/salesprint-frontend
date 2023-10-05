@@ -5,6 +5,7 @@ import Redirect from "@/components/utils/Redirect";
 import { registerUser } from "@/lib/api/auth";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -14,6 +15,7 @@ type RegisterInputs = {
   password: string;
   password_confirmation: string;
   phone_number: string;
+  username: string;
 };
 
 export default function RegisterPage() {
@@ -28,6 +30,7 @@ export default function RegisterPage() {
   });
 
   const { data: session } = useSession();
+  const { query } = useRouter();
 
   useEffect(() => {
     if (session?.user.error) {
@@ -35,10 +38,23 @@ export default function RegisterPage() {
     }
   }, [session]);
 
-  if (session && !session?.user?.error && session?.user?.role) {
-    const redirectURL = `/${session.user.role}`;
+  if (session && !session?.user?.error) {
+    console.log("query.callbackUrl", query.callbackUrl);
+    console.log("session?.user?.role", session?.user?.role);
 
-    return <Redirect to={redirectURL} />;
+    const redirectURL = query.callbackUrl
+      ? query.callbackUrl
+      : session?.user?.role === "admin"
+      ? `/admin`
+      : "/";
+
+    console.log("redirectURL", redirectURL);
+
+    return (
+      <Redirect
+        to={Array.isArray(redirectURL) ? redirectURL[0] : redirectURL}
+      />
+    );
   }
 
   const onSubmit: SubmitHandler<RegisterInputs> = async (data) => {
@@ -52,13 +68,14 @@ export default function RegisterPage() {
       setError(result.error.message);
       return;
     }
-    // const result = await signIn("credentials", {
-    //   ...data,
-    //   redirect: false,
-    // });
-    // if (result?.error) {
-    //   setError(result.error);
-    // }
+    const loginResult = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+    if (loginResult?.error) {
+      setError(loginResult.error);
+    }
     setIsLoading(false);
   };
 
@@ -98,14 +115,22 @@ export default function RegisterPage() {
                 error={errors.name?.message}
               />
               <FormInput
-                {...register("email", { required: "Email is required" })}
-                type="email"
-                id="email"
-                label="Email Address"
-                placeholder="example@example.com"
-                error={errors.email?.message}
+                {...register("username", { required: "Username is required" })}
+                type="text"
+                id="username"
+                label="Username"
+                placeholder="Enter your username"
+                error={errors.username?.message}
               />
             </div>
+            <FormInput
+              {...register("email", { required: "Email is required" })}
+              type="email"
+              id="email"
+              label="Email Address"
+              placeholder="example@example.com"
+              error={errors.email?.message}
+            />
             <FormInput
               {...register("phone_number", {
                 required: "Phone number is required",

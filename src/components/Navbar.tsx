@@ -218,7 +218,7 @@ function UserPanel() {
           />
         </div>
         <span className="inline-block max-w-[3rem] overflow-hidden truncate">
-          {user.name}asdasdasdasdasdasdadadsasdas
+          {user.username || ""}
         </span>
       </Popover.Button>
 

@@ -9,6 +9,7 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     id: string;
     role: string;
+    username: string;
     access_token: string;
     token_exp: number;
     error?: string;
@@ -18,6 +19,7 @@ declare module "next-auth" {
     user: {
       id: string;
       role: string;
+      username: string;
       access_token: string;
       token_exp: number;
       error?: string;
@@ -31,6 +33,7 @@ declare module "next-auth/jwt" {
     user: {
       id: string;
       role: string;
+      username: string;
       access_token: string;
       token_exp: number;
       error?: string;
