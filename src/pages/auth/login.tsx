@@ -27,12 +27,6 @@ export default function LoginPage() {
 
   const { data: session } = useSession();
 
-  useEffect(() => {
-    if (session?.user.error) {
-      signOut();
-    }
-  }, [session]);
-
   if (session && !session?.user?.error) {
     console.log("query.callbackUrl", query.callbackUrl);
     console.log("session?.user?.role", session?.user?.role);

@@ -61,7 +61,7 @@ export default NextAuth({
 
       // TODO refresh token
       const data = await refreshToken(token.user.access_token);
-      const access_token = data.access_token;
+      const access_token = data?.access_token;
       if (access_token) {
         token.user.access_token = access_token;
         token.user.token_exp = Date.now() + data.expires_in * 1000;

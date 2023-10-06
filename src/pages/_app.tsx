@@ -2,11 +2,12 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import AppLayout from "@/components/Layout";
 import "@/styles/globals.css";
-import { SessionProvider } from "next-auth/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider, signOut, useSession } from "next-auth/react";
 import type { AppContext, AppInitialProps, AppProps } from "next/app";
 import App from "next/app";
 import { Poppins } from "next/font/google";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import "react-multi-carousel/lib/styles.css";
 
 const font = Poppins({
@@ -14,13 +15,13 @@ const font = Poppins({
   subsets: ["latin"],
 });
 
-type AppOwnProps = { dashboard: boolean };
+const queryClient = new QueryClient();
 
 export default function MyApp({
   Component,
   pageProps: { session, ...pageProps },
   router,
-}: AppProps & AppOwnProps) {
+}: AppProps) {
   const path = router.pathname;
 
   let layout: "app" | "dashboard" | "auth" = "app";
@@ -45,9 +46,11 @@ export default function MyApp({
         refetchOnWindowFocus={true}
         refetchInterval={5 * 60}
       >
-        <WrapperLayout layout={layout}>
-          <Component {...pageProps} />
-        </WrapperLayout>
+        <QueryClientProvider client={queryClient}>
+          <WrapperLayout layout={layout}>
+            <Component {...pageProps} />
+          </WrapperLayout>
+        </QueryClientProvider>
       </SessionProvider>
     </>
   );
@@ -57,6 +60,18 @@ function WrapperLayout({
   children,
   layout,
 }: { layout: "app" | "dashboard" | "auth" } & PropsWithChildren) {
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (session?.user && session?.user.error) {
+      signOut();
+    }
+  }, [session]);
+
+  if (status === "loading") {
+    return "Loading...";
+  }
+
   if (layout === "dashboard") {
     return <DashboardLayout>{children}</DashboardLayout>;
   }

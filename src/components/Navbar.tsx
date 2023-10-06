@@ -3,24 +3,24 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import {
-  RiBillFill,
-  RiBillLine,
   RiHome3Fill,
   RiHome3Line,
   RiLayoutMasonryFill,
   RiLayoutMasonryLine,
   RiMoonLine,
   RiShoppingCartLine,
+  RiStoreLine,
   RiSunLine,
   RiTShirt2Fill,
   RiTShirt2Line,
 } from "react-icons/ri";
 
+import { getUserStore } from "@/lib/api/user";
 import { Popover, Transition } from "@headlessui/react";
+import { useQuery } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
-import { MdLightMode, MdModeNight } from "react-icons/md";
 import AppLogo from "./utils/AppLogo";
 import DarkModeToggle from "./utils/DarkModeToggle";
 
@@ -115,7 +115,8 @@ export default function Navbar() {
             )}
 
             {!!session?.user && (
-              <div className="pl-4 border-l border-gray-400 dark:border-gray-500">
+              <div className="pl-4 border-l border-gray-400 dark:border-gray-500 flex items-center gap-3">
+                <StorePanel />
                 <UserPanel />
               </div>
             )}
@@ -205,7 +206,7 @@ function UserPanel() {
   const { user } = session;
   return (
     <Popover className="relative">
-      <Popover.Button className="flex items-center gap-2 py-1.5 px-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded">
+      <Popover.Button className="flex items-center gap-2 py-1.5 px-3 hover:bg-gray-200 dark:hover:bg-gray-800 rounded">
         <span className="sr-only">Open user menu</span>
         <div className="w-9 h-9 relative rounded-full">
           <Image
@@ -217,7 +218,7 @@ function UserPanel() {
             className="object-cover rounded-full"
           />
         </div>
-        <span className="inline-block max-w-[3rem] overflow-hidden truncate">
+        <span className="inline-block max-w-[3.5rem] overflow-hidden truncate">
           {user.username || ""}
         </span>
       </Popover.Button>
@@ -233,10 +234,10 @@ function UserPanel() {
       >
         <Popover.Panel
           as="div"
-          className="z-50 absolute right-0 top-full w-60 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+          className="z-50 absolute right-0 top-full w-60 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-800 dark:divide-gray-600"
         >
           <div className="px-4 py-3" role="none">
-            <p className="text-sm text-gray-900 dark:text-white" role="none">
+            <p className="text-lg text-gray-900 dark:text-white" role="none">
               {user.name || ""}
             </p>
             <p
@@ -246,7 +247,7 @@ function UserPanel() {
               {user.email || ""}
             </p>
           </div>
-          <ul className="py-1" role="none">
+          <ul className="py-3" role="none">
             <li>
               <Link
                 href={"/user/orders"}
@@ -275,6 +276,125 @@ function UserPanel() {
               </button>
             </li>
           </ul>
+        </Popover.Panel>
+      </Transition>
+    </Popover>
+  );
+}
+
+function StorePanel() {
+  const { data: session } = useSession();
+
+  const userId = session?.user?.id;
+
+  const { data: store } = useQuery(
+    ["/user/user_store", userId],
+    () => getUserStore(session?.user?.access_token),
+    {
+      enabled: !!userId,
+    }
+  );
+
+  if (!session?.user) {
+    return null;
+  }
+
+  const { user } = session;
+
+  return (
+    <Popover className="relative">
+      <Popover.Button className="flex items-center gap-2 py-1.5 px-3 hover:bg-gray-200 dark:hover:bg-gray-800 rounded">
+        <span className="sr-only">Open store menu</span>
+        <div className="w-9 h-9 relative rounded-full overflow-hidden">
+          {store?.image ? (
+            <Image
+              src={store.image || ""}
+              alt=""
+              fill
+              sizes="2rem"
+              loading="lazy"
+              className="object-cover rounded-full"
+            />
+          ) : (
+            <div className="w-full h-full flex justify-center items-center text-xl bg-gray-300 text-gray-700">
+              <RiStoreLine />
+            </div>
+          )}
+        </div>
+        <span className="inline-block max-w-[3.5rem] overflow-hidden truncate">
+          {store?.name || "Store"}
+        </span>
+      </Popover.Button>
+
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-200"
+        enterFrom="opacity-0 translate-x-1"
+        enterTo="opacity-100 translate-x-0"
+        leave="transition ease-in duration-150"
+        leaveFrom="opacity-100 translate-x-0"
+        leaveTo="opacity-0 translate-x-1"
+      >
+        <Popover.Panel
+          as="div"
+          className="z-50 absolute right-0 top-full w-72 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-800 dark:divide-gray-600"
+        >
+          {store ? (
+            <Fragment>
+              <div className="px-4 py-3" role="none">
+                <p
+                  className="text-lg text-gray-900 dark:text-white"
+                  role="none"
+                >
+                  {store.name || ""}
+                </p>
+                <p
+                  className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
+                  role="none"
+                >
+                  {store.city || ""}
+                </p>
+              </div>
+              <ul className="py-1" role="none">
+                <li>
+                  <Link
+                    href={"/seller/orders"}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                    role="menuitem"
+                  >
+                    Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={`/seller/settings`}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                    role="menuitem"
+                  >
+                    Settings
+                  </Link>
+                </li>
+              </ul>
+            </Fragment>
+          ) : (
+            <div
+              className="px-4 py-3 flex flex-col items-center gap-3"
+              role="none"
+            >
+              <p
+                className="text-sm text-center text-gray-900 dark:text-white"
+                role="none"
+              >
+                Anda belum memiliki toko
+              </p>
+              <Link
+                href="/seller/register"
+                className="px-3 py-1 border border-secondary font-medium text-gray-100 bg-secondary hover:bg-secondary/95 rounded"
+              >
+                Buka toko gratis
+              </Link>
+            </div>
+          )}
         </Popover.Panel>
       </Transition>
     </Popover>

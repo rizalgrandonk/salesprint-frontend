@@ -6,13 +6,13 @@ type RequestConfig = {
   data?: any;
 };
 
-export function protectedRequest({
+export function protectedRequest<T = any>({
   method,
   path,
   token,
   data,
 }: RequestConfig & { token: string }) {
-  return axios(path, {
+  return axios<T>(path, {
     method: method || "GET",
     data: data,
     headers: {
