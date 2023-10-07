@@ -7,7 +7,7 @@ export async function getUserStore(token?: string) {
   }
   return await protectedRequest<Store>({
     method: "GET",
-    path: "/api/user/user_store",
+    path: "/api/mystore",
     token,
   })
     .then((res) => res.data)

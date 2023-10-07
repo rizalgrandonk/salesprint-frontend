@@ -26,21 +26,24 @@ const FeaturedProductsCarousel = ({
   };
 
   return (
-    <Carousel
-      draggable
-      swipeable
-      customDot={<CustomCarouselDot />}
-      responsive={responsive}
-      showDots={true}
-      autoPlay={true}
-      autoPlaySpeed={2000}
-      arrows={false}
-      infinite
-    >
-      {products.map((product) => (
-        <FeaturedProductsItem key={product.id} product={product} />
-      ))}
-    </Carousel>
+    <div className="relative pb-8">
+      <Carousel
+        draggable
+        swipeable
+        customDot={<CustomCarouselDot />}
+        responsive={responsive}
+        showDots={true}
+        autoPlay={true}
+        autoPlaySpeed={2000}
+        arrows={false}
+        renderDotsOutside
+        infinite
+      >
+        {products.map((product) => (
+          <FeaturedProductsItem key={product.id} product={product} />
+        ))}
+      </Carousel>
+    </div>
   );
 };
 

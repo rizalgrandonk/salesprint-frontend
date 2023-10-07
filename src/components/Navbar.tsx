@@ -17,7 +17,7 @@ import {
   RiTShirt2Line,
 } from "react-icons/ri";
 
-import { getUserStore } from "@/lib/api/user";
+import { getUserStore } from "@/lib/api/store";
 import { Popover, Transition } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";

@@ -27,7 +27,7 @@ const LatestProductsCarousel = ({ products }: LatestProductsCarouselProps) => {
   };
 
   return (
-    <div className="relative pb-20">
+    <div className="relative pb-10">
       <Carousel
         draggable
         swipeable

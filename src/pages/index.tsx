@@ -30,24 +30,14 @@ export default function Home({
   return (
     <>
       <Meta />
-      <FeaturedProductsCarousel products={featuredProducts} />
+      <section id="category" className="container py-6">
+        <FeaturedProductsCarousel products={featuredProducts} />
+      </section>
 
-      <div className="w-full py-16 flex flex-col justify-center items-center">
-        <h1 className="text-5xl md:text-7xl text-center font-gray-100 uppercase tracking-widest mb-2">
-          Salesprint
-        </h1>
-        <span className="block w-1/2 h-2 bg-primary"></span>
-      </div>
-
-      <div className="relative">
-        <span className="block w-2/5 h-1/4 absolute right-0 top-0 bg-secondary" />
-        <section id="category" className="container pt-10 pb-10">
-          <h2 className="text-3xl md:text-5xl w-1/2 mb-10 font-semibold tracking-wide uppercase">
-            Categories
-          </h2>
-          <CategoryList categories={categories} />
-        </section>
-      </div>
+      <section id="category" className="container py-6">
+        <h2 className="text-4xl w-1/2 mb-8 font-semibold">Categories</h2>
+        <CategoryList categories={categories} />
+      </section>
 
       <section className="w-full flex flex-col md:items-center md:flex-row space-y-10 mt-12 mb-12">
         <div className="relative w-5/6 md:w-1/2 h-100 bg-secondary">
@@ -81,15 +71,12 @@ export default function Home({
         </div>
       </section>
 
-      <div className="relative">
-        <span className="block w-1/5 h-2/4 absolute -right-0 top-0 md:top-16 bg-secondary" />
-        <section id="latest-product" className="container pt-16 md:pt-24 pb-10">
-          <h2 className="text-3xl md:text-5xl w-1/2 mb-10 font-semibold tracking-wide uppercase">
-            Latest Products
-          </h2>
-          <LatestProductsCarousel products={latestProducts} />
-        </section>
-      </div>
+      <section id="latest-product" className="container py-6">
+        <h2 className="text-3xl md:text-5xl w-1/2 mb-10 font-semibold tracking-wide uppercase">
+          Latest Products
+        </h2>
+        <LatestProductsCarousel products={latestProducts} />
+      </section>
     </>
   );
 }

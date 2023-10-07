@@ -21,7 +21,10 @@ const LatestProductsItem = ({
   // const { addItem, inCart } = useCart();
 
   return (
-    <div className="block w-full h-[70vh] px-1 lg:px-3">
+    <Link
+      href={`/products/${product.slug}`}
+      className="block w-full h-[70vh] px-1 lg:px-3"
+    >
       <div className="relative w-full h-full shadow-md overflow-hidden group">
         <div className="w-full h-full transition-all duration-500 transform group-hover:scale-125 bg-cover bg-center relative">
           <Image
@@ -47,30 +50,14 @@ const LatestProductsItem = ({
               <span className="px-3 py-1 font-medium rounded-full border-2 border-primary">
                 {`Price | ${formatPrice(product.price)}`}
               </span>
-              <Link
-                href={`/products/${product.slug}`}
-                className="block mt-6 hover:text-primary"
-              >
+              <span className="block mt-6 hover:text-primary">
                 Click for detail{" >>"}
-              </Link>
-            </div>
-            <div
-              className={`flex justify-between items-center space-x-4 text-white w-full h-20 p-4 md:-mb-20 md:group-hover:mb-0 bg-primary transition-all duration-500 ${
-                currentSlide == slide ? "mb-0" : "-mb-20"
-              }`}
-            >
-              <button
-                className="inline-block w-full h-full bg-secondary hover:bg-opacity-90 font-semibold tracking-wider disabled:bg-gray-400 disabled:pointer-events-none uppercase"
-                // onClick={() => addItem(product)}
-                // disabled={inCart(product.id)}
-              >
-                Add To Cart
-              </button>
+              </span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
