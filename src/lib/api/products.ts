@@ -4,7 +4,7 @@ import { publicRequest } from ".";
 export async function getAllProducts() {
   return await publicRequest<Product[]>({
     method: "GET",
-    path: "/api/products/",
+    path: "/products/",
   })
     .then((res) => res.data)
     .catch((err) => {

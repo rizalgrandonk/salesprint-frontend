@@ -10,7 +10,7 @@ type ReqError = {
 export async function refreshToken(token: string) {
   return await protectedRequest({
     method: "POST",
-    path: "/api/auth/refresh",
+    path: "/auth/refresh",
     token,
   })
     .then((res) => res.data)
@@ -26,7 +26,7 @@ export async function loginUser(credentials?: {
 }) {
   return await publicRequest<AuthResponse>({
     method: "POST",
-    path: "/api/auth/login",
+    path: "/auth/login",
     data: credentials,
   })
     .then((res) => res.data)
@@ -45,7 +45,7 @@ export async function registerUser(credentials?: {
 }): Promise<{ data?: AuthResponse; status?: number; error?: ReqError }> {
   return await publicRequest<AuthResponse>({
     method: "POST",
-    path: "/api/auth/register",
+    path: "/auth/register",
     data: credentials,
   })
     .then((res) => ({ data: res.data, status: res.status, error: undefined }))
