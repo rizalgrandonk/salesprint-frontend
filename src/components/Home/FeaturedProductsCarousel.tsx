@@ -34,7 +34,7 @@ const FeaturedProductsCarousel = ({
         responsive={responsive}
         showDots={true}
         autoPlay={true}
-        autoPlaySpeed={2000}
+        autoPlaySpeed={5000}
         arrows={false}
         renderDotsOutside
         infinite

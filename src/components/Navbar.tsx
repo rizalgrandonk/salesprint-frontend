@@ -15,12 +15,15 @@ import {
   RiSunLine,
   RiTShirt2Fill,
   RiTShirt2Line,
+  RiUserFill,
+  RiUserLine,
 } from "react-icons/ri";
 
 import { getUserStore } from "@/lib/api/store";
 import { Popover, Transition } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
+import { MdSearch } from "react-icons/md";
 import AppLogo from "./utils/AppLogo";
 import DarkModeToggle from "./utils/DarkModeToggle";
 
@@ -50,18 +53,21 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed z-20 w-full h-16 md:h-20 transition-all bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm border-b border-gray-300 dark:border-gray-600`}
+        className={`fixed z-20 w-full h-16 lg:h-20 transition-all bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-sm border-b border-gray-300 dark:border-gray-600`}
       >
         <div className="container h-full mx-auto flex justify-between items-center">
           <div className="h-full py-5">
-            <Link href="/" className="flex items-center gap-2 h-full">
+            <Link
+              href="/"
+              className="flex items-center gap-2 h-full text-primary"
+            >
               <AppLogo />
               <span className="text-3xl font-semibold hidden lg:inline">
                 Salesprint
               </span>
             </Link>
           </div>
-          <div className="hidden h-full w-1/2 lg:w-2/5 lg:flex items-center justify-between">
+          {/* <div className="hidden h-full w-1/2 lg:w-2/5 lg:flex items-center justify-between">
             <Link
               href="/products"
               className="hover:text-primary font-medium uppercase"
@@ -74,6 +80,19 @@ export default function Navbar() {
             >
               Categories
             </Link>
+          </div> */}
+          <div className="flex-grow px-8">
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-2xl text-gray-700 dark:text-gray-300">
+                <MdSearch />
+              </div>
+              <input
+                type="text"
+                name="nav_search"
+                className="bg-gray-100 border border-gray-500 text-gray-900 rounded focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-900 dark:placeholder-gray-400 dark:text-gray-100 outline-none"
+                placeholder="Search"
+              />
+            </div>
           </div>
 
           <div className="flex justify-between items-center gap-4">
@@ -96,18 +115,18 @@ export default function Navbar() {
             </DarkModeToggle>
 
             {!session?.user && (
-              <div className="flex items-center gap-2 pl-4 py-1 border-l border-gray-400 dark:border-gray-500">
+              <div className="hidden lg:flex items-center gap-2 pl-4 py-1 border-l border-gray-400 dark:border-gray-500">
                 <Link
                   href="/auth/register"
                   locale="en"
-                  className="px-3 py-1 border border-secondary text-sm font-medium text-gray-100 bg-secondary hover:bg-secondary/95 rounded"
+                  className="px-3 py-1 border border-primary text-sm font-medium text-gray-200 bg-primary hover:bg-primary-dark rounded"
                 >
                   Sign Up
                 </Link>
                 <Link
                   href="/auth/login"
                   locale="id"
-                  className="px-3 py-1 border border-secondary text-sm font-medium hover:bg-secondary hover:text-gray-100 rounded"
+                  className="px-3 py-1 border border-primary text-sm font-medium hover:bg-primary-dark hover:text-gray-200 rounded"
                 >
                   Sign In
                 </Link>
@@ -126,7 +145,7 @@ export default function Navbar() {
 
       {/* Mobile Nav */}
       <nav
-        className="lg:hidden block fixed inset-x-0 -bottom-0.5 z-10 bg-white text-secondary"
+        className="lg:hidden block fixed inset-x-0 -bottom-0.5 z-10 bg-white text-primary"
         style={{ boxShadow: "0 -2px 20px rgba(0, 0, 0, 0.1)" }}
       >
         <div className="flex justify-between">
@@ -156,12 +175,12 @@ export default function Navbar() {
           <div className="w-full flex flex-col justify-center items-center">
             <Link
               href="/cart"
-              className="w-16 h-16 bg-secondary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95"
+              className="w-16 h-16 bg-primary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95"
             >
-              <span className="text-4xl text-white relative focus:text-primary hover:text-primary">
+              <span className="text-4xl text-gray-200 relative focus:text-primary hover:text-primary">
                 <RiShoppingCartLine />
                 {/* {totalItems > 0 && (
-                    <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center bg-red-600 rounded-full text-white">
+                    <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center bg-red-600 rounded-full text-gray-200">
                       {totalItems}
                     </span>
                   )} */}
@@ -182,14 +201,15 @@ export default function Navbar() {
             </span>
             <span className="block text-xs">Categories</span>
           </Link>
-          {/* <Link href="/orders" className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2">
-              <span className="text-2xl">
-                {asPath.startsWith("/orders") ? <RiBillFill /> : <RiBillLine />}
-              </span>
-              <span className="block text-xs">
-                {localize(locale, "orders")}
-              </span>
-          </Link> */}
+          <Link
+            href="/profile"
+            className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
+          >
+            <span className="text-2xl">
+              {asPath.startsWith("/profile") ? <RiUserFill /> : <RiUserLine />}
+            </span>
+            <span className="block text-xs">Profile</span>
+          </Link>
         </div>
       </nav>
     </>
@@ -237,7 +257,7 @@ function UserPanel() {
           className="z-50 absolute right-0 top-full w-60 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-800 dark:divide-gray-600"
         >
           <div className="px-4 py-3" role="none">
-            <p className="text-lg text-gray-900 dark:text-white" role="none">
+            <p className="text-lg text-gray-900 dark:text-gray-200" role="none">
               {user.name || ""}
             </p>
             <p
@@ -251,7 +271,7 @@ function UserPanel() {
             <li>
               <Link
                 href={"/user/orders"}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Orders
@@ -260,7 +280,7 @@ function UserPanel() {
             <li>
               <Link
                 href={`/user/settings`}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Settings
@@ -269,7 +289,7 @@ function UserPanel() {
             <li>
               <button
                 onClick={() => signOut()}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Sign Out
@@ -343,7 +363,7 @@ function StorePanel() {
             <Fragment>
               <div className="px-4 py-3" role="none">
                 <p
-                  className="text-lg text-gray-900 dark:text-white"
+                  className="text-lg text-gray-900 dark:text-gray-200"
                   role="none"
                 >
                   {store.name || ""}
@@ -359,7 +379,7 @@ function StorePanel() {
                 <li>
                   <Link
                     href={"/seller/orders"}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                     role="menuitem"
                   >
                     Orders
@@ -368,7 +388,7 @@ function StorePanel() {
                 <li>
                   <Link
                     href={`/seller/settings`}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                     role="menuitem"
                   >
                     Settings
@@ -382,14 +402,14 @@ function StorePanel() {
               role="none"
             >
               <p
-                className="text-sm text-center text-gray-900 dark:text-white"
+                className="text-sm text-center text-gray-900 dark:text-gray-200"
                 role="none"
               >
                 Anda belum memiliki toko
               </p>
               <Link
                 href="/seller/register"
-                className="px-3 py-1 border border-secondary font-medium text-gray-100 bg-secondary hover:bg-secondary/95 rounded"
+                className="px-3 py-1 border border-primary font-medium text-gray-100 bg-primary hover:bg-primary/95 rounded"
               >
                 Buka toko gratis
               </Link>

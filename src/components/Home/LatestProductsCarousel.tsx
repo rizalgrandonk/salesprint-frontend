@@ -9,12 +9,10 @@ type LatestProductsCarouselProps = {
 };
 
 const LatestProductsCarousel = ({ products }: LatestProductsCarouselProps) => {
-  const [currentSlide, setCurrentSlide] = useState(2);
-
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
-      items: 3,
+      items: 2,
     },
     tablet: {
       breakpoint: { max: 1024, min: 655 },
@@ -26,8 +24,12 @@ const LatestProductsCarousel = ({ products }: LatestProductsCarouselProps) => {
     },
   };
 
+  const groupedProducts = groupObjects(products).sort(
+    (a, b) => b.length - a.length
+  );
+
   return (
-    <div className="relative pb-10">
+    <div className="relative pb-8">
       <Carousel
         draggable
         swipeable
@@ -35,25 +37,41 @@ const LatestProductsCarousel = ({ products }: LatestProductsCarouselProps) => {
         showDots
         responsive={responsive}
         autoPlay={true}
-        autoPlaySpeed={3000}
+        autoPlaySpeed={5000}
         arrows={false}
         renderDotsOutside
         infinite
-        afterChange={(_, { currentSlide }) => {
-          setCurrentSlide(currentSlide);
-        }}
       >
-        {products.map((product, index) => (
-          <LatestProductsItem
-            key={product.id}
-            slide={index + 2}
-            currentSlide={currentSlide}
-            product={product}
-          />
+        {groupedProducts.map((prods, index) => (
+          <div key={index}>
+            {prods.map((product, index) => (
+              <LatestProductsItem key={product.id} product={product} />
+            ))}
+          </div>
         ))}
       </Carousel>
     </div>
   );
 };
+
+function groupObjects<T>(inputArray: T[], by: number = 2): T[][] {
+  const pairedArray: T[][] = [];
+  let currentPair: T[] = [];
+
+  for (const obj of inputArray) {
+    if (currentPair.length < by) {
+      currentPair.push(obj);
+    } else {
+      pairedArray.push(currentPair);
+      currentPair = [obj];
+    }
+  }
+
+  if (currentPair.length > 0) {
+    pairedArray.push(currentPair);
+  }
+
+  return pairedArray;
+}
 
 export default LatestProductsCarousel;

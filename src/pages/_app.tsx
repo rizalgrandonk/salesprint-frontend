@@ -1,6 +1,7 @@
 import AuthLayout from "@/components/auth/AuthLayout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import AppLayout from "@/components/Layout";
+import LoadingLogo from "@/components/utils/LoadingLogo";
 import "@/styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
@@ -69,7 +70,11 @@ function WrapperLayout({
   }, [session]);
 
   if (status === "loading") {
-    return "Loading...";
+    return (
+      <div className="h-screen w-screen text-primary">
+        <LoadingLogo />
+      </div>
+    );
   }
 
   if (layout === "dashboard") {

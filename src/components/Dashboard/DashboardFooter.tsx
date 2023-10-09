@@ -1,12 +1,12 @@
 export default function DashboardFooter() {
   return (
     <>
-      <footer className="p-4 my-6 mx-4 bg-white rounded-lg shadow md:flex md:items-center md:justify-between md:p-6 xl:p-8 dark:bg-gray-800">
-        <ul className="flex flex-wrap items-center mb-6 space-y-1 md:mb-0">
+      <footer className="p-4 my-6 mx-4 bg-white rounded-lg shadow lg:flex lg:items-center lg:justify-between lg:p-6 xl:p-8 dark:bg-gray-800">
+        <ul className="flex flex-wrap items-center mb-6 space-y-1 lg:mb-0">
           <li>
             <a
               href="#"
-              className="mr-4 text-sm font-normal text-gray-500 hover:underline md:mr-6 dark:text-gray-400"
+              className="mr-4 text-sm font-normal text-gray-500 hover:underline lg:mr-6 dark:text-gray-400"
             >
               Terms and conditions
             </a>
@@ -14,7 +14,7 @@ export default function DashboardFooter() {
           <li>
             <a
               href="#"
-              className="mr-4 text-sm font-normal text-gray-500 hover:underline md:mr-6 dark:text-gray-400"
+              className="mr-4 text-sm font-normal text-gray-500 hover:underline lg:mr-6 dark:text-gray-400"
             >
               Privacy Policy
             </a>
@@ -22,7 +22,7 @@ export default function DashboardFooter() {
           <li>
             <a
               href="#"
-              className="mr-4 text-sm font-normal text-gray-500 hover:underline md:mr-6 dark:text-gray-400"
+              className="mr-4 text-sm font-normal text-gray-500 hover:underline lg:mr-6 dark:text-gray-400"
             >
               Licensing
             </a>
@@ -30,7 +30,7 @@ export default function DashboardFooter() {
           <li>
             <a
               href="#"
-              className="mr-4 text-sm font-normal text-gray-500 hover:underline md:mr-6 dark:text-gray-400"
+              className="mr-4 text-sm font-normal text-gray-500 hover:underline lg:mr-6 dark:text-gray-400"
             >
               Cookie Policy
             </a>

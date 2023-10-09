@@ -34,7 +34,7 @@ export default function CategoriesItem({
   return (
     <Link
       href={`/categories/${category.slug}`}
-      className={`relative block w-full lg:h-full transition-all duration-500 transform hover:scale-95 group bg-cover bg-center overflow-hidden ${span}`}
+      className={`relative block w-full lg:h-full transition-all duration-500 transform hover:scale-95 group bg-cover bg-center overflow-hidden rounded ${span}`}
     >
       <Image
         src={category.image}
@@ -45,7 +45,7 @@ export default function CategoriesItem({
         className="object-cover object-center group-hover:scale-110 transition-all duration-500"
       />
       <div className="relative w-full h-full flex justify-center items-center bg-black/50">
-        <h2 className="text-3xl md:text-5xl text-white text-center uppercase font-semibold">
+        <h2 className="text-3xl lg:text-5xl text-white text-center uppercase font-semibold">
           {category.name}
         </h2>
       </div>

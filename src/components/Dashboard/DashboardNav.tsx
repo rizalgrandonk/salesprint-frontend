@@ -55,7 +55,7 @@ export default function DashboardNav({
             </button>
             <Link
               href={dashboardUrl}
-              className="flex items-center gap-2 ml-2 md:mr-24"
+              className="flex items-center gap-2 ml-2 lg:mr-24"
             >
               <div className="h-8 lg:h-10">
                 <AppLogo />

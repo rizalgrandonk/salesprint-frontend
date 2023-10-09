@@ -20,8 +20,9 @@ export type Product = {
   }[];
   created_at: string;
   updated_at: string;
-  category: Category;
+  category?: Category;
   store_category?: Category;
-  store: Store;
+  store?: Store;
   product_variants?: ProductVariant;
+  reviews_count?: number;
 };
