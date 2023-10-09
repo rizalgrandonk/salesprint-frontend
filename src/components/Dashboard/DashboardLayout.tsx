@@ -1,6 +1,5 @@
 import { signOut, useSession } from "next-auth/react";
 import { PropsWithChildren, useEffect, useState } from "react";
-import DashboardFooter from "./DashboardFooter";
 import DashboardNav from "./DashboardNav";
 import DashboardSidebar from "./DashboardSidebar";
 
