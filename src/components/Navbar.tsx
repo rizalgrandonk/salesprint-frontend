@@ -89,7 +89,7 @@ export default function Navbar() {
               <input
                 type="text"
                 name="nav_search"
-                className="bg-gray-100 border border-gray-500 text-gray-900 rounded focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-900 dark:placeholder-gray-400 dark:text-gray-100 outline-none"
+                className="bg-gray-100 border border-gray-300 dark:border-gray-600 text-gray-900 rounded focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-900 dark:placeholder-gray-400 dark:text-gray-100 outline-none"
                 placeholder="Search"
               />
             </div>
