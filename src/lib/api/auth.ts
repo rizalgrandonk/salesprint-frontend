@@ -3,7 +3,7 @@ import { protectedRequest, publicRequest } from ".";
 import axios from "../axios";
 
 type ReqError = {
-  errors: { [key: string]: string[] }[];
+  errors?: { [key: string]: string[] }[];
   message: string;
 };
 
@@ -42,7 +42,11 @@ export async function registerUser(credentials?: {
   password: string;
   password_confirmation: string;
   phone_number: string;
-}): Promise<{ data?: AuthResponse; status?: number; error?: ReqError }> {
+}): Promise<{
+  data?: AuthResponse;
+  status?: number;
+  error?: ReqError;
+}> {
   return await publicRequest<AuthResponse>({
     method: "POST",
     path: "/auth/register",
@@ -50,11 +54,14 @@ export async function registerUser(credentials?: {
   })
     .then((res) => ({ data: res.data, status: res.status, error: undefined }))
     .catch((err) => {
-      console.log("Error registerUser", err?.response?.data);
+      console.log("Error registerUser", err);
+      const error = err?.response?.data || { message: err.message } || {
+          message: "Service Unavailable",
+        };
       return {
         data: undefined,
-        error: err?.response?.data,
-        status: err?.response?.status,
+        error: error,
+        status: err?.response?.status || 500,
       };
     });
 }

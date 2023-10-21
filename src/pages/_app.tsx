@@ -80,7 +80,11 @@ function WrapperLayout({
     return <DashboardLayout>{children}</DashboardLayout>;
   }
   if (layout === "auth") {
-    return <AuthLayout>{children}</AuthLayout>;
+    return (
+      <AppLayout>
+        <AuthLayout>{children}</AuthLayout>
+      </AppLayout>
+    );
   }
 
   return <AppLayout>{children}</AppLayout>;

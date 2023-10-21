@@ -9,12 +9,12 @@ export default function AuthLayout({ children }: PropsWithChildren) {
         alt=""
         fill
         loading="lazy"
-        className="object-cover -z-10"
+        className="object-cover"
         sizes="100vw"
       />
 
       <div className="w-full h-full flex">
-        <div className="hidden lg:flex lg:flex-grow h-full items-center bg-black/20 px-8"></div>
+        <div className="hidden lg:flex lg:flex-grow h-full items-center bg-black/20 px-8 z-10"></div>
         {children}
       </div>
     </div>

@@ -59,8 +59,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center w-full h-full max-w-xl py-16 bg-white dark:bg-gray-900 text-gray-700 dark:text-white relative">
-      <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 absolute top-4 right-4" />
+    <div className="flex items-center w-full h-full max-w-xl py-16 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100 relative">
+      <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-700 absolute top-4 right-4" />
 
       <div className="w-full max-h-full overflow-y-auto px-16">
         <div className="flex flex-col gap-4 items-center">

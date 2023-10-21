@@ -21,9 +21,16 @@ export default function Home({
     .sort((a, b) => b.average_rating - a.average_rating)
     .slice(0, 6);
 
-  const latestProducts = products.length > 4 ? products.slice(0, 8) : products;
+  const latestProducts = products.slice(0, 4);
 
-  const recomendations = products.sort(() => 0.5 - Math.random()).slice(0, 12);
+  const recomendations = products
+    .sort((itemA, itemB) => Math.random() - 0.5)
+    .slice(0, 12);
+  // (a, b) => a - b
+
+  // [1,2,3,4]
+  // [2,4,1,3]
+  // [2,4]
 
   if (!products || !categories) {
     return <LoadingSpinner />;

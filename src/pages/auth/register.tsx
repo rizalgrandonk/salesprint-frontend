@@ -59,7 +59,7 @@ export default function RegisterPage() {
 
     if (result.error) {
       setIsLoading(false);
-      setError(result.error.message);
+      setError(result.error?.message);
       return;
     }
     const loginResult = await signIn("credentials", {
