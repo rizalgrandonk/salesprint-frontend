@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
@@ -11,15 +12,21 @@ type BreadcrumbProps = {
 
 export default function Breadcrumb({ navList }: BreadcrumbProps) {
   return (
-    <nav className="flex" aria-label="Breadcrumb">
-      <ol className="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
+    <nav aria-label="Breadcrumb">
+      <ol className="inline-flex items-center space-x-1 text-sm font-medium">
         {navList.map(({ title, href }, index) => (
           <li key={index + href}>
-            <div className="flex items-center">
-              <RiArrowRightSLine />
+            <div className="flex items-center gap-1">
+              {index > 0 && <RiArrowRightSLine className="text-xl" />}
               <Link
                 href={href}
-                className="text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white"
+                className={clsx(
+                  "text-gray-700 dark:text-gray-300 hover:text-primary-dark dark:hover:text-primary-dark",
+                  {
+                    "text-primary dark:text-primary":
+                      index === navList.length - 1,
+                  }
+                )}
               >
                 {title}
               </Link>

@@ -20,7 +20,7 @@ const LatestProductsItem = ({ product }: LatestProductsItemProps) => {
       href={`/products/${product.slug}`}
       className="block w-full h-80 p-1 lg:p-3"
     >
-      <div className="px-3 py-4 flex w-full h-full shadow-md rounded overflow-hidden group border border-gray-300 dark:border-gray-600">
+      <div className="px-3 py-4 flex w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700">
         <div className="w-40 lg:w-80 h-full bg-cover bg-center relative rounded overflow-hidden">
           <Image
             src={

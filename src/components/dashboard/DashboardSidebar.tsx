@@ -75,22 +75,24 @@ export default function DashboardSidebar({
                     ]}
                   />
                 </li>
-                <li>
-                  <MenuDropdown
-                    title="Store"
-                    icon={MdStore}
-                    childs={[
-                      {
-                        title: "Edit Appearance",
-                        href: "#",
-                      },
-                      {
-                        title: "Storefront",
-                        href: "#",
-                      },
-                    ]}
-                  />
-                </li>
+                {user?.role === "seller" && (
+                  <li>
+                    <MenuDropdown
+                      title="Store"
+                      icon={MdStore}
+                      childs={[
+                        {
+                          title: "Edit Appearance",
+                          href: "#",
+                        },
+                        {
+                          title: "Storefront",
+                          href: `/${user?.role}/store`,
+                        },
+                      ]}
+                    />
+                  </li>
+                )}
                 <li>
                   <MenuItem title="Profile" href="#" icon={MdPerson} />
                 </li>
@@ -139,13 +141,17 @@ function MenuItem({
 
     !!href && router.push(href);
   };
+
+  const isCurrentPage = router.pathname === href;
+
   return (
     <button
       onClick={handleClick}
       className={clsx(
         "w-full flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700",
         {
-          "bg-gray-100 dark:bg-gray-700": !!active,
+          "bg-gray-100 dark:bg-gray-700": !!active || !!isCurrentPage,
+          "text-primary dark:text-primary": !!isCurrentPage,
         },
         className
       )}
@@ -169,8 +175,9 @@ type MenuDropdownProps = {
 };
 
 function MenuDropdown({ title, childs, icon: Icon }: MenuDropdownProps) {
+  const { pathname } = useRouter();
   return (
-    <Disclosure>
+    <Disclosure defaultOpen={childs.some((item) => item.href === pathname)}>
       {({ open }) => (
         <>
           <Disclosure.Button className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">

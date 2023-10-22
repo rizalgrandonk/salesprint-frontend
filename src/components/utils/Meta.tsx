@@ -1,21 +1,23 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+type SeoData = {
+  title: string;
+  keywords: string;
+  description: string;
+  shareImage: string;
+  url: string;
+  article: boolean;
+};
+
 type MetaProps = {
-  seo?: {
-    title: string;
-    keywords: string;
-    description: string;
-    shareImage: string;
-    url: string;
-    article: boolean;
-  };
+  seo?: Partial<SeoData>;
 };
 
 export default function Meta({ seo }: MetaProps) {
   const { asPath } = useRouter();
 
-  const defaultSeo: MetaProps["seo"] = {
+  const defaultSeo: SeoData = {
     title: "Salesprint | Sale on a big sale",
     keywords: "merch, clothing, brand",
     description:

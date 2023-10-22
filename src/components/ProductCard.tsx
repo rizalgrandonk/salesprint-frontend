@@ -9,7 +9,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={product.slug}
-      className="w-full h-full shadow-md rounded overflow-hidden group border border-gray-300 dark:border-gray-600 p-2"
+      className="w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700 p-2"
     >
       <div className="w-full h-36 lg:h-60 bg-cover bg-center relative rounded overflow-hidden">
         <Image

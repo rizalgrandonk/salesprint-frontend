@@ -1,5 +1,8 @@
 import { signOut, useSession } from "next-auth/react";
+import Head from "next/head";
 import { PropsWithChildren, useEffect, useState } from "react";
+import Meta from "../utils/Meta";
+import DashboardFooter from "./DashboardFooter";
 import DashboardNav from "./DashboardNav";
 import DashboardSidebar from "./DashboardSidebar";
 
@@ -24,6 +27,18 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
 
   return (
     <>
+      <Head>
+        <meta charSet="UTF-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
+
+      <Meta
+        seo={{
+          title: `Salesprint ${session.user.role}`,
+        }}
+      />
+
       <DashboardNav
         mobileSidebarOpen={mobileSidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -35,10 +50,10 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         />
         <div
           id="main-content"
-          className="relative w-full h-full overflow-y-auto bg-gray-100 px-6 py-4 lg:ml-64 dark:bg-gray-900"
+          className="relative w-full h-full overflow-y-auto bg-gray-100 px-5 py-1 lg:ml-64 dark:bg-gray-900"
         >
-          <main className="">{children}</main>
-          {/* <DashboardFooter /> */}
+          <main className="min-h-[80%]">{children}</main>
+          <DashboardFooter />
         </div>
       </div>
     </>

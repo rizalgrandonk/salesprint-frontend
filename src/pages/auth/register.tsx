@@ -74,12 +74,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center w-full h-full max-w-2xl py-16 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-white relative">
-      <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 absolute top-4 right-4" />
-
+    <div className="flex items-center w-full h-full max-w-2xl py-16 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white relative">
       <div className="w-full max-h-full overflow-y-auto px-16">
         <div className="flex flex-col gap-4 items-center">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 text-primary">
             <div className="w-12">
               <AppLogo />
             </div>
@@ -155,7 +153,7 @@ export default function RegisterPage() {
               error={errors.password_confirmation?.message}
             />
 
-            <div className="py-4 flex flex-col items-center">
+            <div className="flex flex-col items-center">
               <button
                 className="w-full max-w-md flex justify-center items-center px-4 py-2 tracking-wide text-white transition-colors duration-200 bg-primary rounded-md hover:bg-primary/95 focus:outline-none focus:bg-primary focus:ring focus:ring-primary focus:ring-opacity-50 disabled:bg-gray-500"
                 disabled={isLoading}

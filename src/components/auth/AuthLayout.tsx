@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 
 export default function AuthLayout({ children }: PropsWithChildren) {
   return (
-    <div className="h-screen relative">
+    <div className="h-full relative">
       <Image
         src="https://source.unsplash.com/random/?mall"
         alt=""
