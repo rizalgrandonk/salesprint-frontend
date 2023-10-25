@@ -57,11 +57,10 @@ export default function Navbar() {
       >
         <div className="container h-full mx-auto flex justify-between items-center">
           <div className="h-full py-5">
-            <Link
-              href="/"
-              className="flex items-center gap-2 h-full text-primary"
-            >
-              <AppLogo />
+            <Link href="/" className="flex items-center gap-2 h-full">
+              <span className="text-primary h-full">
+                <AppLogo />
+              </span>
               <span className="text-3xl font-semibold hidden lg:inline">
                 Salesprint
               </span>

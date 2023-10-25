@@ -13,7 +13,7 @@ export default function Layout({ children }: PropsWithChildren) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <Navbar />
-      <main className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden pt-16 lg:pt-20">
+      <main className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden pt-16 lg:pt-20 min-h-screen">
         {children}
       </main>
       <Footer />
