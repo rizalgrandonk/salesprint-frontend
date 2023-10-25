@@ -3,11 +3,13 @@ import BaseCard from "@/components/utils/BaseCard";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import { getUserStore } from "@/lib/api/store";
+import { DEFAULT_STORE_IMAGE } from "@/lib/constants";
 import { StoreBanner } from "@/types/Store";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { RiInformationLine } from "react-icons/ri";
+import Link from "next/link";
+import { RiEditLine, RiInformationLine } from "react-icons/ri";
 import Carousel, { ArrowProps } from "react-multi-carousel";
 
 export default function SellerStore() {
@@ -62,7 +64,7 @@ export default function SellerStore() {
         <BaseCard className="flex gap-3">
           <div className="w-32 h-32 relative">
             <Image
-              src={store.image || ""}
+              src={store.image || DEFAULT_STORE_IMAGE}
               alt=""
               fill
               sizes="8rem"
@@ -110,7 +112,7 @@ export default function SellerStore() {
         </BaseCard>
       </div>
 
-      <div className="coll-span-full lg:col-span-2">
+      <div className="coll-span-full lg:col-span-2 space-y-2 lg:space-y-4">
         <BaseCard className="space-y-4">
           <h2 className="text-xl font-semibold">Banner</h2>
 
@@ -118,6 +120,16 @@ export default function SellerStore() {
             <BannerCarousel store_banners={store.store_banners} />
           ) : (
             <div>No Store Banners</div>
+          )}
+        </BaseCard>
+
+        <BaseCard className="space-y-4">
+          <h2 className="text-xl font-semibold">Store Categories</h2>
+
+          {store.store_categories && store.store_categories.length > 0 ? (
+            store.store_categories.map((category) => <div>{category.name}</div>)
+          ) : (
+            <div>No Store Categories</div>
           )}
         </BaseCard>
       </div>
@@ -160,7 +172,7 @@ function BannerCarousel({ store_banners }: BannerCarouselProps) {
         {store_banners.map((banner) => (
           <div key={banner.id} className="w-full h-60 relative">
             <Image
-              src={banner.image || ""}
+              src={banner.image}
               alt=""
               fill
               sizes="50vh"

@@ -9,7 +9,8 @@ export type Store = {
   province_id: string;
   postal_code: string;
   status: string;
-  image: string;
+  image?: string;
+  store_description?: string;
   created_at: string;
   updated_at: string;
 

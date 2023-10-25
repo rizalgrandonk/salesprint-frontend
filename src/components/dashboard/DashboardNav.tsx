@@ -1,5 +1,6 @@
+import { DEFAULT_USER_IMAGE } from "@/lib/constants";
 import { Popover, Transition } from "@headlessui/react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
@@ -106,7 +107,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
         <span className="sr-only">Open user menu</span>
         <div className="w-8 h-8 relative">
           <Image
-            src={userImage || ""}
+            src={userImage || DEFAULT_USER_IMAGE}
             alt=""
             fill
             sizes="2rem"
@@ -179,8 +180,8 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
             </li>
             <li>
               <button
-                // href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Logout

@@ -20,6 +20,7 @@ import {
 } from "react-icons/ri";
 
 import { getUserStore } from "@/lib/api/store";
+import { DEFAULT_STORE_IMAGE, DEFAULT_USER_IMAGE } from "@/lib/constants";
 import { Popover, Transition } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
@@ -229,7 +230,7 @@ function UserPanel() {
         <span className="sr-only">Open user menu</span>
         <div className="w-9 h-9 relative rounded-full">
           <Image
-            src={user.image || ""}
+            src={user.image || DEFAULT_USER_IMAGE}
             alt=""
             fill
             sizes="2rem"
@@ -325,20 +326,14 @@ function StorePanel() {
       <Popover.Button className="flex items-center gap-2 py-1.5 px-3 hover:bg-gray-200 dark:hover:bg-gray-800 rounded">
         <span className="sr-only">Open store menu</span>
         <div className="w-9 h-9 relative rounded-full overflow-hidden">
-          {store?.image ? (
-            <Image
-              src={store.image || ""}
-              alt=""
-              fill
-              sizes="2rem"
-              loading="lazy"
-              className="object-cover rounded-full"
-            />
-          ) : (
-            <div className="w-full h-full flex justify-center items-center text-xl bg-gray-300 text-gray-700">
-              <RiStoreLine />
-            </div>
-          )}
+          <Image
+            src={store?.image || DEFAULT_STORE_IMAGE}
+            alt=""
+            fill
+            sizes="2rem"
+            loading="lazy"
+            className="object-cover rounded-full"
+          />
         </div>
         <span className="inline-block max-w-[3.5rem] overflow-hidden truncate">
           {store?.name || "Store"}
