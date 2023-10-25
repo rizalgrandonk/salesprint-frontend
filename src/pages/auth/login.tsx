@@ -102,7 +102,7 @@ export default function LoginPage() {
 
             <div className="py-4">
               <button
-                className="w-full flex justify-center items-center px-4 py-2 tracking-wide text-white transition-colors duration-200 bg-primary rounded-md hover:bg-primary/95 focus:outline-none focus:bg-primary focus:ring focus:ring-primary focus:ring-opacity-50 disabled:bg-gray-500"
+                className="w-full flex justify-center items-center px-4 py-2 tracking-wide text-white transition-colors duration-200 bg-primary rounded hover:bg-primary/95 focus:outline-none focus:bg-primary focus:ring focus:ring-primary focus:ring-opacity-50 disabled:bg-gray-500"
                 disabled={isLoading}
               >
                 {isLoading ? (

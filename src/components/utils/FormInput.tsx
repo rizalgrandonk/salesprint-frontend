@@ -28,7 +28,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputType>(
             name={props.id}
             id={props.id}
             className={clsx(
-              "bg-inherit block w-full px-4 py-2 text-gray-700 placeholder-gray-400 border border-gray-400 rounded-md dark:placeholder-gray-500 dark:text-gray-300 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40",
+              "bg-inherit block w-full px-4 py-2 text-gray-700 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:text-gray-300 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40",
               { "pl-14": !!props.leftel }
             )}
           />

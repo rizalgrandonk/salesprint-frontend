@@ -97,14 +97,14 @@ export default function SearchMenu({ className }: { className?: string }) {
             type="text"
             name="app_search"
             id="topbar-search"
-            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary outline-none"
+            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary outline-none"
             placeholder="Search"
             displayValue={(menu: Menu) => menu.title}
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
 
-        <Combobox.Options className="absolute mt-1 w-full lg:w-screen max-w-xl overflow-auto rounded-md bg-gray-50/50 dark:bg-gray-700/50 py-2 text-base text-gray-900 dark:text-white shadow-lg ring-1 ring-gray-700/5 dark:ring-gray-50/50 backdrop-blur-sm focus:outline-none sm:text-sm">
+        <Combobox.Options className="absolute mt-1 w-full lg:w-screen max-w-xl overflow-auto rounded bg-gray-50/50 dark:bg-gray-700/50 py-2 text-base text-gray-900 dark:text-white shadow-lg ring-1 ring-gray-700/5 dark:ring-gray-50/50 backdrop-blur-sm focus:outline-none sm:text-sm">
           {filtered.length === 0 && query !== "" ? (
             <div className="relative cursor-default select-none py-2 px-4">
               Nothing found.
@@ -127,7 +127,7 @@ export default function SearchMenu({ className }: { className?: string }) {
                   <>
                     <div
                       className={clsx(
-                        "flex items-center justify-center w-10 h-10 rounded-lg",
+                        "flex items-center justify-center w-10 h-10 rounded",
                         { "bg-white/30": active }
                       )}
                     >

@@ -4,7 +4,7 @@ import { RiGithubFill, RiInstagramLine, RiTwitterFill } from "react-icons/ri";
 export default function DashboardFooter() {
   return (
     <footer className="py-6 space-y-6">
-      <div className="p-5 bg-white rounded-lg shadow lg:flex lg:items-center lg:justify-between dark:bg-gray-800">
+      <div className="p-5 bg-white rounded shadow lg:flex lg:items-center lg:justify-between dark:bg-gray-800">
         <ul className="flex flex-wrap items-center space-y-1 lg:mb-0">
           <li>
             <a

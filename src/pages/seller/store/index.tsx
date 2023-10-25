@@ -1,6 +1,7 @@
 import Alerts from "@/components/utils/Alerts";
 import BaseCard from "@/components/utils/BaseCard";
 import Breadcrumb from "@/components/utils/Breadcrumb";
+import Button from "@/components/utils/Button";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import { getUserStore } from "@/lib/api/store";
 import {
@@ -12,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { MdModeEdit } from "react-icons/md";
 import { RiEditLine, RiInformationLine } from "react-icons/ri";
 import Carousel, { ArrowProps } from "react-multi-carousel";
 
@@ -58,9 +60,15 @@ export default function SellerStore() {
           ]}
         />
 
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-          Storefront & Info
-        </h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+            Storefront & Info
+          </h1>
+          <Button size="sm" variant="primary" href="/seller/store/settings">
+            <MdModeEdit className="text-base" />
+            <span>Edit store info</span>
+          </Button>
+        </div>
       </div>
 
       <div className="col-span-full lg:col-auto space-y-2 lg:space-y-4">
