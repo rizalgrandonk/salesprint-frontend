@@ -71,8 +71,8 @@ export default function SellerStore() {
         </div>
       </div>
 
-      <div className="col-span-full lg:col-auto space-y-2 lg:space-y-4">
-        <BaseCard className="space-y-2">
+      <div className="col-span-full lg:col-auto flex flex-col gap-2 lg:gap-4">
+        <BaseCard className="space-y-2 flex-grow">
           <div className="flex gap-3">
             <div className="w-32 h-32 relative">
               <Image
@@ -98,7 +98,7 @@ export default function SellerStore() {
           )}
         </BaseCard>
 
-        <BaseCard className="space-y-4">
+        <BaseCard className="space-y-4 flex-grow">
           <h2 className="text-xl font-semibold">Store Address</h2>
 
           <div className="space-y-2">
@@ -130,8 +130,8 @@ export default function SellerStore() {
         </BaseCard>
       </div>
 
-      <div className="coll-span-full lg:col-span-2 space-y-2 lg:space-y-4">
-        <BaseCard className="space-y-4">
+      <div className="coll-span-full lg:col-span-2 flex flex-col gap-2 lg:gap-4">
+        <BaseCard className="space-y-4 flex-grow">
           <h2 className="text-xl font-semibold">Banner</h2>
 
           {store.store_banners && store.store_banners.length > 0 ? (
@@ -141,7 +141,7 @@ export default function SellerStore() {
           )}
         </BaseCard>
 
-        <BaseCard className="space-y-4">
+        <BaseCard className="space-y-4 flex-grow">
           <h2 className="text-xl font-semibold">Store Categories</h2>
 
           {store.store_categories && store.store_categories.length > 0 ? (

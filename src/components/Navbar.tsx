@@ -279,11 +279,11 @@ function UserPanel() {
             </li>
             <li>
               <Link
-                href={`/user/settings`}
+                href={`/user/profile`}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
-                Settings
+                Profile
               </Link>
             </li>
             <li>
@@ -381,11 +381,11 @@ function StorePanel() {
                 </li>
                 <li>
                   <Link
-                    href={`/seller/settings`}
+                    href={`/seller/store`}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                     role="menuitem"
                   >
-                    Settings
+                    Info
                   </Link>
                 </li>
               </ul>
