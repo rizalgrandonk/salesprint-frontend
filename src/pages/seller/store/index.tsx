@@ -3,7 +3,10 @@ import BaseCard from "@/components/utils/BaseCard";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import { getUserStore } from "@/lib/api/store";
-import { DEFAULT_STORE_IMAGE } from "@/lib/constants";
+import {
+  DEFAULT_STORE_CATEGORY_IMAGE,
+  DEFAULT_STORE_IMAGE,
+} from "@/lib/constants";
 import { StoreBanner } from "@/types/Store";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -61,23 +64,30 @@ export default function SellerStore() {
       </div>
 
       <div className="col-span-full lg:col-auto space-y-2 lg:space-y-4">
-        <BaseCard className="flex gap-3">
-          <div className="w-32 h-32 relative">
-            <Image
-              src={store.image || DEFAULT_STORE_IMAGE}
-              alt=""
-              fill
-              sizes="8rem"
-              loading="lazy"
-              className="object-cover rounded"
-            />
+        <BaseCard className="space-y-2">
+          <div className="flex gap-3">
+            <div className="w-32 h-32 relative">
+              <Image
+                src={store.image || DEFAULT_STORE_IMAGE}
+                alt=""
+                fill
+                sizes="8rem"
+                loading="lazy"
+                className="object-cover rounded"
+              />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold">{store.name}</h2>
+              <span className="inline-block bg-green-100 text-green-800 font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300 uppercase">
+                {store.status}
+              </span>
+            </div>
           </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold">{store.name}</h2>
-            <span className="inline-block bg-green-100 text-green-800 font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
-              {store.status}
-            </span>
-          </div>
+          {store.store_description && (
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-normal">
+              {store.store_description}
+            </p>
+          )}
         </BaseCard>
 
         <BaseCard className="space-y-4">
@@ -127,7 +137,25 @@ export default function SellerStore() {
           <h2 className="text-xl font-semibold">Store Categories</h2>
 
           {store.store_categories && store.store_categories.length > 0 ? (
-            store.store_categories.map((category) => <div>{category.name}</div>)
+            <div className="flex items-center gap-2 overflow-x-auto pb-3">
+              {store.store_categories.map((category) => (
+                <div className="flex-shrink-0 w-[10rem] space-y-1 border rounded overflow-hidden border-gray-300 dark:border-gray-700">
+                  <div className="w-full aspect-video relative">
+                    <Image
+                      src={category.image || DEFAULT_STORE_CATEGORY_IMAGE}
+                      alt={category.name}
+                      fill
+                      sizes="25vw"
+                      loading="lazy"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="font-medium text-sm p-1 text-center">
+                    {category.name}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div>No Store Categories</div>
           )}

@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         />
         <div
           id="main-content"
-          className="relative w-full h-full overflow-y-auto bg-gray-100 px-5 py-1 lg:ml-64 dark:bg-gray-900"
+          className="relative w-full h-full overflow-y-auto bg-gray-100 px-3 lg:px-5 py-1 lg:ml-64 dark:bg-gray-900"
         >
           <main className="min-h-[80%]">{children}</main>
           <DashboardFooter />

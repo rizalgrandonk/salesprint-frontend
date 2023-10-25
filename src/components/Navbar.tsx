@@ -231,7 +231,7 @@ function UserPanel() {
         <div className="w-9 h-9 relative rounded-full">
           <Image
             src={user.image || DEFAULT_USER_IMAGE}
-            alt=""
+            alt={user.name || ""}
             fill
             sizes="2rem"
             loading="lazy"
