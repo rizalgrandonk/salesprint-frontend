@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import Link from "next/link";
 import { PropsWithChildren } from "react";
 import { IconType } from "react-icons";
@@ -6,6 +7,7 @@ type ButtonProps = {
   href?: string;
   size?: keyof typeof sizeClass;
   variant?: keyof typeof variantClass;
+  fullWidth?: boolean;
 } & PropsWithChildren;
 
 const sizeClass = {
@@ -22,15 +24,27 @@ const variantClass = {
   warning: "bg-amber-500",
   info: "bg-sky-500",
   success: "bg-green-500",
+  secondary: "bg-gray-500",
+  outline:
+    "bg-gray-100 dark:bg-gray-900 border border-primary hover:bg-primary text-primary hover:text-gray-50",
 };
 
-export default function Button({ children, href, size, variant }: ButtonProps) {
+export default function Button({
+  children,
+  href,
+  size,
+  variant,
+  fullWidth,
+}: ButtonProps) {
   const selectedVariantClass = variant
     ? variantClass[variant]
     : variantClass["primary"];
   const selectedSizeClass = size ? sizeClass[size] : sizeClass["md"];
 
-  const className = `inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-gray-50 rounded hover:bg-opacity-90 transition-all ${selectedVariantClass} ${selectedSizeClass}`;
+  const className = clsx(
+    fullWidth ? "flex w-full" : "inline-flex",
+    `items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-gray-50 rounded hover:bg-opacity-90 transition-all ${selectedVariantClass} ${selectedSizeClass}`
+  );
 
   if (href) {
     return (

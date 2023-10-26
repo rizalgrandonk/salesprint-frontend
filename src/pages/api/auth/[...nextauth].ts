@@ -24,6 +24,7 @@ export default NextAuth({
               email: current_user.email,
               role: current_user.role,
               username: current_user.username,
+              phone_number: current_user.phone_number,
               image: current_user.image,
               access_token: token,
               token_exp: Date.now() + exp * 1000,

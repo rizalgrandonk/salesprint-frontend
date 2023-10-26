@@ -26,6 +26,7 @@ import { useQuery } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
 import { MdSearch } from "react-icons/md";
 import AppLogo from "./utils/AppLogo";
+import Button from "./utils/Button";
 import DarkModeToggle from "./utils/DarkModeToggle";
 
 export default function Navbar() {
@@ -116,7 +117,7 @@ export default function Navbar() {
 
             {!session?.user && (
               <div className="hidden lg:flex items-center gap-2 pl-4 py-1 border-l border-gray-400 dark:border-gray-500">
-                <Link
+                {/* <Link
                   href="/auth/register"
                   locale="en"
                   className="px-3 py-1 border border-primary text-sm font-medium text-gray-200 bg-primary hover:bg-primary-dark rounded"
@@ -129,7 +130,13 @@ export default function Navbar() {
                   className="px-3 py-1 border border-primary text-sm font-medium hover:bg-primary-dark hover:text-gray-200 rounded"
                 >
                   Sign In
-                </Link>
+                </Link> */}
+                <Button size="sm" variant="primary" href="/auth/register">
+                  Sign Up
+                </Button>
+                <Button size="sm" variant="outline" href="/auth/register">
+                  Sign In
+                </Button>
               </div>
             )}
 
@@ -402,7 +409,7 @@ function StorePanel() {
                 Anda belum memiliki toko
               </p>
               <Link
-                href="/seller/register"
+                href="/auth/user/create-store"
                 className="px-3 py-1 border border-primary font-medium text-gray-100 bg-primary hover:bg-primary/95 rounded"
               >
                 Buka toko gratis

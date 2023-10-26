@@ -5,7 +5,10 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   const { pathname } = request.nextUrl;
   const token = await getToken({ req: request });
 
-  if (pathname.startsWith("/auth/login")) {
+  if (
+    pathname.startsWith("/auth/login") ||
+    pathname.startsWith("/auth/register")
+  ) {
     if (token && !token.user.error) {
       if (token.user.role) {
         const url = new URL(`/${token.user.role}`, request.url);
@@ -16,7 +19,7 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
     }
   }
 
-  const protectedPaths = ["/admin", "/seller", "/user"];
+  const protectedPaths = ["/admin", "/seller", "/user", "/auth/user"];
   const matchesProtectedPath = protectedPaths.some((path) =>
     pathname.startsWith(path)
   );
