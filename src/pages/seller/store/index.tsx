@@ -147,7 +147,10 @@ export default function SellerStore() {
           {store.store_categories && store.store_categories.length > 0 ? (
             <div className="flex items-center gap-2 overflow-x-auto pb-3">
               {store.store_categories.map((category) => (
-                <div className="flex-shrink-0 w-[10rem] space-y-1 border rounded overflow-hidden border-gray-300 dark:border-gray-700">
+                <div
+                  key={category.id}
+                  className="flex-shrink-0 w-[10rem] space-y-1 border rounded overflow-hidden border-gray-300 dark:border-gray-700"
+                >
                   <div className="w-full aspect-video relative">
                     <Image
                       src={category.image || DEFAULT_STORE_CATEGORY_IMAGE}
