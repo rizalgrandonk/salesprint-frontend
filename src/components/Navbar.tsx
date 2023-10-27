@@ -117,25 +117,11 @@ export default function Navbar() {
 
             {!session?.user && (
               <div className="hidden lg:flex items-center gap-2 pl-4 py-1 border-l border-gray-400 dark:border-gray-500">
-                {/* <Link
-                  href="/auth/register"
-                  locale="en"
-                  className="px-3 py-1 border border-primary text-sm font-medium text-gray-200 bg-primary hover:bg-primary-dark rounded"
-                >
-                  Sign Up
-                </Link>
-                <Link
-                  href="/auth/login"
-                  locale="id"
-                  className="px-3 py-1 border border-primary text-sm font-medium hover:bg-primary-dark hover:text-gray-200 rounded"
-                >
-                  Sign In
-                </Link> */}
                 <ButtonLink size="sm" variant="primary" href="/auth/register">
-                  Sign Up
+                  Daftar
                 </ButtonLink>
                 <ButtonLink size="sm" variant="outline" href="/auth/login">
-                  Sign In
+                  Masuk
                 </ButtonLink>
               </div>
             )}
@@ -163,7 +149,7 @@ export default function Navbar() {
             <span className="text-2xl">
               {asPath == "/" ? <RiHome3Fill /> : <RiHome3Line />}
             </span>
-            <span className="block text-xs">Home</span>
+            <span className="block text-xs">Beranda</span>
           </Link>
           <Link
             href="/products"
@@ -176,7 +162,7 @@ export default function Navbar() {
                 <RiTShirt2Line />
               )}
             </span>
-            <span className="block text-xs">Products</span>
+            <span className="block text-xs">Produk</span>
           </Link>
 
           <div className="w-full flex flex-col justify-center items-center">
@@ -206,7 +192,7 @@ export default function Navbar() {
                 <RiLayoutMasonryLine />
               )}
             </span>
-            <span className="block text-xs">Categories</span>
+            <span className="block text-xs">Kategori</span>
           </Link>
           <Link
             href="/profile"
@@ -215,7 +201,7 @@ export default function Navbar() {
             <span className="text-2xl">
               {asPath.startsWith("/profile") ? <RiUserFill /> : <RiUserLine />}
             </span>
-            <span className="block text-xs">Profile</span>
+            <span className="block text-xs">Profil</span>
           </Link>
         </div>
       </nav>
@@ -234,7 +220,7 @@ function UserPanel() {
   return (
     <Popover className="relative">
       <Popover.Button className="flex items-center gap-2 py-1.5 px-3 hover:bg-gray-200 dark:hover:bg-gray-800 rounded">
-        <span className="sr-only">Open user menu</span>
+        <span className="sr-only">Buka menu user</span>
         <div className="w-9 h-9 relative rounded-full">
           <Image
             src={user.image || DEFAULT_USER_IMAGE}
@@ -281,7 +267,7 @@ function UserPanel() {
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
-                Orders
+                Pesanan
               </Link>
             </li>
             <li>
@@ -290,7 +276,7 @@ function UserPanel() {
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
-                Profile
+                Profil
               </Link>
             </li>
             <li>
@@ -299,7 +285,7 @@ function UserPanel() {
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
-                Sign Out
+                Keluar
               </button>
             </li>
           </ul>
@@ -331,7 +317,7 @@ function StorePanel() {
   return (
     <Popover className="relative">
       <Popover.Button className="flex items-center gap-2 py-1.5 px-3 hover:bg-gray-200 dark:hover:bg-gray-800 rounded">
-        <span className="sr-only">Open store menu</span>
+        <span className="sr-only">Buka menu toko</span>
         <div className="w-9 h-9 relative rounded-full overflow-hidden">
           <Image
             src={store?.image || DEFAULT_STORE_IMAGE}
@@ -343,7 +329,7 @@ function StorePanel() {
           />
         </div>
         <span className="inline-block max-w-[3.5rem] overflow-hidden truncate">
-          {store?.name || "Store"}
+          {store?.name || "Toko"}
         </span>
       </Popover.Button>
 
@@ -383,7 +369,7 @@ function StorePanel() {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                     role="menuitem"
                   >
-                    Orders
+                    Pesanan
                   </Link>
                 </li>
                 <li>
@@ -408,12 +394,9 @@ function StorePanel() {
               >
                 Anda belum memiliki toko
               </p>
-              <Link
-                href="/auth/user/create-store"
-                className="px-3 py-1 border border-primary font-medium text-gray-100 bg-primary hover:bg-primary/95 rounded"
-              >
+              <ButtonLink href="/auth/user/create-store" variant="primary">
                 Buka toko gratis
-              </Link>
+              </ButtonLink>
             </div>
           )}
         </Popover.Panel>

@@ -61,15 +61,15 @@ export default function DashboardSidebar({
                 </li>
                 <li>
                   <MenuDropdown
-                    title="Products"
+                    title="Produk"
                     icon={MdInventory}
                     childs={[
                       {
-                        title: "Add New",
+                        title: "Tambah Baru",
                         href: "#",
                       },
                       {
-                        title: "Product List",
+                        title: "Daftar Produk",
                         href: "#",
                       },
                     ]}
@@ -78,15 +78,15 @@ export default function DashboardSidebar({
                 {user?.role === "seller" && (
                   <li>
                     <MenuDropdown
-                      title="Store"
+                      title="Toko"
                       icon={MdStore}
                       childs={[
                         {
-                          title: "Edit Appearance",
+                          title: "Ubah Tampilan",
                           href: "#",
                         },
                         {
-                          title: "Storefront",
+                          title: "Halaman & Info",
                           href: `/${user?.role}/store`,
                         },
                       ]}
@@ -94,7 +94,7 @@ export default function DashboardSidebar({
                   </li>
                 )}
                 <li>
-                  <MenuItem title="Profile" href="#" icon={MdPerson} />
+                  <MenuItem title="Profil" href="#" icon={MdPerson} />
                 </li>
               </ul>
             </div>

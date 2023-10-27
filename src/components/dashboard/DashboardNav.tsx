@@ -84,8 +84,6 @@ export default function DashboardNav({
 
             <NotificatiionPanel dashboardUrl={dashboardUrl} />
 
-            <AppsPanel dashboardUrl={dashboardUrl} />
-
             <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700" />
 
             <div className="flex items-center ml-3">
@@ -104,7 +102,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
   return (
     <Popover className="relative">
       <Popover.Button className="flex text-sm bg-gray-800 rounded-full hover:ring-4 hover:ring-gray-200 dark:hover:ring-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
-        <span className="sr-only">Open user menu</span>
+        <span className="sr-only">Buka menu user</span>
         <div className="w-8 h-8 relative">
           <Image
             src={userImage || DEFAULT_USER_IMAGE}
@@ -132,13 +130,13 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
         >
           <div className="px-4 py-3" role="none">
             <p className="text-sm text-gray-900 dark:text-white" role="none">
-              Neil Sims
+              {session?.user?.name || ""}
             </p>
             <p
               className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
               role="none"
             >
-              neil.sims@flowbite.com
+              {session?.user?.email || ""}
             </p>
           </div>
           <ul className="py-1" role="none">
@@ -157,7 +155,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
-                Settings
+                Pengaturan
               </Link>
             </li>
             <li>
@@ -166,7 +164,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
-                Report
+                Laporan
               </Link>
             </li>
             <li>
@@ -175,7 +173,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
-                Go to Homepage
+                Kembali ke beranda
               </Link>
             </li>
             <li>
@@ -184,93 +182,10 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
-                Logout
+                Keluar
               </button>
             </li>
           </ul>
-        </Popover.Panel>
-      </Transition>
-    </Popover>
-  );
-}
-
-function AppsPanel({ dashboardUrl }: { dashboardUrl: string }) {
-  return (
-    <Popover className="relative">
-      <Popover.Button className="hidden text-2xl p-2 text-gray-500 rounded sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none">
-        <span className="sr-only">View notifications</span>
-        <MdApps />
-      </Popover.Button>
-
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-200"
-        enterFrom="opacity-0 translate-x-1"
-        enterTo="opacity-100 translate-x-0"
-        leave="transition ease-in duration-150"
-        leaveFrom="opacity-100 translate-x-0"
-        leaveTo="opacity-0 translate-x-1"
-      >
-        <Popover.Panel
-          as="div"
-          className="absolute top-full right-0 z-50 w-96 my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
-        >
-          <div className="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            Apps
-          </div>
-          <div className="grid grid-cols-3 gap-4 p-4">
-            <Link
-              href={`${dashboardUrl}/sales`}
-              className="block p-4 text-center rounded hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              <MdShoppingBag className="text-3xl inline-block mb-1" />
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Sales
-              </div>
-            </Link>
-            <Link
-              href={`${dashboardUrl}/users`}
-              className="block p-4 text-center rounded hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              <MdGroups2 className="text-3xl inline-block mb-1" />
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Users
-              </div>
-            </Link>
-            <Link
-              href={`${dashboardUrl}/profile`}
-              className="block p-4 text-center rounded hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              <MdAccountCircle className="text-3xl inline-block mb-1" />
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Profile
-              </div>
-            </Link>
-            <Link
-              href={`${dashboardUrl}/settings`}
-              className="block p-4 text-center rounded hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              <MdSettings className="text-3xl inline-block mb-1" />
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Settings
-              </div>
-            </Link>
-            <Link
-              href={`${dashboardUrl}/products`}
-              className="block p-4 text-center rounded hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              <MdInventory className="text-3xl inline-block mb-1" />
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Products
-              </div>
-            </Link>
-            <button className="block p-4 text-center rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-              <MdLogout className="text-3xl inline-block mb-1" />
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Logout
-              </div>
-            </button>
-          </div>
         </Popover.Panel>
       </Transition>
     </Popover>
@@ -281,7 +196,7 @@ function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
   return (
     <Popover className="relative">
       <Popover.Button className="text-2xl p-2 text-gray-500 rounded hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none">
-        <span className="sr-only">View notifications</span>
+        <span className="sr-only">Lihat notifikasi</span>
         <MdNotifications />
       </Popover.Button>
 
@@ -299,7 +214,7 @@ function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
           className="absolute top-full -right-full lg:right-0 z-50 w-72 lg:w-96 my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
         >
           <div className="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            Notifications
+            Notifikasi
           </div>
           <div>
             <Link
@@ -334,7 +249,7 @@ function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
           >
             <div className="inline-flex items-center gap-2">
               <MdVisibility className="text-2xl" />
-              View all
+              Lihat semua
             </div>
           </Link>
         </Popover.Panel>

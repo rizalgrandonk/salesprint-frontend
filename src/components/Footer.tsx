@@ -12,14 +12,14 @@ export default function Footer() {
         <div className="container h-full flex flex-col lg:flex-row space-y-10 lg:space-y-0 justify-between items-start">
           <div className="w-full lg:w-1/4 flex justify-between items-start">
             <div>
-              <h4 className="text-xl font-semibold mb-6">Navigate</h4>
+              <h4 className="text-xl font-semibold mb-6">Navigasi</h4>
               <ul>
                 <li className="py-1">
                   <Link
                     href="/"
                     className="hover:text-gray-700 dark:hover:text-gray-300"
                   >
-                    Home
+                    Beranda
                   </Link>
                 </li>
                 <li className="py-1">
@@ -27,7 +27,7 @@ export default function Footer() {
                     href="/"
                     className="hover:text-gray-700 dark:hover:text-gray-300"
                   >
-                    Products
+                    Produk
                   </Link>
                 </li>
                 <li className="py-1">
@@ -35,15 +35,7 @@ export default function Footer() {
                     href="/"
                     className="hover:text-gray-700 dark:hover:text-gray-300"
                   >
-                    Categories
-                  </Link>
-                </li>
-                <li className="py-1">
-                  <Link
-                    href="/seller"
-                    className="hover:text-gray-700 dark:hover:text-gray-300"
-                  >
-                    Seller Center
+                    Kategori
                   </Link>
                 </li>
               </ul>

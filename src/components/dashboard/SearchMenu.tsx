@@ -28,27 +28,22 @@ const menuList: Menu[] = [
     icon: MdDashboardCustomize,
   },
   {
-    title: "Add New Product",
+    title: "Tambah produk baru",
     href: "/products/add",
     icon: MdLibraryAdd,
   },
   {
-    title: "Product List",
+    title: "Daftar produk",
     href: "/products",
     icon: MdInventory,
   },
   {
-    title: "Edit Store",
+    title: "Ubah info toko",
     href: "/store/edit",
     icon: MdStore,
   },
   {
-    title: "Storefront",
-    href: "/store/storefront",
-    icon: MdStorefront,
-  },
-  {
-    title: "Profile",
+    title: "Profil",
     href: "/profile",
     icon: MdPerson,
   },
@@ -86,7 +81,7 @@ export default function SearchMenu({ className }: { className?: string }) {
   return (
     <form className={clsx("relative", className)}>
       <label htmlFor="topbar-search" className="sr-only">
-        Search
+        Cari
       </label>
       <Combobox value={selected} onChange={handleOnChange}>
         <div className="relative mt-1 lg:w-96">
@@ -107,7 +102,7 @@ export default function SearchMenu({ className }: { className?: string }) {
         <Combobox.Options className="absolute mt-1 w-full lg:w-screen max-w-xl overflow-auto rounded bg-gray-50/50 dark:bg-gray-700/50 py-2 text-base text-gray-900 dark:text-white shadow-lg ring-1 ring-gray-700/5 dark:ring-gray-50/50 backdrop-blur-sm focus:outline-none sm:text-sm">
           {filtered.length === 0 && query !== "" ? (
             <div className="relative cursor-default select-none py-2 px-4">
-              Nothing found.
+              Kosong
             </div>
           ) : (
             filtered.map((menu, index) => (

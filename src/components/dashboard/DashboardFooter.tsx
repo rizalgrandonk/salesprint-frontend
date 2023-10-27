@@ -11,7 +11,7 @@ export default function DashboardFooter() {
               href="#"
               className="mr-4 text-sm font-normal text-gray-500 hover:underline lg:mr-6 dark:text-gray-400"
             >
-              Terms and conditions
+              Syarat dan ketentuan
             </a>
           </li>
         </ul>
