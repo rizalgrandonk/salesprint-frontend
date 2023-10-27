@@ -1,5 +1,5 @@
 import AppLogo from "@/components/utils/AppLogo";
-import Button from "@/components/utils/Button";
+import { Button } from "@/components/utils/Button";
 import FormInput from "@/components/utils/FormInput";
 import Redirect from "@/components/utils/Redirect";
 import { useSession } from "next-auth/react";
@@ -54,7 +54,7 @@ export default function CreateStore() {
           </Link>
 
           <p className="text-lg text-gray-500 dark:text-gray-300">
-            Create your store now
+            Buka toko anda sekarang
           </p>
         </div>
 
@@ -68,37 +68,37 @@ export default function CreateStore() {
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <FormInput
               {...register("phone_number", {
-                required: "Phone Number is required",
+                required: "Nomor telepon harus diisi",
               })}
               type="text"
               id="phone_number"
-              label="Phone Number"
-              placeholder="Your phone number"
+              label="Nomor telepon"
+              placeholder="Masukan nomor telepon anda"
               error={errors.phone_number?.message}
               disabled
             />
             <FormInput
-              {...register("name", { required: "Store Name is required" })}
+              {...register("name", { required: "Nama toko harus diisi" })}
               type="text"
               id="name"
-              label="Store Name"
-              placeholder="The store name"
+              label="Nama toko"
+              placeholder="Masukan nama toko anda"
               error={errors.name?.message}
             />
             <FormInput
               {...register("address", {
-                required: "Store Address is required",
+                required: "Alamat toko harus diisi",
               })}
               type="text"
               id="address"
-              label="Store Address"
-              placeholder="Input store address"
+              label="Alamat toko"
+              placeholder="Masukan alamat toko anda"
               error={errors.address?.message}
             />
 
             <div className="py-4 flex items-center justify-end gap-4">
-              <Button variant="outline">Cancel</Button>
-              <Button variant="primary">Create</Button>
+              <Button variant="outline">Batal</Button>
+              <Button variant="primary">Selesai</Button>
             </div>
           </form>
 

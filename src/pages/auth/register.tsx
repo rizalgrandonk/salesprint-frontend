@@ -1,4 +1,5 @@
 import AppLogo from "@/components/utils/AppLogo";
+import { Button } from "@/components/utils/Button";
 import DarkModeToggle from "@/components/utils/DarkModeToggle";
 import FormInput from "@/components/utils/FormInput";
 import Redirect from "@/components/utils/Redirect";
@@ -85,7 +86,7 @@ export default function RegisterPage() {
           </Link>
 
           <p className="text-lg text-gray-500 dark:text-gray-300">
-            Sign up and enjoy your shopping time
+            Daftar dan nikmati waktu berbelanja anda
           </p>
         </div>
 
@@ -99,63 +100,67 @@ export default function RegisterPage() {
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <FormInput
-                {...register("name", { required: "Name is required" })}
+                {...register("name", { required: "Nama harus diisi" })}
                 type="text"
                 id="name"
-                label="Name"
-                placeholder="Enter your name"
+                label="Nama"
+                placeholder="Masukan nama anda"
                 error={errors.name?.message}
               />
               <FormInput
-                {...register("username", { required: "Username is required" })}
+                {...register("username", {
+                  required: "Nama pengguna harus diisi",
+                })}
                 type="text"
                 id="username"
-                label="Username"
-                placeholder="Enter your username"
+                label="Nama pengguna"
+                placeholder="Masukan nama pengguna anda"
                 error={errors.username?.message}
               />
             </div>
             <FormInput
-              {...register("email", { required: "Email is required" })}
+              {...register("email", { required: "Email harus diisi" })}
               type="email"
               id="email"
-              label="Email Address"
+              label="Alamat email"
               placeholder="example@example.com"
               error={errors.email?.message}
             />
             <FormInput
               {...register("phone_number", {
-                required: "Phone number is required",
+                required: "Nomor telepon harus diisi",
               })}
               type="text"
               id="phone_number"
-              label="Phone Number"
-              placeholder="Enter your phone number"
+              label="Nomor telepon"
+              placeholder="Masukan nomor telepon anda"
               error={errors.phone_number?.message}
               leftel="62"
             />
             <FormInput
-              {...register("password", { required: "Password is required" })}
+              {...register("password", { required: "Kata sandi harus diisi" })}
               type="password"
               id="password"
-              label="Password"
-              placeholder="Enter your password"
+              label="Kata sandi"
+              placeholder="Masukan kata sandi anda"
               error={errors.password?.message}
             />
             <FormInput
               {...register("password_confirmation", {
-                required: "Password confirmation is required",
+                required: "Konfirmasi kata sandi harus diisi",
               })}
               type="password"
               id="password_confirmation"
-              label="Password Confirmation"
-              placeholder="Enter your password confirmation"
+              label="Konfirmasi kata sandi"
+              placeholder="Masukan konfirmasi kata sandi anda"
               error={errors.password_confirmation?.message}
             />
 
-            <div className="flex flex-col items-center">
-              <button
-                className="w-full max-w-md flex justify-center items-center px-4 py-2 tracking-wide text-white transition-colors duration-200 bg-primary rounded hover:bg-primary/95 focus:outline-none focus:bg-primary focus:ring focus:ring-primary focus:ring-opacity-50 disabled:bg-gray-500"
+            <div className="py-4">
+              <Button
+                type="submit"
+                fullWidth
+                variant="primary"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -164,19 +169,19 @@ export default function RegisterPage() {
                     {"Loading"}
                   </>
                 ) : (
-                  "Sign Up"
+                  "Daftar"
                 )}
-              </button>
+              </Button>
             </div>
           </form>
 
           <p className="mt-6 text-sm text-center text-gray-400">
-            Already have account?{" "}
+            Sudah punya akun?{" "}
             <Link
               href="/auth/login"
               className="text-primary focus:outline-none focus:underline hover:underline"
             >
-              Sign in
+              Masuk
             </Link>
             .
           </p>

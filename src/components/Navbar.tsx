@@ -19,14 +19,14 @@ import {
   RiUserLine,
 } from "react-icons/ri";
 
-import { getUserStore } from "@/lib/api/store";
+import { getUserStore } from "@/lib/api/stores";
 import { DEFAULT_STORE_IMAGE, DEFAULT_USER_IMAGE } from "@/lib/constants";
 import { Popover, Transition } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
 import { MdSearch } from "react-icons/md";
 import AppLogo from "./utils/AppLogo";
-import Button from "./utils/Button";
+import { Button, ButtonLink } from "./utils/Button";
 import DarkModeToggle from "./utils/DarkModeToggle";
 
 export default function Navbar() {
@@ -131,12 +131,12 @@ export default function Navbar() {
                 >
                   Sign In
                 </Link> */}
-                <Button size="sm" variant="primary" href="/auth/register">
+                <ButtonLink size="sm" variant="primary" href="/auth/register">
                   Sign Up
-                </Button>
-                <Button size="sm" variant="outline" href="/auth/register">
+                </ButtonLink>
+                <ButtonLink size="sm" variant="outline" href="/auth/login">
                   Sign In
-                </Button>
+                </ButtonLink>
               </div>
             )}
 

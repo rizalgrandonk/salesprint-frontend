@@ -67,7 +67,7 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
           </div>
           <p className="hidden lg:line-clamp-2">{product.description}</p>
           <button className="inline-block px-5 py-3 bg-primary hover:bg-opacity-80 font-semibold tracking-wider uppercase">
-            Discover
+            Telusuri
           </button>
         </div>
       </div>

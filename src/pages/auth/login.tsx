@@ -1,4 +1,5 @@
 import AppLogo from "@/components/utils/AppLogo";
+import { Button } from "@/components/utils/Button";
 import DarkModeToggle from "@/components/utils/DarkModeToggle";
 import FormInput from "@/components/utils/FormInput";
 import Redirect from "@/components/utils/Redirect";
@@ -71,7 +72,7 @@ export default function LoginPage() {
           </Link>
 
           <p className="text-lg text-gray-500 dark:text-gray-300">
-            Sign in to access your account
+            Masuk untuk mengakses akun anda
           </p>
         </div>
 
@@ -84,25 +85,27 @@ export default function LoginPage() {
         <div className="mt-8">
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <FormInput
-              {...register("email", { required: "Email is required" })}
+              {...register("email", { required: "Email harus diisi" })}
               type="email"
               id="email"
-              label="Email Address"
+              label="Alamat email"
               placeholder="example@example.com"
               error={errors.email?.message}
             />
             <FormInput
-              {...register("password", { required: "Password is required" })}
+              {...register("password", { required: "Kata sandi harus diisi" })}
               type="password"
               id="password"
-              label="Password"
-              placeholder="Your Password"
+              label="Kata sandi"
+              placeholder="Kata sandi anda"
               error={errors.password?.message}
             />
 
             <div className="py-4">
-              <button
-                className="w-full flex justify-center items-center px-4 py-2 tracking-wide text-white transition-colors duration-200 bg-primary rounded hover:bg-primary/95 focus:outline-none focus:bg-primary focus:ring focus:ring-primary focus:ring-opacity-50 disabled:bg-gray-500"
+              <Button
+                fullWidth
+                type="submit"
+                variant="primary"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -111,19 +114,19 @@ export default function LoginPage() {
                     {"Loading"}
                   </>
                 ) : (
-                  "Sign In"
+                  "Masuk"
                 )}
-              </button>
+              </Button>
             </div>
           </form>
 
           <p className="mt-6 text-sm text-center text-gray-400">
-            Don&#x27;t have an account yet?{" "}
+            Belum punya akun?{" "}
             <Link
               href="/auth/register"
               className="text-primary focus:outline-none focus:underline hover:underline"
             >
-              Sign up
+              Daftar
             </Link>
             .
           </p>

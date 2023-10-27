@@ -1,14 +1,13 @@
 import clsx from "clsx";
 import Link from "next/link";
-import { PropsWithChildren } from "react";
+import {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  PropsWithChildren,
+  forwardRef,
+} from "react";
 import { IconType } from "react-icons";
-
-type ButtonProps = {
-  href?: string;
-  size?: keyof typeof sizeClass;
-  variant?: keyof typeof variantClass;
-  fullWidth?: boolean;
-} & PropsWithChildren;
+import { twMerge } from "tailwind-merge";
 
 const sizeClass = {
   // xs: "text-xs py-2 px-3",
@@ -26,32 +25,79 @@ const variantClass = {
   success: "bg-green-500",
   secondary: "bg-gray-500",
   outline:
-    "bg-gray-100 dark:bg-gray-900 border border-primary hover:bg-primary text-primary hover:text-gray-50",
+    "bg-gray-100 dark:bg-gray-900 border border-primary text-primary hover:text-gray-50 hover:bg-primary dark:hover:bg-primary",
 };
 
-export default function Button({
-  children,
-  href,
-  size,
-  variant,
-  fullWidth,
-}: ButtonProps) {
-  const selectedVariantClass = variant
-    ? variantClass[variant]
-    : variantClass["primary"];
-  const selectedSizeClass = size ? sizeClass[size] : sizeClass["md"];
+const buttonBaseClass =
+  "items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-gray-50 rounded hover:bg-opacity-90 transition-all duration-100";
 
-  const className = clsx(
-    fullWidth ? "flex w-full" : "inline-flex",
-    `items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-gray-50 rounded hover:bg-opacity-90 transition-all ${selectedVariantClass} ${selectedSizeClass}`
-  );
+type BtnProps = /*(AnchorHTMLAttributes<HTMLAnchorElement> |)*/ {
+  href?: string;
+  size?: keyof typeof sizeClass;
+  variant?: keyof typeof variantClass;
+  fullWidth?: boolean;
+};
 
-  if (href) {
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & BtnProps;
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  function Button(
+    { variant, size, fullWidth, className, children, ...props }: ButtonProps,
+    ref
+  ) {
+    const selectedVariantClass = variant
+      ? variantClass[variant]
+      : variantClass["primary"];
+    const selectedSizeClass = size ? sizeClass[size] : sizeClass["md"];
+
+    const buttonClass = twMerge(
+      fullWidth ? "flex w-full" : "inline-flex",
+      buttonBaseClass,
+      selectedVariantClass,
+      selectedSizeClass,
+      className
+    );
+
     return (
-      <Link className={className} href={href}>
+      <button ref={ref} {...props} className={buttonClass}>
+        {children}
+      </button>
+    );
+  }
+);
+
+type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> &
+  BtnProps & { href: string };
+
+export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
+  function ButtonLink(
+    {
+      variant,
+      size,
+      fullWidth,
+      className,
+      children,
+      ...props
+    }: ButtonLinkProps,
+    ref
+  ) {
+    const selectedVariantClass = variant
+      ? variantClass[variant]
+      : variantClass["primary"];
+    const selectedSizeClass = size ? sizeClass[size] : sizeClass["md"];
+
+    const buttonClass = twMerge(
+      fullWidth ? "flex w-full" : "inline-flex",
+      buttonBaseClass,
+      selectedVariantClass,
+      selectedSizeClass,
+      className
+    );
+
+    return (
+      <Link ref={ref} {...props} className={buttonClass}>
         {children}
       </Link>
     );
   }
-  return <button className={className}>{children}</button>;
-}
+);

@@ -1,9 +1,9 @@
 import Alerts from "@/components/utils/Alerts";
 import BaseCard from "@/components/utils/BaseCard";
 import Breadcrumb from "@/components/utils/Breadcrumb";
-import Button from "@/components/utils/Button";
+import { ButtonLink } from "@/components/utils/Button";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
-import { getUserStore } from "@/lib/api/store";
+import { getUserStore } from "@/lib/api/stores";
 import {
   DEFAULT_STORE_CATEGORY_IMAGE,
   DEFAULT_STORE_IMAGE,
@@ -62,12 +62,12 @@ export default function SellerStore() {
 
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-            Storefront & Info
+            Halaman & Info Toko
           </h1>
-          <Button size="sm" variant="primary" href="/seller/store/settings">
+          <ButtonLink size="sm" variant="primary" href="/seller/store/settings">
             <MdModeEdit className="text-base" />
-            <span>Edit store info</span>
-          </Button>
+            <span>Ubah info toko</span>
+          </ButtonLink>
         </div>
       </div>
 
@@ -99,12 +99,12 @@ export default function SellerStore() {
         </BaseCard>
 
         <BaseCard className="space-y-4 flex-grow">
-          <h2 className="text-xl font-semibold">Store Address</h2>
+          <h2 className="text-xl font-semibold">Alamat Toko</h2>
 
           <div className="space-y-2">
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Address
+                Alamat
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {store.address}
@@ -112,7 +112,7 @@ export default function SellerStore() {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                City
+                Kota
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {store.city}
@@ -120,7 +120,7 @@ export default function SellerStore() {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Province
+                Provinsi
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {store.province}
@@ -132,17 +132,17 @@ export default function SellerStore() {
 
       <div className="coll-span-full lg:col-span-2 flex flex-col gap-2 lg:gap-4">
         <BaseCard className="space-y-4 flex-grow">
-          <h2 className="text-xl font-semibold">Banner</h2>
+          <h2 className="text-xl font-semibold">Banner Toko</h2>
 
           {store.store_banners && store.store_banners.length > 0 ? (
             <BannerCarousel store_banners={store.store_banners} />
           ) : (
-            <div>No Store Banners</div>
+            <div>Tidak ada banner</div>
           )}
         </BaseCard>
 
         <BaseCard className="space-y-4 flex-grow">
-          <h2 className="text-xl font-semibold">Store Categories</h2>
+          <h2 className="text-xl font-semibold">Katagori Toko </h2>
 
           {store.store_categories && store.store_categories.length > 0 ? (
             <div className="flex items-center gap-2 overflow-x-auto pb-3">
@@ -168,7 +168,7 @@ export default function SellerStore() {
               ))}
             </div>
           ) : (
-            <div>No Store Categories</div>
+            <div>Tidak ada kategori toko</div>
           )}
         </BaseCard>
       </div>
