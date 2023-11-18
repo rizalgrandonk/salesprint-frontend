@@ -23,13 +23,11 @@ export default function SellerStore() {
   const userId = session?.user?.id;
   const userToken = session?.user?.access_token;
 
-  const { data: store, isLoading } = useQuery(
-    ["/user/user_store", userId],
-    () => getUserStore(userToken),
-    {
-      enabled: !!userId && !!userToken,
-    }
-  );
+  const { data: store, isLoading } = useQuery({
+    queryKey: ["/user/user_store", userId],
+    queryFn: () => getUserStore(userToken),
+    enabled: !!userId && !!userToken,
+  });
 
   if (isLoading) {
     return <LoadingSpinner />;

@@ -32,7 +32,7 @@ export async function loginUser(credentials?: {
     .then((res) => res.data)
     .catch((err) => {
       console.log("Error loginUser", err?.response?.data);
-      return undefined;
+      return null;
     });
 }
 

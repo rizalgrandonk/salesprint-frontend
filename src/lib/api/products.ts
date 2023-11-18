@@ -9,6 +9,6 @@ export async function getAllProducts() {
     .then((res) => res.data)
     .catch((err) => {
       console.log("Error getAllProducts", err?.response?.data);
-      return undefined;
+      return null;
     });
 }

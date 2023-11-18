@@ -73,9 +73,9 @@ export default function Home({
           </div>
         </div>
         <div className="w-full lg:w-1/2 h-full flex justify-center items-center">
-          <div className="w-full lg:w-1/2">
+          <div className="lg:px-20">
             <p className="text-sm text-center my-6">Salesprint</p>
-            <h3 className="text-center text-6xl font-bold my-4">
+            <h3 className="text-center text-4xl font-bold my-4">
               Telusuri dan temukan di Salesprint
             </h3>
             <Link

@@ -52,19 +52,21 @@ export default NextAuth({
         token.access_token = user.access_token;
       }
 
-      const shouldRefreshTime = Math.round(
-        token.user.token_exp - 10 * 60 * 1000 - Date.now()
-      );
+      // const shouldRefreshTime = Math.round(
+      //   token.user.token_exp - 10 * 60 * 1000 - Date.now()
+      // );
 
-      if (shouldRefreshTime > 0) {
-        return Promise.resolve(token);
-      }
+      // if (shouldRefreshTime > 0) {
+      //   return Promise.resolve(token);
+      // }
 
       // TODO refresh token
       const data = await refreshToken(token.user.access_token);
       const access_token = data?.access_token;
       if (access_token) {
         token.user.access_token = access_token;
+        token.user.role = data.user.role;
+        token.role = data.user.role;
         token.user.token_exp = Date.now() + data.expires_in * 1000;
       } else {
         token.user.error = "error_refresh_token";

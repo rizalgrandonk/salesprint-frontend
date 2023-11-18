@@ -10,11 +10,9 @@ type SeoData = {
   article: boolean;
 };
 
-type MetaProps = {
-  seo?: Partial<SeoData>;
-};
+type MetaProps = Partial<SeoData>;
 
-export default function Meta({ seo }: MetaProps) {
+export default function Meta(seo: MetaProps) {
   const { asPath } = useRouter();
 
   const defaultSeo: SeoData = {

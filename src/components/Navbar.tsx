@@ -50,6 +50,8 @@ export default function Navbar() {
   // const { totalItems } = useCart();
   const { data: session } = useSession();
 
+  console.log("Session", session);
+
   const { asPath, locale } = useRouter();
 
   return (
@@ -299,14 +301,13 @@ function StorePanel() {
   const { data: session } = useSession();
 
   const userId = session?.user?.id;
+  const userToken = session?.user?.access_token;
 
-  const { data: store } = useQuery(
-    ["/user/user_store", userId],
-    () => getUserStore(session?.user?.access_token),
-    {
-      enabled: !!userId,
-    }
-  );
+  const { data: store } = useQuery({
+    queryKey: ["/user/user_store", userId],
+    queryFn: () => getUserStore(userToken),
+    enabled: !!userId && !!userToken,
+  });
 
   if (!session?.user) {
     return null;

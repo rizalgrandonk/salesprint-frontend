@@ -9,6 +9,6 @@ export async function getAllCategories() {
     .then((res) => res.data)
     .catch((err) => {
       console.log("Error getAllCategories", err?.response?.data);
-      return undefined;
+      return null;
     });
 }

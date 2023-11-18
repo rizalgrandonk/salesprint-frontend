@@ -33,11 +33,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      <Meta
-        seo={{
-          title: `Salesprint ${session.user.role}`,
-        }}
-      />
+      <Meta title={`Salesprint ${session.user.role}`} />
 
       <DashboardNav
         mobileSidebarOpen={mobileSidebarOpen}
