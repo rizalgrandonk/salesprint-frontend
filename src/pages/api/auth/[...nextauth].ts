@@ -1,4 +1,4 @@
-import { loginUser, refreshToken } from "@/lib/api/auth";
+import { getUserInfo, loginUser, refreshToken } from "@/lib/api/auth";
 import axios from "@/lib/axios";
 import NextAuth from "next-auth";
 import CredentialsProviders from "next-auth/providers/credentials";
@@ -44,7 +44,7 @@ export default NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, account, profile, isNewUser }) {
+    async jwt({ token, user, account, profile }) {
       if (user) {
         token.user = user;
         token.role = user.role;
@@ -52,26 +52,34 @@ export default NextAuth({
         token.access_token = user.access_token;
       }
 
-      // const shouldRefreshTime = Math.round(
-      //   token.user.token_exp - 10 * 60 * 1000 - Date.now()
-      // );
+      const shouldRefreshTime = Math.round(
+        token.user.token_exp - 9 * 60 * 1000 - Date.now()
+      );
 
-      // if (shouldRefreshTime > 0) {
-      //   return Promise.resolve(token);
-      // }
+      if (shouldRefreshTime > 0) {
+        const data = await getUserInfo(token.user.access_token);
+        if (data) {
+          const { created_at, updated_at, email_verified_at, ...userData } =
+            data;
+          token.user = {
+            ...token.user,
+            ...userData,
+          };
+          token.role = data.role;
+        }
+        return Promise.resolve(token);
+      }
 
       // TODO refresh token
       const data = await refreshToken(token.user.access_token);
       const access_token = data?.access_token;
       if (access_token) {
         token.user.access_token = access_token;
-        token.user.role = data.user.role;
-        token.role = data.user.role;
         token.user.token_exp = Date.now() + data.expires_in * 1000;
       } else {
         token.user.error = "error_refresh_token";
       }
-      return token;
+      return Promise.resolve(token);
     },
     async session({ session, token, user }) {
       if (token.user) {

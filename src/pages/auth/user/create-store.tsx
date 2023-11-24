@@ -5,7 +5,6 @@ import FormSelect from "@/components/utils/FormSelect";
 import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
 import useDebounce from "@/hooks/useDebounce";
-import useRefinement, { RefinementCallback } from "@/hooks/useRefinement";
 import {
   createStore,
   getCities,
@@ -59,7 +58,7 @@ export default function CreateStore() {
     queryFn: () => getProvince(),
   });
 
-  const { data: cityList } = useQuery({
+  const { data: cityList, isLoading: loadingCities } = useQuery({
     queryKey: ["/store/get_cities", currentProvinceId],
     queryFn: () => getCities(currentProvinceId),
     enabled: !!currentProvinceId,
@@ -120,7 +119,7 @@ export default function CreateStore() {
   }
 
   if (session.user?.role === "seller") {
-    return <Redirect to="/seller" />;
+    return <Redirect to="/seller/store" />;
   }
 
   const onSubmit: SubmitHandler<CreateStoreInputs> = async (data) => {
@@ -226,7 +225,8 @@ export default function CreateStore() {
                 {...register("city_id")}
                 id="city_id"
                 label="Kota"
-                placeholder="Pilih kota"
+                disabled={loadingCities}
+                placeholder={loadingCities ? "Loading..." : "Pilih kota"}
                 error={errors.city_id?.message || errors.city?.message}
                 options={cityOptions}
               />
@@ -248,7 +248,15 @@ export default function CreateStore() {
               />
 
               <div className="py-4 flex items-center justify-end gap-4">
-                <Button variant="outline">Batal</Button>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    const newSession = await updateSession();
+                    console.log("newSession", newSession);
+                  }}
+                >
+                  Batal
+                </Button>
                 <Button
                   type="submit"
                   variant="primary"

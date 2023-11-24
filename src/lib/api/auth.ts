@@ -1,4 +1,4 @@
-import { AuthResponse } from "@/types/User";
+import { AuthResponse, User } from "@/types/User";
 import { protectedRequest, publicRequest } from ".";
 import axios from "../axios";
 
@@ -17,6 +17,19 @@ export async function refreshToken(token: string) {
     .catch((err) => {
       console.log("Error refreshToken", err?.response?.data);
       return err.response;
+    });
+}
+
+export async function getUserInfo(token: string) {
+  return await protectedRequest<User>({
+    method: "GET",
+    path: "/auth/me",
+    token,
+  })
+    .then((res) => res.data)
+    .catch((err) => {
+      console.log("Error getUserInfo", err?.response?.data);
+      return null;
     });
 }
 
