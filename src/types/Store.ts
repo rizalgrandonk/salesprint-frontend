@@ -30,7 +30,10 @@ export const createStoreSchema = z.object({
     .string({ required_error: "Domain toko harus diisi" })
     .trim()
     .min(1, "Domain toko harus diisi")
-    .max(50, "Domain toko tidak boleh lebih dari 50 karakter"),
+    .max(50, "Domain toko tidak boleh lebih dari 50 karakter")
+    .refine((val) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(val), {
+      message: "Format Domain toko tidak sesuai",
+    }),
   phone_number: z
     .string({ required_error: "Nomor telepon harus diisi" })
     .trim()

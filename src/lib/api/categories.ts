@@ -2,13 +2,14 @@ import { Category } from "@/types/Category";
 import { publicRequest } from ".";
 
 export async function getAllCategories() {
-  return await publicRequest<Category[]>({
+  const result = await publicRequest<Category[]>({
     method: "GET",
     path: "/categories/",
-  })
-    .then((res) => res.data)
-    .catch((err) => {
-      console.log("Error getAllCategories", err?.response?.data);
-      return null;
-    });
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
 }

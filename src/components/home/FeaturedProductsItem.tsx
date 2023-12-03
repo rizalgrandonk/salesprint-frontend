@@ -1,9 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
-// import { useCart } from "@/contexts/CartContext";
-// import { getMediaURL } from "@/lib/api";
 import { formatPrice } from "@/lib/formater";
 import { Product } from "@/types/Product";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { RiStarFill, RiStoreLine } from "react-icons/ri";
 

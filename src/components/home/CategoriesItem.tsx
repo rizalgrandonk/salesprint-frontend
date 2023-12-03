@@ -1,7 +1,6 @@
 import { Category } from "@/types/Category";
 import Image from "next/image";
 import Link from "next/link";
-// import { getMediaURL } from "@/lib/api";
 
 type CategoriesItemProps = {
   category: Category;

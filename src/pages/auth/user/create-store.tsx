@@ -19,9 +19,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
-
-z.string().safeParse("test");
 
 export default function CreateStore() {
   const { data: session, update: updateSession } = useSession();
