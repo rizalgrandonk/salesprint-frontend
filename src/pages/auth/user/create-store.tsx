@@ -63,24 +63,27 @@ export default function CreateStore() {
 
   const debouncedSlug = useDebounce(currentSlug, 2000);
 
-  const checkSlug = useCallback(async (slugVal?: string) => {
-    if (!slugVal) {
-      return false;
-    }
+  const checkSlug = useCallback(
+    async (slugVal?: string) => {
+      if (!slugVal) {
+        return false;
+      }
 
-    const store = await getStoreBySlug(slugVal);
+      const store = await getStoreBySlug(slugVal);
 
-    if (store) {
-      setError("slug", { message: "Domain toko sudah dipakai" });
-      return false;
-    }
+      if (store) {
+        setError("slug", { message: "Domain toko sudah dipakai" });
+        return false;
+      }
 
-    return true;
-  }, []);
+      return true;
+    },
+    [setError]
+  );
 
   useEffect(() => {
     checkSlug(debouncedSlug);
-  }, [debouncedSlug]);
+  }, [debouncedSlug, checkSlug]);
 
   useEffect(() => {
     if (!currentProvinceId) {
@@ -95,7 +98,7 @@ export default function CreateStore() {
     }
 
     setValue("province", province.province);
-  }, [currentProvinceId]);
+  }, [currentProvinceId, setValue, provinceList]);
 
   useEffect(() => {
     if (!currentCityId) {
@@ -109,7 +112,7 @@ export default function CreateStore() {
 
     setValue("city", city.city_name);
     setValue("postal_code", city.postal_code);
-  }, [currentCityId]);
+  }, [currentCityId, setValue, cityList]);
 
   if (!session?.user || session?.user?.error) {
     return <Redirect to="/auth/login" />;
