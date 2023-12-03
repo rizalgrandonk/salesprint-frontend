@@ -59,9 +59,9 @@ export default function RegisterPage() {
     const result = await registerUser(data);
     console.log(result);
 
-    if (result.error) {
+    if (!result.success) {
       setIsLoading(false);
-      setError(result.error?.message);
+      setError(result.message);
       return;
     }
     const loginResult = await signIn("credentials", {

@@ -10,7 +10,7 @@ type RequestConfig = {
 
 export type RequestError = {
   success: false;
-  errors?: { [key: string]: string[] }[];
+  errors?: { [key: string]: string[] };
   message: string;
 };
 

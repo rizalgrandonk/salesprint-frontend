@@ -127,9 +127,9 @@ export default function CreateStore() {
     }
     console.log(data);
 
-    const newStore = await createStore(data, session.user.access_token);
-    if (!newStore.success) {
-      setRequestState({ isLoading: false, error: newStore.error });
+    const result = await createStore(data, session.user.access_token);
+    if (!result.success) {
+      setRequestState({ isLoading: false, error: result.message });
       return;
     }
 
