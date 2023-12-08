@@ -61,7 +61,7 @@ export async function getStoreBySlug(slug: string, signal?: AbortSignal) {
 export async function getProvince() {
   const result = await publicRequest<Province[]>({
     method: "GET",
-    path: `/stores/get_province`,
+    path: `/province`,
   });
 
   if (!result.success) {
@@ -78,7 +78,7 @@ export async function getCities(provinceId?: string) {
 
   const result = await publicRequest<City[]>({
     method: "GET",
-    path: `/stores/get_cities`,
+    path: `/city`,
     params: { province_id: provinceId },
   });
 
