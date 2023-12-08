@@ -1,18 +1,17 @@
 import clsx from "clsx";
-import { ReactNode, SelectHTMLAttributes, forwardRef } from "react";
+import { ReactNode, TextareaHTMLAttributes, forwardRef } from "react";
 import { MdWarningAmber } from "react-icons/md";
 
-type FormSelectType = SelectHTMLAttributes<HTMLSelectElement> & {
+type FormAreaType = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   id: string;
   label: string;
   error?: string;
   leftel?: ReactNode;
   info?: ReactNode;
-  options?: { title: string; value: string }[];
 };
 
-const FormSelect = forwardRef<HTMLSelectElement, FormSelectType>(
-  function FormSelect({ options = [], ...props }: FormSelectType, ref) {
+const FormArea = forwardRef<HTMLTextAreaElement, FormAreaType>(
+  function FormArea(props: FormAreaType, ref) {
     return (
       <div className="space-y-1">
         <label htmlFor={props.id} className="text-gray-600 dark:text-gray-200">
@@ -24,23 +23,16 @@ const FormSelect = forwardRef<HTMLSelectElement, FormSelectType>(
               {props.leftel}
             </div>
           )}
-          <select
+          <textarea
             ref={ref}
             {...props}
-            name={props.id}
+            name={props.name || props.id}
             id={props.id}
             className={clsx(
               "bg-inherit block w-full px-4 py-2 text-gray-700 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:text-gray-300 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800",
               { "pl-14": !!props.leftel }
             )}
-          >
-            <option value="">{props.placeholder || "Pilih"}</option>
-            {options.map((option, index) => (
-              <option key={option.value + index} value={option.value}>
-                {option.title}
-              </option>
-            ))}
-          </select>
+          />
         </div>
         {!!props.info && <div>{props.info}</div>}
         {!!props.error && (
@@ -54,4 +46,4 @@ const FormSelect = forwardRef<HTMLSelectElement, FormSelectType>(
   }
 );
 
-export default FormSelect;
+export default FormArea;

@@ -1,9 +1,11 @@
+import Alerts from "@/components/utils/Alerts";
 import AppLogo from "@/components/utils/AppLogo";
 import { Button } from "@/components/utils/Button";
 import FormInput from "@/components/utils/FormInput";
 import FormSelect from "@/components/utils/FormSelect";
 import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
+import QueryKeys from "@/constants/queryKeys";
 import useDebounce from "@/hooks/useDebounce";
 import {
   createStore,
@@ -51,12 +53,12 @@ export default function CreateStore() {
   } = watch();
 
   const { data: provinceList } = useQuery({
-    queryKey: ["/store/get_province"],
+    queryKey: [QueryKeys.STORE_GET_PROVINCE],
     queryFn: () => getProvince(),
   });
 
   const { data: cityList, isLoading: loadingCities } = useQuery({
-    queryKey: ["/store/get_cities", currentProvinceId],
+    queryKey: [QueryKeys.STORE_GET_CITES, currentProvinceId],
     queryFn: () => getCities(currentProvinceId),
     enabled: !!currentProvinceId,
   });
@@ -126,6 +128,11 @@ export default function CreateStore() {
     setRequestState((prev) => ({ ...prev, isLoading: true }));
     const validSlug = await checkSlug(data.slug);
     if (!validSlug) {
+      setRequestState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: "Domain toko tidak valid",
+      }));
       return;
     }
     console.log(data);
@@ -173,9 +180,7 @@ export default function CreateStore() {
           </div>
 
           {!!requestState.error && (
-            <div className="mt-6 px-3 py-2 border-2 border-rose-400 text-rose-500 bg-rose-500/10 rounded font-semibold">
-              Error: {requestState.error}
-            </div>
+            <Alerts variant="danger">Error: {requestState.error}</Alerts>
           )}
 
           <div className="mt-8">
@@ -261,15 +266,9 @@ export default function CreateStore() {
                   type="submit"
                   variant="primary"
                   disabled={requestState.isLoading}
+                  isLoading={requestState.isLoading}
                 >
-                  {requestState.isLoading ? (
-                    <>
-                      <span className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-t-2 border-white mr-4" />
-                      {"Loading"}
-                    </>
-                  ) : (
-                    "Selesai"
-                  )}
+                  Selesai
                 </Button>
               </div>
             </form>

@@ -3,6 +3,7 @@ import { z } from "zod";
 export type Store = {
   id: string;
   name: string;
+  phone_number: string;
   slug: string;
   address: string;
   city: string;
@@ -53,7 +54,7 @@ export const createStoreSchema = z.object({
     .string({ required_error: "Kota harus diisi" })
     .trim()
     .min(1, "Kota harus diisi")
-    .max(10, "Kota tidak boleh lebih dari 10 karakter"),
+    .max(150, "Kota tidak boleh lebih dari 50 karakter"),
   province_id: z
     .string({ required_error: "Provinsi harus diisi" })
     .trim()
@@ -63,7 +64,7 @@ export const createStoreSchema = z.object({
     .string({ required_error: "Provinsi harus diisi" })
     .trim()
     .min(1, "Provinsi harus diisi")
-    .max(10, "Provinsi tidak boleh lebih dari 10 karakter"),
+    .max(50, "Provinsi tidak boleh lebih dari 50 karakter"),
   postal_code: z
     .string({ required_error: "Kode pos harus diisi" })
     .trim()
@@ -71,7 +72,20 @@ export const createStoreSchema = z.object({
     .max(10, "Kode pos tidak boleh lebih dari 10 karakter"),
 });
 
+export const editStoreSchema = createStoreSchema
+  .partial({
+    slug: true,
+  })
+  .extend({
+    store_description: z
+      .string({ required_error: "Nama harus diisi" })
+      .trim()
+      .max(1000, "Nama tidak boleh lebih dari 1000 karakter")
+      .optional(),
+  });
+
 export type CreateStoreInputs = z.infer<typeof createStoreSchema>;
+export type EditStoreInputs = z.infer<typeof editStoreSchema>;
 
 export type StoreBanner = {
   id: string;

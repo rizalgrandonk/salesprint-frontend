@@ -82,12 +82,12 @@ export default function DashboardSidebar({
                       icon={MdStore}
                       childs={[
                         {
-                          title: "Ubah Tampilan",
-                          href: "#",
+                          title: "Halaman & Info",
+                          href: `/seller/store`,
                         },
                         {
-                          title: "Halaman & Info",
-                          href: `/${user?.role}/store`,
+                          title: "Pengaturan",
+                          href: "/seller/store/settings",
                         },
                       ]}
                     />

@@ -31,6 +31,17 @@ export async function createStore(data: CreateStoreInputs, token: string) {
   });
 }
 
+export async function updateStore(slug: string, data: FormData, token: string) {
+  console.log("FormData", data);
+  return await protectedRequest<Store>({
+    method: "POST",
+    path: `/stores/${slug}`,
+    token,
+    data,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
 export async function getStoreBySlug(slug: string, signal?: AbortSignal) {
   const result = await publicRequest<Store>(
     {

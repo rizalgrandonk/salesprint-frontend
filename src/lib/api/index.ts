@@ -1,4 +1,10 @@
-import { AxiosRequestConfig, AxiosResponse, isAxiosError } from "axios";
+import {
+  AxiosHeaders,
+  AxiosRequestConfig,
+  AxiosResponse,
+  RawAxiosRequestHeaders,
+  isAxiosError,
+} from "axios";
 import axios from "../axios";
 
 type RequestConfig = {
@@ -6,6 +12,7 @@ type RequestConfig = {
   path: string;
   data?: any;
   params?: any;
+  headers?: RawAxiosRequestHeaders;
 };
 
 export type RequestError = {
@@ -21,7 +28,14 @@ export type RequestSuccess<T = any> = {
 };
 
 export async function protectedRequest<T = any>(
-  { method, path, token, data, params }: RequestConfig & { token: string },
+  {
+    method,
+    path,
+    token,
+    data,
+    params,
+    headers,
+  }: RequestConfig & { token: string },
   config?: AxiosRequestConfig
 ): Promise<RequestSuccess<T> | RequestError> {
   try {
@@ -31,6 +45,7 @@ export async function protectedRequest<T = any>(
       params: params,
       headers: {
         Authorization: `Bearer ${token}`,
+        ...headers,
       },
       ...config,
     });
@@ -58,7 +73,7 @@ export async function protectedRequest<T = any>(
 }
 
 export async function publicRequest<T = any>(
-  { method, path, data, params }: RequestConfig,
+  { method, path, data, params, headers }: RequestConfig,
   config?: AxiosRequestConfig
 ): Promise<RequestSuccess<T> | RequestError> {
   try {
@@ -66,6 +81,7 @@ export async function publicRequest<T = any>(
       method: method || "GET",
       data: data,
       params: params,
+      headers: headers,
       ...config,
     });
 

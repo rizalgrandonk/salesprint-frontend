@@ -19,6 +19,7 @@ import {
   RiUserLine,
 } from "react-icons/ri";
 
+import QueryKeys from "@/constants/queryKeys";
 import { getUserStore } from "@/lib/api/stores";
 import { DEFAULT_STORE_IMAGE, DEFAULT_USER_IMAGE } from "@/lib/constants";
 import { Popover, Transition } from "@headlessui/react";
@@ -304,7 +305,7 @@ function StorePanel() {
   const userToken = session?.user?.access_token;
 
   const { data: store } = useQuery({
-    queryKey: ["/user/user_store", userId],
+    queryKey: [QueryKeys.USER_STORE, userId],
     queryFn: () => getUserStore(userToken),
     enabled: !!userId && !!userToken,
   });

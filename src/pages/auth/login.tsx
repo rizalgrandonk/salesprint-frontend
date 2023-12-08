@@ -4,6 +4,8 @@ import DarkModeToggle from "@/components/utils/DarkModeToggle";
 import FormInput from "@/components/utils/FormInput";
 import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
+import QueryKeys from "@/constants/queryKeys";
+import { useQueryClient } from "@tanstack/react-query";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,6 +22,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { query } = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -27,6 +30,8 @@ export default function LoginPage() {
   } = useForm<LoginInputs>({
     mode: "all",
   });
+
+  const queryClient = useQueryClient();
 
   const { data: session } = useSession();
 
@@ -39,8 +44,6 @@ export default function LoginPage() {
       : session?.user?.role === "admin"
       ? `/admin`
       : "/";
-
-    console.log("redirectURL", redirectURL);
 
     return (
       <Redirect
@@ -55,6 +58,11 @@ export default function LoginPage() {
       ...data,
       redirect: false,
     });
+
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.USER_STORE],
+    });
+
     if (result?.error) {
       setError(result.error);
     }

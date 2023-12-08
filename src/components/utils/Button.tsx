@@ -11,9 +11,9 @@ import { twMerge } from "tailwind-merge";
 
 const sizeClass = {
   // xs: "text-xs py-2 px-3",
-  sm: "text-sm h-9 px-4",
-  md: "text-base h-10 px-6",
-  lg: "text-lg h-11 px-8",
+  sm: "text-xs h-8 px-4",
+  md: "text-sm h-9 px-6",
+  lg: "text-base h-10 px-8",
   // xl: "text-xl py-4 px-6",
 };
 
@@ -36,13 +36,22 @@ type BtnProps = /*(AnchorHTMLAttributes<HTMLAnchorElement> |)*/ {
   size?: keyof typeof sizeClass;
   variant?: keyof typeof variantClass;
   fullWidth?: boolean;
+  isLoading?: boolean;
 };
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & BtnProps;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
-    { variant, size, fullWidth, className, children, ...props }: ButtonProps,
+    {
+      variant,
+      size,
+      fullWidth,
+      className,
+      children,
+      isLoading,
+      ...props
+    }: ButtonProps,
     ref
   ) {
     const selectedVariantClass = variant
@@ -60,7 +69,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button ref={ref} {...props} className={buttonClass}>
-        {children}
+        {!!isLoading ? (
+          <>
+            <span className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-t-2 border-white mr-4" />
+            {"Loading"}
+          </>
+        ) : (
+          children
+        )}
       </button>
     );
   }
@@ -77,6 +93,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
       fullWidth,
       className,
       children,
+      isLoading,
       ...props
     }: ButtonLinkProps,
     ref
@@ -96,7 +113,14 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
 
     return (
       <Link ref={ref} {...props} className={buttonClass}>
-        {children}
+        {!!isLoading ? (
+          <>
+            <span className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-t-2 border-white mr-4" />
+            {"Loading"}
+          </>
+        ) : (
+          children
+        )}
       </Link>
     );
   }

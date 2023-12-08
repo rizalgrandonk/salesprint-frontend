@@ -4,7 +4,9 @@ import DarkModeToggle from "@/components/utils/DarkModeToggle";
 import FormInput from "@/components/utils/FormInput";
 import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
+import QueryKeys from "@/constants/queryKeys";
 import { registerUser } from "@/lib/api/auth";
+import { useQueryClient } from "@tanstack/react-query";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -33,6 +35,8 @@ export default function RegisterPage() {
 
   const { data: session } = useSession();
   const { query } = useRouter();
+
+  const queryClient = useQueryClient();
 
   if (session && !session?.user?.error) {
     console.log("query.callbackUrl", query.callbackUrl);
@@ -69,6 +73,11 @@ export default function RegisterPage() {
       password: data.password,
       redirect: false,
     });
+
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.USER_STORE],
+    });
+
     if (loginResult?.error) {
       setError(loginResult.error);
     }
