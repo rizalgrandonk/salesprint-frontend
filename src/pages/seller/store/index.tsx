@@ -12,9 +12,8 @@ import { StoreBanner } from "@/types/Store";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
 import { MdModeEdit } from "react-icons/md";
-import { RiEditLine, RiInformationLine } from "react-icons/ri";
+import { RiInformationLine } from "react-icons/ri";
 import Carousel, { ArrowProps } from "react-multi-carousel";
 
 export default function SellerStore() {
@@ -48,11 +47,11 @@ export default function SellerStore() {
         <Breadcrumb
           navList={[
             {
-              title: "Home",
+              title: "Beranda",
               href: "/seller",
             },
             {
-              title: "Store",
+              title: "Toko",
               href: "/seller/store",
             },
           ]}
@@ -216,15 +215,9 @@ function BannerCarousel({ store_banners }: BannerCarouselProps) {
               loading="lazy"
               className="object-cover rounded"
             />
-            <span className="absolute inset-0 bg-black/10" />
           </div>
         ))}
       </Carousel>
     </div>
   );
 }
-
-const CustomRightArrow = ({ onClick, ...rest }: ArrowProps) => {
-  // onMove means if dragging or swiping in progress.
-  return <button onClick={() => onClick && onClick()}>{">>"}</button>;
-};

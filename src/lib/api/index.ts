@@ -52,7 +52,7 @@ export async function protectedRequest<T = any>(
 
     return response.data;
   } catch (err) {
-    console.log(err);
+    console.log("Request Error");
 
     if (!isAxiosError(err)) {
       return {
@@ -61,6 +61,8 @@ export async function protectedRequest<T = any>(
       };
     }
 
+    console.log(err.message);
+
     if (!err.response) {
       return {
         success: false,
@@ -68,6 +70,7 @@ export async function protectedRequest<T = any>(
       };
     }
 
+    console.log(err.response);
     return err.response.data as RequestError;
   }
 }
@@ -96,6 +99,8 @@ export async function publicRequest<T = any>(
       };
     }
 
+    console.log(err.message);
+
     if (!err.response) {
       return {
         success: false,
@@ -103,6 +108,7 @@ export async function publicRequest<T = any>(
       };
     }
 
+    console.log(err.response);
     return err.response.data as RequestError;
   }
 }

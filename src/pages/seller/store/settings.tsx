@@ -12,15 +12,29 @@ import {
   getUserStore,
   updateStore,
 } from "@/lib/api/stores";
-import { EditStoreInputs, Store, editStoreSchema } from "@/types/Store";
+import {
+  EditStoreInputs,
+  Store,
+  StoreBanner,
+  editStoreSchema,
+} from "@/types/Store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toFormData } from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
-import { MdModeEdit, MdSave, MdUpload } from "react-icons/md";
+import {
+  MdAddToPhotos,
+  MdDeleteOutline,
+  MdModeEdit,
+  MdSave,
+  MdUpload,
+} from "react-icons/md";
+import Carousel from "react-multi-carousel";
+
+const MAX_BANNERS = 3;
 
 export default function StoreSettings() {
   const { data: session } = useSession();
@@ -67,15 +81,6 @@ export default function StoreSettings() {
   } = formData;
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleFileImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-    }
-  };
 
   useEffect(() => {
     if (isFormInfoDirty) {
@@ -160,11 +165,11 @@ export default function StoreSettings() {
         <Breadcrumb
           navList={[
             {
-              title: "Home",
+              title: "Beranda",
               href: "/seller",
             },
             {
-              title: "Store",
+              title: "Toko",
               href: "/seller/store",
             },
             {
@@ -201,51 +206,18 @@ export default function StoreSettings() {
       </div>
 
       <div className="col-span-full lg:col-span-1 flex flex-col gap-2 lg:gap-4">
-        <BaseCard className="space-y-4 flex-grow">
-          <h2 className="text-xl font-semibold">Informasi Toko</h2>
-
-          <StoreInfoForm formData={formData} />
-        </BaseCard>
+        <StoreInfoForm formData={formData} />
       </div>
 
       <div className="col-span-full lg:col-span-1 flex flex-col gap-2 lg:gap-4">
-        <BaseCard className="space-y-4">
-          <div className="w-60 h-60 bg-cover bg-center relative rounded overflow-hidden">
-            {!!imagePreview && (
-              <Image
-                src={imagePreview}
-                alt={store?.name || ""}
-                fill
-                loading="lazy"
-                className="object-cover group-hover:scale-105 transition-all duration-200"
-                sizes="(max-width: 768px) 25vw, 25vw"
-              />
-            )}
-          </div>
-          <div className="space-y-3">
-            <h2 className="text-xl font-semibold">Foto Profil Toko</h2>
-            <p className="text-gray-400">JPG, JPEG or PNG. Maksimal 1 MB</p>
-            <div className="flex">
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                size="sm"
-                variant="primary"
-              >
-                <MdUpload className="text-base" />
-                <span>Unggah Foto</span>
-              </Button>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              name="file-image"
-              id="file-image"
-              hidden
-              onChange={handleFileImageChange}
-            />
-          </div>
-        </BaseCard>
-        <BaseCard className="space-y-4 flex-grow"></BaseCard>
+        <StoreImageUpload
+          imagePreview={imagePreview}
+          onFileChange={setSelectedImage}
+        />
+        <StoreBannerManage
+          storeSlug={store?.slug || ""}
+          store_banners={store?.store_banners || []}
+        />
       </div>
     </div>
   );
@@ -317,70 +289,252 @@ function StoreInfoForm({ formData }: StoreInfoFormProps) {
   }));
 
   return (
-    <div className="space-y-3">
-      <FormInput
-        {...register("name")}
-        type="text"
-        id="name"
-        label="Nama toko"
-        placeholder="Masukan nama toko anda"
-        error={errors.name?.message}
-      />
+    <BaseCard className="space-y-4 flex-grow">
+      <h2 className="text-xl font-semibold">Informasi Toko</h2>
+      <div className="space-y-3">
+        <FormInput
+          {...register("name")}
+          type="text"
+          id="name"
+          label="Nama toko"
+          placeholder="Masukan nama toko anda"
+          error={errors.name?.message}
+        />
 
-      <FormArea
-        {...register("store_description")}
-        id="store_description"
-        label="Deskripsi Toko"
-        placeholder="Masukan deskripsi toko anda"
-        rows={8}
-        error={errors.store_description?.message}
-      />
+        <FormArea
+          {...register("store_description")}
+          id="store_description"
+          label="Deskripsi Toko"
+          placeholder="Masukan deskripsi toko anda"
+          rows={8}
+          error={errors.store_description?.message}
+        />
 
-      <FormInput
-        {...register("phone_number")}
-        type="text"
-        id="phone_number"
-        label="Nomor telepon toko"
-        placeholder="Masukan nomor telepon toko anda"
-        error={errors.phone_number?.message}
-      />
+        <FormInput
+          {...register("phone_number")}
+          type="text"
+          id="phone_number"
+          label="Nomor telepon toko"
+          placeholder="Masukan nomor telepon toko anda"
+          error={errors.phone_number?.message}
+        />
 
-      <FormSelect
-        {...register("province_id")}
-        id="province_id"
-        label="Provonsi"
-        placeholder="Pilih provinsi"
-        error={errors.province_id?.message || errors.province?.message}
-        options={provinceOptions}
-      />
+        <FormSelect
+          {...register("province_id")}
+          id="province_id"
+          label="Provonsi"
+          placeholder="Pilih provinsi"
+          error={errors.province_id?.message || errors.province?.message}
+          options={provinceOptions}
+        />
 
-      <FormSelect
-        {...register("city_id")}
-        id="city_id"
-        label="Kota"
-        disabled={loadingCities}
-        placeholder={loadingCities ? "Loading..." : "Pilih kota"}
-        error={errors.city_id?.message || errors.city?.message}
-        options={cityOptions}
-      />
+        <FormSelect
+          {...register("city_id")}
+          id="city_id"
+          label="Kota"
+          disabled={loadingCities}
+          placeholder={loadingCities ? "Loading..." : "Pilih kota"}
+          error={errors.city_id?.message || errors.city?.message}
+          options={cityOptions}
+        />
 
-      <FormInput
-        {...register("address")}
-        type="text"
-        id="address"
-        label="Alamat toko"
-        placeholder="Masukan alamat toko anda"
-        error={errors.address?.message}
-      />
+        <FormInput
+          {...register("address")}
+          type="text"
+          id="address"
+          label="Alamat toko"
+          placeholder="Masukan alamat toko anda"
+          error={errors.address?.message}
+        />
 
-      <FormInput
-        {...register("postal_code")}
-        type="text"
-        id="postal_code"
-        label="Kode pos toko"
-        placeholder="Masukan kode pos toko anda"
-        error={errors.postal_code?.message}
-      />
+        <FormInput
+          {...register("postal_code")}
+          type="text"
+          id="postal_code"
+          label="Kode pos toko"
+          placeholder="Masukan kode pos toko anda"
+          error={errors.postal_code?.message}
+        />
+      </div>
+    </BaseCard>
+  );
+}
+
+type StoreImageUploadProps = {
+  onFileChange?: (file: File) => void;
+  imagePreview?: string;
+  storeName?: string;
+};
+
+function StoreImageUpload({
+  onFileChange,
+  storeName,
+  imagePreview,
+}: StoreImageUploadProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFileImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onFileChange && onFileChange(file);
+    }
+  };
+
+  return (
+    <BaseCard className="space-y-4">
+      <div className="w-60 h-60 bg-cover bg-center relative rounded overflow-hidden">
+        {!!imagePreview && (
+          <Image
+            src={imagePreview}
+            alt={storeName || ""}
+            fill
+            loading="lazy"
+            className="object-cover group-hover:scale-105 transition-all duration-200"
+            sizes="(max-width: 768px) 25vw, 25vw"
+          />
+        )}
+      </div>
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold">Foto Profil Toko</h2>
+        <p className="text-gray-400 text-sm">JPG, JPEG or PNG. Maksimal 1 MB</p>
+        <div className="flex">
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            size="sm"
+            variant="primary"
+          >
+            <MdUpload className="text-base" />
+            <span>Unggah Foto</span>
+          </Button>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          name="file-image"
+          id="file-image"
+          hidden
+          onChange={handleFileImageChange}
+        />
+      </div>
+    </BaseCard>
+  );
+}
+
+type StoreBannerManageProps = {
+  store_banners: StoreBanner[];
+  storeSlug: string;
+};
+
+function StoreBannerManage({ store_banners }: StoreBannerManageProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    if (store_banners.length >= 3) {
+      console.log(
+        `Gagal, makasimal 3 banner, saat ini anda punya ${store_banners.length} banner`
+      );
+      return;
+    }
+
+    // TODO Process image upload
+  };
+
+  const handleDeleteImage = async (imageId: string) => {
+    // TODO Process image delete
+  };
+
+  return (
+    <BaseCard className="space-y-4 flex-grow">
+      <h2 className="text-xl font-semibold">Banner Toko</h2>
+
+      <BannerCarousel>
+        {store_banners.map((banner) => (
+          <div
+            key={banner.id}
+            className="w-full h-60 relative overflow-hidden group"
+          >
+            <Image
+              src={banner.image}
+              alt=""
+              fill
+              sizes="50vh"
+              loading="lazy"
+              className="object-cover rounded"
+            />
+            <div className="absolute left-0 bottom-0 w-full h-40 bg-gradient-to-t from-black/70 p-3 flex justify-center items-end lg:-mb-20 group-hover:mb-0 transition-all">
+              <Button
+                onClick={() => handleDeleteImage(banner.id)}
+                variant="danger"
+              >
+                <MdDeleteOutline className="text-2xl" />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </BannerCarousel>
+
+      <div className="space-y-3">
+        <p className="text-gray-400 text-sm">JPG, JPEG or PNG. Maksimal 1 MB</p>
+        <div className="flex">
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            size="sm"
+            variant="primary"
+          >
+            <MdAddToPhotos className="text-base" />
+            <span>Tambah Banner</span>
+          </Button>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          name="file-image"
+          id="file-image"
+          hidden
+          onChange={handleFileImageChange}
+        />
+      </div>
+    </BaseCard>
+  );
+}
+
+function BannerCarousel({ children }: PropsWithChildren) {
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 1,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 1,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
+  return (
+    <div className="relative">
+      <Carousel
+        draggable
+        swipeable
+        responsive={responsive}
+        showDots={false}
+        autoPlay={false}
+        removeArrowOnDeviceType={["tablet", "mobile"]}
+        autoPlaySpeed={5000}
+        arrows={true}
+        infinite
+      >
+        {children}
+      </Carousel>
     </div>
   );
 }
