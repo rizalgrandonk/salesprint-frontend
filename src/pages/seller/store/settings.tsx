@@ -7,6 +7,8 @@ import FormInput from "@/components/utils/FormInput";
 import FormSelect from "@/components/utils/FormSelect";
 import QueryKeys from "@/constants/queryKeys";
 import {
+  createStoreBanner,
+  deleteStoreBanner,
   getCities,
   getProvince,
   getUserStore,
@@ -214,10 +216,7 @@ export default function StoreSettings() {
           imagePreview={imagePreview}
           onFileChange={setSelectedImage}
         />
-        <StoreBannerManage
-          storeSlug={store?.slug || ""}
-          store_banners={store?.store_banners || []}
-        />
+        <StoreBannerManage store={store} />
       </div>
     </div>
   );
@@ -422,12 +421,20 @@ function StoreImageUpload({
 }
 
 type StoreBannerManageProps = {
-  store_banners: StoreBanner[];
-  storeSlug: string;
+  store?: Store | null;
 };
 
-function StoreBannerManage({ store_banners }: StoreBannerManageProps) {
+function StoreBannerManage({ store }: StoreBannerManageProps) {
+  const { data: session } = useSession();
+
+  const userId = session?.user?.id;
+  const userToken = session?.user?.access_token;
+
+  const queryClient = useQueryClient();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const store_banners = store?.store_banners || [];
 
   const handleFileImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -443,11 +450,80 @@ function StoreBannerManage({ store_banners }: StoreBannerManageProps) {
       return;
     }
 
-    // TODO Process image upload
+    if (!userToken) {
+      console.log("Unauthorize, no user token");
+      return;
+    }
+
+    if (!store) {
+      console.log("Error store not found");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const prevData = queryClient.getQueryData<Store>([
+      QueryKeys.USER_STORE,
+      userId,
+    ]);
+    if (prevData) {
+      queryClient.setQueryData([QueryKeys.USER_STORE, userId], {
+        ...prevData,
+        store_banners: [
+          ...(prevData.store_banners || []),
+          {
+            id: "pending",
+            description: null,
+            image: URL.createObjectURL(file),
+          },
+        ],
+      });
+    }
+
+    const result = await createStoreBanner(store.slug, formData, userToken);
+
+    if (!result.success) {
+      queryClient.setQueryData([QueryKeys.USER_STORE, userId], prevData);
+    }
+
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.USER_STORE, userId],
+    });
   };
 
-  const handleDeleteImage = async (imageId: string) => {
-    // TODO Process image delete
+  const handleDeleteImage = async (bannerId: string) => {
+    if (!userToken) {
+      console.log("Unauthorize, no user token");
+      return;
+    }
+    if (!store) {
+      console.log("Error store not found");
+      return;
+    }
+
+    const prevData = queryClient.getQueryData<Store>([
+      QueryKeys.USER_STORE,
+      userId,
+    ]);
+    if (prevData && prevData.store_banners) {
+      queryClient.setQueryData([QueryKeys.USER_STORE, userId], {
+        ...prevData,
+        store_banners: prevData.store_banners.filter(
+          (banner) => banner.id !== bannerId
+        ),
+      });
+    }
+
+    const result = await deleteStoreBanner(store.slug, bannerId, userToken);
+
+    if (!result.success) {
+      queryClient.setQueryData([QueryKeys.USER_STORE, userId], prevData);
+    }
+
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.USER_STORE, userId],
+    });
   };
 
   return (
@@ -455,9 +531,9 @@ function StoreBannerManage({ store_banners }: StoreBannerManageProps) {
       <h2 className="text-xl font-semibold">Banner Toko</h2>
 
       <BannerCarousel>
-        {store_banners.map((banner) => (
+        {store_banners.map((banner, index) => (
           <div
-            key={banner.id}
+            key={banner.id + index}
             className="w-full h-60 relative overflow-hidden group"
           >
             <Image
@@ -469,12 +545,14 @@ function StoreBannerManage({ store_banners }: StoreBannerManageProps) {
               className="object-cover rounded"
             />
             <div className="absolute left-0 bottom-0 w-full h-40 bg-gradient-to-t from-black/70 p-3 flex justify-center items-end lg:-mb-20 group-hover:mb-0 transition-all">
-              <Button
-                onClick={() => handleDeleteImage(banner.id)}
-                variant="danger"
-              >
-                <MdDeleteOutline className="text-2xl" />
-              </Button>
+              {banner.id !== "pending" && (
+                <Button
+                  onClick={() => handleDeleteImage(banner.id)}
+                  variant="danger"
+                >
+                  <MdDeleteOutline className="text-2xl" />
+                </Button>
+              )}
             </div>
           </div>
         ))}
