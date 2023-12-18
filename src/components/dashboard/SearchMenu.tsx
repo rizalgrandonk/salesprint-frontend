@@ -1,5 +1,5 @@
 import { Combobox } from "@headlessui/react";
-import clsx from "clsx";
+
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -13,6 +13,7 @@ import {
   MdStore,
   MdStorefront,
 } from "react-icons/md";
+import { twMerge } from "tailwind-merge";
 
 type Menu = {
   title: string;
@@ -79,7 +80,7 @@ export default function SearchMenu({ className }: { className?: string }) {
   };
 
   return (
-    <form className={clsx("relative", className)}>
+    <form className={twMerge("relative", className)}>
       <label htmlFor="topbar-search" className="sr-only">
         Cari
       </label>
@@ -109,11 +110,9 @@ export default function SearchMenu({ className }: { className?: string }) {
               <Combobox.Option
                 key={menu.title + index}
                 className={({ active }) =>
-                  clsx(
+                  twMerge(
                     "relative cursor-pointer select-none py-2 px-3 flex items-center gap-3",
-                    {
-                      "bg-primary text-black": active,
-                    }
+                    active ? "bg-primary text-black" : ""
                   )
                 }
                 value={menu}
@@ -121,9 +120,9 @@ export default function SearchMenu({ className }: { className?: string }) {
                 {({ selected, active }) => (
                   <>
                     <div
-                      className={clsx(
+                      className={twMerge(
                         "flex items-center justify-center w-10 h-10 rounded",
-                        { "bg-white/30": active }
+                        active ? "bg-white/30" : ""
                       )}
                     >
                       <menu.icon className="text-3xl" />
@@ -131,9 +130,9 @@ export default function SearchMenu({ className }: { className?: string }) {
                     <div className="">
                       <p className="text-lg">{menu.title}</p>
                       <p
-                        className={clsx(
+                        className={twMerge(
                           "text-sm text-gray-700 dark:text-gray-500",
-                          { "text-gray-800 dark:text-gray-600": active }
+                          active ? "text-gray-800 dark:text-gray-600" : ""
                         )}
                       >
                         {`/${user?.role || ""}${menu.href || ""}`}

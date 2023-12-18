@@ -13,3 +13,7 @@
     stroke-dashoffset: 0;
   }
 }
+
+.react-multiple-carousel__arrow {
+  z-index: 0 !important;
+}

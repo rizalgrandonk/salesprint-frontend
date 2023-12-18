@@ -1,5 +1,6 @@
 import Alerts from "@/components/utils/Alerts";
 import BaseCard from "@/components/utils/BaseCard";
+import BaseModal from "@/components/utils/BaseModal";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import { Button } from "@/components/utils/Button";
 import FormArea from "@/components/utils/FormArea";
@@ -13,6 +14,7 @@ import {
   getProvince,
   getUserStore,
   updateStore,
+  updateStoreBanner,
 } from "@/lib/api/stores";
 import {
   EditStoreInputs,
@@ -22,15 +24,22 @@ import {
 } from "@/types/Store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toFormData } from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
 import {
   MdAddToPhotos,
   MdDeleteOutline,
-  MdModeEdit,
+  MdEdit,
+  MdFilePresent,
+  MdFileUpload,
   MdSave,
   MdUpload,
 } from "react-icons/md";
@@ -424,26 +433,45 @@ type StoreBannerManageProps = {
   store?: Store | null;
 };
 
+type StoreBannerForm = {
+  file: File | string;
+  description?: string;
+};
+
 function StoreBannerManage({ store }: StoreBannerManageProps) {
   const { data: session } = useSession();
 
   const userId = session?.user?.id;
   const userToken = session?.user?.access_token;
 
-  const queryClient = useQueryClient();
+  const [selectedBanner, setSelectedBanner] = useState<StoreBanner | null>(
+    null
+  );
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const store_banners = store?.store_banners || [];
 
-  const handleFileImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+  console.log({ selectedBanner });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const createOrUpdateStoreBanner = async (
+    storeSlug: string,
+    data: FormData,
+    token: string,
+    bannerId?: string
   ) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      return;
+    if (!bannerId) {
+      return await createStoreBanner(storeSlug, data, token);
     }
-    if (store_banners.length >= 3) {
+    return await updateStoreBanner(storeSlug, bannerId, data, token);
+  };
+
+  const handleSubmitBanner = async (data: StoreBannerForm) => {
+    const { file, description } = data;
+    if (!selectedBanner && store_banners.length >= 3) {
+      // TODO Add alert or toast
       console.log(
         `Gagal, makasimal 3 banner, saat ini anda punya ${store_banners.length} banner`
       );
@@ -461,29 +489,42 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
     }
 
     const formData = new FormData();
-    formData.append("image", file);
+    if (file instanceof File) {
+      formData.append("image", file);
+    }
+    if (description) {
+      formData.append("description", description);
+    }
 
     const prevData = queryClient.getQueryData<Store>([
       QueryKeys.USER_STORE,
       userId,
     ]);
     if (prevData) {
+      const newBanner = {
+        id: "pending",
+        description: description,
+        image: file instanceof File ? URL.createObjectURL(file) : file,
+      };
+      const newBanners = !selectedBanner
+        ? [...(prevData.store_banners || []), newBanner]
+        : (prevData.store_banners || []).map((banner) =>
+            banner.id !== selectedBanner.id ? banner : newBanner
+          );
       queryClient.setQueryData([QueryKeys.USER_STORE, userId], {
         ...prevData,
-        store_banners: [
-          ...(prevData.store_banners || []),
-          {
-            id: "pending",
-            description: null,
-            image: URL.createObjectURL(file),
-          },
-        ],
+        store_banners: newBanners,
       });
     }
 
-    const result = await createStoreBanner(store.slug, formData, userToken);
+    const result = await createOrUpdateStoreBanner(
+      store.slug,
+      formData,
+      userToken,
+      selectedBanner?.id
+    );
 
-    if (!result.success) {
+    if (!result || !result.success) {
       queryClient.setQueryData([QueryKeys.USER_STORE, userId], prevData);
     }
 
@@ -492,7 +533,7 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
     });
   };
 
-  const handleDeleteImage = async (bannerId: string) => {
+  const handleDeleteBanner = async (bannerId: string) => {
     if (!userToken) {
       console.log("Unauthorize, no user token");
       return;
@@ -527,42 +568,57 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
   };
 
   return (
-    <BaseCard className="space-y-4 flex-grow">
-      <h2 className="text-xl font-semibold">Banner Toko</h2>
+    <Fragment>
+      <BaseCard className="space-y-4 flex-grow">
+        <h2 className="text-xl font-semibold">Banner Toko</h2>
 
-      <BannerCarousel>
-        {store_banners.map((banner, index) => (
-          <div
-            key={banner.id + index}
-            className="w-full h-60 relative overflow-hidden group"
-          >
-            <Image
-              src={banner.image}
-              alt=""
-              fill
-              sizes="50vh"
-              loading="lazy"
-              className="object-cover rounded"
-            />
-            <div className="absolute left-0 bottom-0 w-full h-40 bg-gradient-to-t from-black/70 p-3 flex justify-center items-end lg:-mb-20 group-hover:mb-0 transition-all">
-              {banner.id !== "pending" && (
-                <Button
-                  onClick={() => handleDeleteImage(banner.id)}
-                  variant="danger"
-                >
-                  <MdDeleteOutline className="text-2xl" />
-                </Button>
-              )}
+        <BannerCarousel>
+          {store_banners.map((banner, index) => (
+            <div
+              key={banner.id + index}
+              className="w-full h-60 relative overflow-hidden group"
+            >
+              <Image
+                src={banner.image}
+                alt=""
+                fill
+                sizes="50vh"
+                loading="lazy"
+                className="object-cover rounded"
+              />
+              <div className="absolute left-0 bottom-0 w-full h-40 bg-gradient-to-t from-black/70 py-3 flex justify-end items-end lg:-mb-20 group-hover:mb-0 transition-all divide-x">
+                <p className="truncate flex-grow px-3 text-gray-100 text-sm">
+                  {banner.description}
+                </p>
+                {banner.id !== "pending" && (
+                  <div className="flex items-center gap-2 px-3">
+                    <Button
+                      onClick={() => {
+                        setIsModalOpen(true);
+                        setSelectedBanner(banner);
+                      }}
+                      variant="info"
+                      size="sm"
+                    >
+                      <MdEdit className="text-xl" />
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteBanner(banner.id)}
+                      variant="danger"
+                      size="sm"
+                    >
+                      <MdDeleteOutline className="text-xl" />
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </BannerCarousel>
+          ))}
+        </BannerCarousel>
 
-      <div className="space-y-3">
-        <p className="text-gray-400 text-sm">JPG, JPEG or PNG. Maksimal 1 MB</p>
-        <div className="flex">
+        <div className="space-y-3">
           <Button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => setIsModalOpen(true)}
             size="sm"
             variant="primary"
           >
@@ -570,16 +626,170 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
             <span>Tambah Banner</span>
           </Button>
         </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          name="file-image"
-          id="file-image"
-          hidden
-          onChange={handleFileImageChange}
-        />
+      </BaseCard>
+
+      <BannerFormModal
+        key={selectedBanner?.id || "Add"}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedBanner(null);
+        }}
+        onSubmit={handleSubmitBanner}
+        defaultFormValue={
+          selectedBanner
+            ? {
+                description: selectedBanner.description,
+                file: selectedBanner.image,
+              }
+            : undefined
+        }
+        isEdit={!!selectedBanner}
+      />
+    </Fragment>
+  );
+}
+
+type BannerFormModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: StoreBannerForm) => void;
+  defaultFormValue?: Partial<StoreBannerForm>;
+  isEdit?: boolean;
+};
+
+const defaultValue = {
+  file: undefined,
+  description: undefined,
+};
+
+function BannerFormModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  defaultFormValue,
+  isEdit,
+}: BannerFormModalProps) {
+  const [formData, setFormData] = useState<Partial<StoreBannerForm>>(
+    defaultFormValue ?? defaultValue
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, file: file }));
+  };
+
+  const handleSubmit = () => {
+    const selectedFile = formData.file;
+    if (!selectedFile) {
+      console.log("No Selected file");
+      return;
+    }
+
+    onSubmit({ file: selectedFile, description: formData.description });
+    setFormData(defaultFormValue ?? defaultValue);
+    onClose();
+  };
+
+  const imagePreviewUrl =
+    formData.file instanceof File
+      ? URL.createObjectURL(formData.file)
+      : formData.file;
+
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="w-full max-w-3xl overflow-hidden transition-all"
+    >
+      <div className="pb-2">
+        <h3 className="text-2xl font-medium leading-6">Tambah Banner</h3>
       </div>
-    </BaseCard>
+      <div className="py-4 flex items-start gap-4">
+        <div className="space-y-1">
+          <span className="text-base">File Banner</span>
+          {imagePreviewUrl ? (
+            <div className="w-72 h-32 bg-cover bg-center relative rounded overflow-hidden">
+              <Image
+                src={imagePreviewUrl}
+                alt="New Banner"
+                fill
+                loading="lazy"
+                className="object-cover group-hover:scale-105 transition-all duration-200"
+                sizes="(max-width: 768px) 25vw, 25vw"
+              />
+            </div>
+          ) : (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="w-72 h-32 relative rounded overflow-hidden flex justify-center items-center gap-4 flex-col border border-gray-400 dark:border-gray-500 cursor-pointer text-gray-400 dark:text-gray-500"
+            >
+              <MdFilePresent className="text-6xl" />
+              <span>Pilih File</span>
+            </div>
+          )}
+          <p className="text-gray-400 text-xs">
+            JPG, JPEG or PNG. Maksimal 1 MB
+          </p>
+          <div className="flex">
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              size="sm"
+              variant="primary"
+            >
+              <MdFileUpload className="text-base" />
+              <span>Pilih File</span>
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-1 flex-grow">
+          <FormArea
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
+            value={formData.description}
+            className="text-sm"
+            id="description"
+            label="Deskripsi Banner"
+            rows={5}
+          />
+        </div>
+      </div>
+
+      <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end">
+        {isEdit ? (
+          <Button onClick={handleSubmit} variant="primary">
+            <MdEdit className="text-base" />
+            <span>Edit Banner</span>
+          </Button>
+        ) : (
+          <Button onClick={handleSubmit} variant="primary">
+            <MdAddToPhotos className="text-base" />
+            <span>Tambah Banner</span>
+          </Button>
+        )}
+      </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        name="file-image"
+        id="file-image"
+        hidden
+        onChange={handleFileImageChange}
+      />
+    </BaseModal>
   );
 }
 

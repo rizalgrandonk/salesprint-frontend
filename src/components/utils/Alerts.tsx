@@ -1,6 +1,6 @@
-import clsx from "clsx";
 import { PropsWithChildren } from "react";
 import { RiInformationLine } from "react-icons/ri";
+import { twMerge } from "tailwind-merge";
 
 const colorVariantClass = {
   info: "text-blue-800 border border-blue-300 bg-blue-50 dark:bg-blue-50/10 dark:text-blue-400 dark:border-blue-800",
@@ -20,7 +20,7 @@ type AlertsProps = {
 export default function Alerts({ children, variant, size }: AlertsProps) {
   return (
     <div
-      className={clsx(
+      className={twMerge(
         "flex items-center p-3 rounded gap-2",
         variant ? colorVariantClass[variant] : colorVariantClass["info"],
         size ? `text-${size}` : "text-sm"

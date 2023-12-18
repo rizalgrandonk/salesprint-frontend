@@ -1,6 +1,6 @@
-import clsx from "clsx";
 import { ReactNode, SelectHTMLAttributes, forwardRef } from "react";
 import { MdWarningAmber } from "react-icons/md";
+import { twMerge } from "tailwind-merge";
 
 type FormSelectType = SelectHTMLAttributes<HTMLSelectElement> & {
   id: string;
@@ -29,9 +29,9 @@ const FormSelect = forwardRef<HTMLSelectElement, FormSelectType>(
             {...props}
             name={props.id}
             id={props.id}
-            className={clsx(
+            className={twMerge(
               "bg-inherit block w-full px-4 py-2 text-gray-700 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:text-gray-300 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800",
-              { "pl-14": !!props.leftel }
+              !!props.leftel ? "pl-14" : ""
             )}
           >
             <option value="">{props.placeholder || "Pilih"}</option>

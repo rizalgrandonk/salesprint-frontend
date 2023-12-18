@@ -1,7 +1,7 @@
-import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { twMerge } from "tailwind-merge";
 
 type BreadcrumbProps = {
   navList: {
@@ -20,12 +20,11 @@ export default function Breadcrumb({ navList }: BreadcrumbProps) {
               {index > 0 && <RiArrowRightSLine className="text-xl" />}
               <Link
                 href={href}
-                className={clsx(
+                className={twMerge(
                   "text-gray-700 dark:text-gray-300 hover:text-primary-dark dark:hover:text-primary-dark",
-                  {
-                    "text-primary dark:text-primary":
-                      index === navList.length - 1,
-                  }
+                  index === navList.length - 1
+                    ? "text-primary dark:text-primary"
+                    : ""
                 )}
               >
                 {title}

@@ -62,9 +62,26 @@ export async function createStoreBanner(
   data: FormData,
   token: string
 ) {
+  console.log(data);
   return await protectedRequest<Store>({
     method: "POST",
     path: `/stores/${slug}/banners`,
+    token,
+    data,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
+export async function updateStoreBanner(
+  storeSlug: string,
+  bannerId: string,
+  data: FormData,
+  token: string
+) {
+  console.log(data);
+  return await protectedRequest<Store>({
+    method: "POST",
+    path: `/stores/${storeSlug}/banners/${bannerId}`,
     token,
     data,
     headers: { "Content-Type": "multipart/form-data" },

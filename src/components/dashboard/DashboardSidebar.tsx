@@ -1,5 +1,4 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { JSXElementConstructor } from "react";
@@ -16,6 +15,7 @@ import {
   MdStore,
   MdStorefront,
 } from "react-icons/md";
+import { twMerge } from "tailwind-merge";
 import { JsxElement } from "typescript";
 import SearchMenu from "./SearchMenu";
 
@@ -38,9 +38,9 @@ export default function DashboardSidebar({
     <>
       <aside
         id="sidebar"
-        className={clsx(
+        className={twMerge(
           "fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 w-64 h-full pt-16 font-normal duration-75 lg:flex transition-width",
-          { hidden: !mobileOpen }
+          !mobileOpen ? "hidden" : ""
         )}
         aria-label="Sidebar"
       >
@@ -107,9 +107,9 @@ export default function DashboardSidebar({
 
       <div
         onClick={() => toggleOpen()}
-        className={clsx(
+        className={twMerge(
           "fixed inset-0 z-10 bg-gray-900/50 dark:bg-gray-900/90",
-          { hidden: !mobileOpen }
+          !mobileOpen ? "hidden" : ""
         )}
         id="sidebarBackdrop"
       ></div>
@@ -147,18 +147,17 @@ function MenuItem({
   return (
     <button
       onClick={handleClick}
-      className={clsx(
+      className={twMerge(
         "w-full flex items-center p-2 text-base text-gray-900 rounded hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700",
-        {
-          "bg-gray-100 dark:bg-gray-700": !!active || !!isCurrentPage,
-          "text-primary dark:text-primary": !!isCurrentPage,
-        },
+        !!active || !!isCurrentPage ? "bg-gray-100 dark:bg-gray-700" : "",
+        !!isCurrentPage ? "text-primary dark:text-primary" : "",
+
         className
       )}
     >
       {!!Icon && (
         <Icon
-          className={clsx(
+          className={twMerge(
             "text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
           )}
         />
@@ -188,9 +187,10 @@ function MenuDropdown({ title, childs, icon: Icon }: MenuDropdownProps) {
               {title}
             </span>
             <MdKeyboardArrowDown
-              className={clsx("text-2xl transition duration-75", {
-                "rotate-90": !open,
-              })}
+              className={twMerge(
+                "text-2xl transition duration-75",
+                !open ? "rotate-90" : ""
+              )}
             />
           </Disclosure.Button>
           <Disclosure.Panel>
