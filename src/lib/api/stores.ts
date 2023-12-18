@@ -57,50 +57,6 @@ export async function getStoreBySlug(slug: string, signal?: AbortSignal) {
   return result.data;
 }
 
-export async function createStoreBanner(
-  slug: string,
-  data: FormData,
-  token: string
-) {
-  console.log(data);
-  return await protectedRequest<Store>({
-    method: "POST",
-    path: `/stores/${slug}/banners`,
-    token,
-    data,
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-}
-
-export async function updateStoreBanner(
-  storeSlug: string,
-  bannerId: string,
-  data: FormData,
-  token: string
-) {
-  console.log(data);
-  return await protectedRequest<Store>({
-    method: "POST",
-    path: `/stores/${storeSlug}/banners/${bannerId}`,
-    token,
-    data,
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-}
-
-export async function deleteStoreBanner(
-  slug: string,
-  id: string,
-  token: string
-) {
-  return await protectedRequest<Store>({
-    method: "DELETE",
-    path: `/stores/${slug}/banners/${id}`,
-    token,
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-}
-
 export async function getProvince() {
   const result = await publicRequest<Province[]>({
     method: "GET",

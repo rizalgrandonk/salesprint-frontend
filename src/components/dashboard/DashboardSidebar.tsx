@@ -4,19 +4,14 @@ import { useRouter } from "next/router";
 import { JSXElementConstructor } from "react";
 import { IconType } from "react-icons";
 import {
-  MdArrowDropDown,
-  MdDashboardCustomize,
-  MdInventory,
   MdKeyboardArrowDown,
-  MdPerson,
-  MdPerson2,
-  MdPerson3,
-  MdSearch,
-  MdStore,
-  MdStorefront,
+  MdOutlineDashboardCustomize,
+  MdOutlineInventory2,
+  MdOutlinePerson,
+  MdOutlineStore,
+  MdOutlineStorefront,
 } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
-import { JsxElement } from "typescript";
 import SearchMenu from "./SearchMenu";
 
 type DashboardSidebarProps = {
@@ -55,14 +50,13 @@ export default function DashboardSidebar({
                   <MenuItem
                     title="Dashboard"
                     href={`/${user?.role || ""}`}
-                    icon={MdDashboardCustomize}
-                    active={pathname === `/${user?.role || ""}`}
+                    icon={MdOutlineDashboardCustomize}
                   />
                 </li>
                 <li>
                   <MenuDropdown
                     title="Produk"
-                    icon={MdInventory}
+                    icon={MdOutlineInventory2}
                     childs={[
                       {
                         title: "Tambah Baru",
@@ -76,25 +70,34 @@ export default function DashboardSidebar({
                   />
                 </li>
                 {user?.role === "seller" && (
-                  <li>
-                    <MenuDropdown
-                      title="Toko"
-                      icon={MdStore}
-                      childs={[
-                        {
-                          title: "Halaman & Info",
-                          href: `/seller/store`,
-                        },
-                        {
-                          title: "Pengaturan",
-                          href: "/seller/store/settings",
-                        },
-                      ]}
-                    />
-                  </li>
+                  <>
+                    <li>
+                      <MenuDropdown
+                        title="Toko"
+                        icon={MdOutlineStore}
+                        childs={[
+                          {
+                            title: "Halaman & Info",
+                            href: `/seller/store`,
+                          },
+                          {
+                            title: "Pengaturan",
+                            href: "/seller/store/settings",
+                          },
+                        ]}
+                      />
+                    </li>
+                    <li>
+                      <MenuItem
+                        title="Etalase"
+                        icon={MdOutlineStorefront}
+                        href="/seller/store-categories"
+                      />
+                    </li>
+                  </>
                 )}
                 <li>
-                  <MenuItem title="Profil" href="#" icon={MdPerson} />
+                  <MenuItem title="Profil" href="#" icon={MdOutlinePerson} />
                 </li>
               </ul>
             </div>
@@ -158,7 +161,10 @@ function MenuItem({
       {!!Icon && (
         <Icon
           className={twMerge(
-            "text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+            "text-2xl transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
+            !!active || !!isCurrentPage
+              ? "text-gray-900 dark:text-white"
+              : "text-gray-500"
           )}
         />
       )}

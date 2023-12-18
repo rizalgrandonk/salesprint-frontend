@@ -10,11 +10,13 @@ import QueryKeys from "@/constants/queryKeys";
 import {
   createStoreBanner,
   deleteStoreBanner,
+  updateStoreBanner,
+} from "@/lib/api/storeBanners";
+import {
   getCities,
   getProvince,
   getUserStore,
   updateStore,
-  updateStoreBanner,
 } from "@/lib/api/stores";
 import {
   EditStoreInputs,

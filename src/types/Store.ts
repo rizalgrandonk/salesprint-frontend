@@ -19,6 +19,10 @@ export type Store = {
 
   store_banners?: StoreBanner[];
   store_categories?: StoreCategory[];
+
+  store_banners_count?: number;
+  store_categories_count?: number;
+  products_count?: number;
 };
 
 export const createStoreSchema = z.object({
@@ -98,6 +102,8 @@ export type StoreCategory = {
   name: string;
   slug: string;
   image?: string;
+
+  products_count?: number;
 };
 
 export type Province = {

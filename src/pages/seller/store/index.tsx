@@ -3,6 +3,7 @@ import BaseCard from "@/components/utils/BaseCard";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import { ButtonLink } from "@/components/utils/Button";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
+import QueryKeys from "@/constants/queryKeys";
 import { getUserStore } from "@/lib/api/stores";
 import {
   DEFAULT_STORE_CATEGORY_IMAGE,
@@ -23,7 +24,7 @@ export default function SellerStore() {
   const userToken = session?.user?.access_token;
 
   const { data: store, isLoading } = useQuery({
-    queryKey: ["/user/user_store", userId],
+    queryKey: [QueryKeys.USER_STORE, userId],
     queryFn: () => getUserStore(userToken),
     enabled: !!userId && !!userToken,
   });
