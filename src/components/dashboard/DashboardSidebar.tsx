@@ -152,7 +152,7 @@ function MenuItem({
       onClick={handleClick}
       className={twMerge(
         "w-full flex items-center p-2 text-base text-gray-900 rounded hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700",
-        !!active || !!isCurrentPage ? "bg-gray-100 dark:bg-gray-700" : "",
+        !!isCurrentPage ? "bg-gray-100 dark:bg-gray-700" : "",
         !!isCurrentPage ? "text-primary dark:text-primary" : "",
 
         className
@@ -162,9 +162,7 @@ function MenuItem({
         <Icon
           className={twMerge(
             "text-2xl transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
-            !!active || !!isCurrentPage
-              ? "text-gray-900 dark:text-white"
-              : "text-gray-500"
+            !!isCurrentPage ? "text-gray-900 dark:text-white" : "text-gray-500"
           )}
         />
       )}

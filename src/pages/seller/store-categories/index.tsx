@@ -81,9 +81,9 @@ export default function StoreCategories() {
           Kategori Toko (Etalase)
         </h1>
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col lg:flex-row gap-2 justify-between items-center">
           <FormInput
-            className="text-sm"
+            className="text-sm w-80"
             id="category-search"
             placeholder="Cari Etalase"
           />
@@ -96,7 +96,10 @@ export default function StoreCategories() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 py-6">
         {storeCategories.map((category) => (
-          <BaseCard className="overflow-hidden h-36 flex items-start p-0">
+          <BaseCard
+            key={category.id}
+            className="overflow-hidden h-36 flex items-start p-0"
+          >
             {category.image ? (
               <div className="w-28 h-full bg-cover bg-center relative overflow-hidden">
                 <Image

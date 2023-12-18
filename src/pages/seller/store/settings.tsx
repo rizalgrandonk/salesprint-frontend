@@ -18,6 +18,7 @@ import {
   getUserStore,
   updateStore,
 } from "@/lib/api/stores";
+import { sleep } from "@/lib/sleep";
 import {
   EditStoreInputs,
   Store,
@@ -569,6 +570,19 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
     });
   };
 
+  const toggleModalOpen = async (banner: StoreBanner | null) => {
+    if (isModalOpen) {
+      setIsModalOpen(false);
+      await sleep(200);
+      setSelectedBanner(null);
+      return;
+    }
+    setIsModalOpen(true);
+    await sleep(200);
+    setSelectedBanner(banner);
+    return;
+  };
+
   return (
     <Fragment>
       <BaseCard className="space-y-4 flex-grow">
@@ -595,10 +609,7 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
                 {banner.id !== "pending" && (
                   <div className="flex items-center gap-2 px-3">
                     <Button
-                      onClick={() => {
-                        setIsModalOpen(true);
-                        setSelectedBanner(banner);
-                      }}
+                      onClick={() => toggleModalOpen(banner)}
                       variant="info"
                       size="sm"
                     >
@@ -620,7 +631,7 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
 
         <div className="space-y-3">
           <Button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => toggleModalOpen(null)}
             size="sm"
             variant="primary"
           >
@@ -633,10 +644,7 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
       <BannerFormModal
         key={selectedBanner?.id || "Add"}
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedBanner(null);
-        }}
+        onClose={() => toggleModalOpen(null)}
         onSubmit={handleSubmitBanner}
         defaultFormValue={
           selectedBanner
