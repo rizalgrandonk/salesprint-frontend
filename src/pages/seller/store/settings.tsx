@@ -39,10 +39,11 @@ import React, {
 import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
 import {
   MdAddToPhotos,
-  MdDeleteOutline,
   MdEdit,
   MdFilePresent,
   MdFileUpload,
+  MdOutlineDelete,
+  MdOutlineEdit,
   MdSave,
   MdUpload,
 } from "react-icons/md";
@@ -613,14 +614,14 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
                       variant="info"
                       size="sm"
                     >
-                      <MdEdit className="text-xl" />
+                      <MdOutlineEdit className="text-xl" />
                     </Button>
                     <Button
                       onClick={() => handleDeleteBanner(banner.id)}
                       variant="danger"
                       size="sm"
                     >
-                      <MdDeleteOutline className="text-xl" />
+                      <MdOutlineDelete className="text-xl" />
                     </Button>
                   </div>
                 )}
@@ -699,6 +700,7 @@ function BannerFormModal({
   const handleSubmit = () => {
     const selectedFile = formData.file;
     if (!selectedFile) {
+      // TODO Add alerts or toast
       console.log("No Selected file");
       return;
     }
