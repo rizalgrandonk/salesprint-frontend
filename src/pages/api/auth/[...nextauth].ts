@@ -72,7 +72,6 @@ export default NextAuth({
         return Promise.resolve(token);
       }
 
-      // TODO refresh token
       const result = await refreshToken(token.user.access_token);
       if (result.success) {
         token.user.access_token = result.data.access_token;

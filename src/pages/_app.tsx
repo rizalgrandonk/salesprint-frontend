@@ -8,6 +8,7 @@ import { SessionProvider, signOut, useSession } from "next-auth/react";
 import type { AppProps } from "next/app";
 import { Poppins } from "next/font/google";
 import { PropsWithChildren, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import "react-multi-carousel/lib/styles.css";
 
 const font = Poppins({
@@ -49,6 +50,7 @@ export default function MyApp({
         <QueryClientProvider client={queryClient}>
           <WrapperLayout layout={layout}>
             <Component {...pageProps} />
+            <Toaster position="top-right" />
           </WrapperLayout>
         </QueryClientProvider>
       </SessionProvider>

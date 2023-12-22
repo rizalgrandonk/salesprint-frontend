@@ -19,6 +19,7 @@ import {
   updateStore,
 } from "@/lib/api/stores";
 import { sleep } from "@/lib/sleep";
+import toast from "@/lib/toast";
 import {
   EditStoreInputs,
   Store,
@@ -125,6 +126,7 @@ export default function StoreSettings() {
         isLoading: false,
         error: "Data tidak ditemukan",
       }));
+      toast.error("Data tidak ditemukan");
       return;
     }
     if (!userToken) {
@@ -133,6 +135,7 @@ export default function StoreSettings() {
         isLoading: false,
         error: "Unauthorize",
       }));
+      toast.error("Unauthorize");
       return;
     }
 
@@ -167,6 +170,7 @@ export default function StoreSettings() {
       error: "",
       success: true,
     }));
+    toast.success("Data berhasil diperbarui");
     return;
   };
 
@@ -175,7 +179,7 @@ export default function StoreSettings() {
     : store?.image || "";
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4 px-3 lg:px-5 py-1">
       <div className="col-span-full space-y-3">
         <Breadcrumb
           navList={[
@@ -194,12 +198,12 @@ export default function StoreSettings() {
           ]}
         />
 
-        {!!requestState.error && (
+        {/* {!!requestState.error && (
           <Alerts variant="danger">Error: {requestState.error}</Alerts>
         )}
         {requestState.success && (
           <Alerts variant="success">Data berhasil diperbarui</Alerts>
-        )}
+        )} */}
 
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
@@ -456,8 +460,6 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
 
   const store_banners = store?.store_banners || [];
 
-  console.log({ selectedBanner });
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const createOrUpdateStoreBanner = async (
@@ -475,20 +477,17 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
   const handleSubmitBanner = async (data: StoreBannerForm) => {
     const { file, description } = data;
     if (!selectedBanner && store_banners.length >= 3) {
-      // TODO Add alert or toast
-      console.log(
-        `Gagal, makasimal 3 banner, saat ini anda punya ${store_banners.length} banner`
-      );
+      toast.error("Gagal, makasimal 3 banner");
       return;
     }
 
     if (!userToken) {
-      console.log("Unauthorize, no user token");
+      toast.error("Unauthorize");
       return;
     }
 
     if (!store) {
-      console.log("Error store not found");
+      toast.error("Gagal, data tidak ditemukan");
       return;
     }
 
@@ -530,6 +529,7 @@ function StoreBannerManage({ store }: StoreBannerManageProps) {
 
     if (!result || !result.success) {
       queryClient.setQueryData([QueryKeys.USER_STORE, userId], prevData);
+      toast.error(`Gagal submit, ${result.message}`);
     }
 
     queryClient.invalidateQueries({
@@ -700,8 +700,7 @@ function BannerFormModal({
   const handleSubmit = () => {
     const selectedFile = formData.file;
     if (!selectedFile) {
-      // TODO Add alerts or toast
-      console.log("No Selected file");
+      toast.error("No Selected file");
       return;
     }
 

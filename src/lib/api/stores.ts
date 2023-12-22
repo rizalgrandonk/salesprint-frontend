@@ -1,9 +1,23 @@
 import { City, CreateStoreInputs, Province, Store } from "@/types/Store";
+import { PaginatedData } from "@/types/data";
 import { protectedRequest, publicRequest } from ".";
 
 // type RequestResult =
 //   | { success: true; data: Store }
 //   | { success: false; error: string };
+
+export async function getPaginatedStores(params?: string) {
+  const result = await publicRequest<PaginatedData<Store[]>>({
+    method: "GET",
+    path: `/paginated/stores/${params ? "?" + params : ""}`,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
 
 export async function getUserStore(token?: string) {
   if (!token) {

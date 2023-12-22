@@ -135,7 +135,6 @@ export default function CreateStore() {
       }));
       return;
     }
-    console.log(data);
 
     const result = await createStore(data, session.user.access_token);
     if (!result.success) {
@@ -144,7 +143,6 @@ export default function CreateStore() {
     }
 
     const newSession = await updateSession();
-    console.log("newSession", newSession);
     setRequestState((prev) => ({ ...prev, isLoading: false }));
     router.push("/seller/store");
   };
@@ -257,7 +255,6 @@ export default function CreateStore() {
                   variant="outline"
                   onClick={async () => {
                     const newSession = await updateSession();
-                    console.log("newSession", newSession);
                   }}
                 >
                   Batal

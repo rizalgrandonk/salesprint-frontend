@@ -15,6 +15,7 @@ import {
 import { getUserStore } from "@/lib/api/stores";
 import { slugify } from "@/lib/formater";
 import { sleep } from "@/lib/sleep";
+import toast from "@/lib/toast";
 import { Store, StoreCategory } from "@/types/Store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -126,20 +127,17 @@ export default function StoreCategories() {
   const handleSubmitCategory = async (data: StoreCategoryForm) => {
     const { name, image } = data;
     if (!selectedCategory && storeCategories && storeCategories.length >= 10) {
-      // TODO Add alert or toast
-      console.log(
-        `Gagal, makasimal 10 kategori, saat ini anda punya ${storeCategories.length} kategori`
-      );
+      toast.error(`Gagal, makasimal 10 kategori`);
       return;
     }
 
     if (!userToken) {
-      console.log("Unauthorize, no user token");
+      toast.error("Unauthorize");
       return;
     }
 
     if (!store) {
-      console.log("Error store not found");
+      toast.error("Data tidak ditemukan");
       return;
     }
 
@@ -149,7 +147,7 @@ export default function StoreCategories() {
       !selectedCategory &&
       storeCategories?.some((category) => category.slug === slug)
     ) {
-      console.log("Category already exist");
+      toast.error("Kategori sudah ada");
       return;
     }
 
@@ -195,6 +193,7 @@ export default function StoreCategories() {
         [QueryKeys.STORE_CATEGORIES, storeSlug],
         prevData
       );
+      toast.error("Gagal, " + result.message);
     }
 
     queryClient.invalidateQueries({
@@ -234,7 +233,7 @@ export default function StoreCategories() {
 
   return (
     <>
-      <div className="space-y-2 lg:space-y-4">
+      <div className="space-y-2 lg:space-y-4 px-3 lg:px-5 py-1">
         <div className="col-span-full space-y-2 lg:space-y-4">
           <Breadcrumb
             navList={[
@@ -280,6 +279,7 @@ export default function StoreCategories() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 py-6">
           {filteredCategories.map((category) => (
             <CategoryCard
+              key={category.id}
               onEdit={() => toggleModalOpen(category)}
               onDelete={() => handleDeleteCategory(category.id)}
               category={category}
@@ -417,11 +417,9 @@ function CategoryFormModal({
   };
 
   const handleSubmit = () => {
-    // const selectedFile = formData.image;
     const validation = storeCategorySchema.safeParse(formData);
     if (!validation.success) {
-      // TODO Add alerts or toast
-      console.log(validation.error);
+      toast.error(validation.error.message);
       return;
     }
 

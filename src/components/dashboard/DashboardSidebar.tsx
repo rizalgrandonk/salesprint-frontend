@@ -53,7 +53,7 @@ export default function DashboardSidebar({
                     icon={MdOutlineDashboardCustomize}
                   />
                 </li>
-                <li>
+                {/* <li>
                   <MenuDropdown
                     title="Produk"
                     icon={MdOutlineInventory2}
@@ -68,7 +68,18 @@ export default function DashboardSidebar({
                       },
                     ]}
                   />
-                </li>
+                </li> */}
+                {user?.role === "admin" && (
+                  <>
+                    <li>
+                      <MenuItem
+                        title="Daftar Toko"
+                        icon={MdOutlineStorefront}
+                        href="/admin/stores"
+                      />
+                    </li>
+                  </>
+                )}
                 {user?.role === "seller" && (
                   <>
                     <li>
@@ -96,9 +107,6 @@ export default function DashboardSidebar({
                     </li>
                   </>
                 )}
-                <li>
-                  <MenuItem title="Profil" href="#" icon={MdOutlinePerson} />
-                </li>
               </ul>
             </div>
           </div>

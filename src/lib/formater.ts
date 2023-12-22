@@ -39,3 +39,34 @@ export function slugify(str: string) {
     .replace(/\s+/g, "-") // replace spaces with hyphens
     .replace(/-+/g, "-"); // remove consecutive hyphens
 }
+
+type QueryStringifyParam = {
+  [key: string]: string | number | string[] | QueryStringifyParam;
+};
+
+export function queryStringify(
+  object: QueryStringifyParam,
+  parentKey: string | null = null
+): string {
+  return Object.keys(object)
+    .map((key) => {
+      const value = object[key];
+
+      if (parentKey) {
+        key = `${parentKey}[${key}]`;
+      }
+
+      if (value && typeof value === "object") {
+        return queryStringify(value as QueryStringifyParam, key);
+      }
+
+      if (Array.isArray(value)) {
+        return value
+          .map((item) => `${key}[]=${encodeURIComponent(String(item))}`)
+          .join("&");
+      }
+
+      return `${key}=${encodeURIComponent(String(value))}`;
+    })
+    .join("&");
+}

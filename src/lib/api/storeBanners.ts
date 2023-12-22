@@ -6,7 +6,6 @@ export async function createStoreBanner(
   data: FormData,
   token: string
 ) {
-  console.log(data);
   return await protectedRequest<StoreBanner>({
     method: "POST",
     path: `/stores/${slug}/banners`,
@@ -22,7 +21,6 @@ export async function updateStoreBanner(
   data: FormData,
   token: string
 ) {
-  console.log(data);
   return await protectedRequest<StoreBanner>({
     method: "POST",
     path: `/stores/${storeSlug}/banners/${bannerId}`,

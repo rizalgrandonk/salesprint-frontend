@@ -51,8 +51,6 @@ export default function Navbar() {
   // const { totalItems } = useCart();
   const { data: session } = useSession();
 
-  console.log("Session", session);
-
   const { asPath, locale } = useRouter();
 
   return (

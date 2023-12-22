@@ -19,7 +19,6 @@ export async function createStoreCategory(
   data: FormData,
   token: string
 ) {
-  console.log(data);
   return await protectedRequest<StoreCategory>({
     method: "POST",
     path: `/stores/${slug}/categories`,
@@ -35,7 +34,6 @@ export async function updateStoreCategory(
   data: FormData,
   token: string
 ) {
-  console.log(data);
   return await protectedRequest<StoreCategory>({
     method: "POST",
     path: `/stores/${storeSlug}/categories/${bannerId}`,

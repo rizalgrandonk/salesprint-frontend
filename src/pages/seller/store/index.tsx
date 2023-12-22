@@ -43,7 +43,7 @@ export default function SellerStore() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 px-3 lg:px-5 py-1">
       <div className="col-span-full space-y-3">
         <Breadcrumb
           navList={[
