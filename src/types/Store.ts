@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { User } from "./User";
 
 export type Store = {
   id: string;
@@ -11,7 +12,7 @@ export type Store = {
   province: string;
   province_id: string;
   postal_code: string;
-  status: string;
+  status: "approved" | "on_review" | "rejected";
   image?: string;
   store_description?: string;
   created_at: string;
@@ -19,6 +20,7 @@ export type Store = {
 
   store_banners?: StoreBanner[];
   store_categories?: StoreCategory[];
+  user?: User;
 
   store_banners_count?: number;
   store_categories_count?: number;

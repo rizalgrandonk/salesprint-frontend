@@ -55,6 +55,20 @@ export async function updateStore(slug: string, data: FormData, token: string) {
   });
 }
 
+export async function updateStoreStatus(
+  slug: string,
+  data: { status: Store["status"] },
+  token: string
+) {
+  return await protectedRequest<Store>({
+    method: "POST",
+    path: `/stores/${slug}/update_store_status`,
+    token,
+    data,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
 export async function getStoreBySlug(slug: string, signal?: AbortSignal) {
   const result = await publicRequest<Store>(
     {

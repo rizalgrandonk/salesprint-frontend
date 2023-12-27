@@ -40,7 +40,7 @@ export function slugify(str: string) {
     .replace(/-+/g, "-"); // remove consecutive hyphens
 }
 
-type QueryStringifyParam = {
+export type QueryStringifyParam = {
   [key: string]: string | number | string[] | QueryStringifyParam;
 };
 

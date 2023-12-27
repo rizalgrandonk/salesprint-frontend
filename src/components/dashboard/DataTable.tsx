@@ -2,38 +2,49 @@ import { ReactNode, ThHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
 export type DataTableHeader<T> = ThHTMLAttributes<HTMLTableCellElement> & {
-  id: string;
   render: ((list: T[]) => ReactNode) | ReactNode;
 };
 
-export type DataTableColumn<T> = ThHTMLAttributes<HTMLTableCellElement> & {
-  id: string;
+export type DataTableCell<T> = ThHTMLAttributes<HTMLTableCellElement> & {
   render: ((item: T) => ReactNode) | ReactNode;
 };
 
 export type DataTableProps<T> = {
   list: T[];
-  headers: DataTableHeader<T>[];
-  columns: DataTableColumn<T>[];
+  columns: {
+    id: string;
+    header: DataTableHeader<T>;
+    cell: DataTableCell<T>;
+  }[];
+  isFetching?: boolean;
 };
 
 export default function DataTable<T>({
-  headers,
   columns,
   list,
+  isFetching,
 }: DataTableProps<T>) {
   return (
-    <div className="overflow-x-auto flex-grow">
+    <div className="overflow-x-auto flex-grow relative">
+      {!!isFetching && (
+        <div className="absolute inset-0 bg-gray-900/20 pointer-events-none flex items-center justify-center z-10">
+          <div className="px-4 py-2 bg-white border border-gray-200 rounded shadow-sm dark:border-gray-700 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+            Memuat...
+          </div>
+        </div>
+      )}
       <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600 relative border-b border-gray-200 dark:border-gray-600">
         <thead className="bg-white dark:bg-gray-800 sticky top-0 z-20 shadow">
           <tr>
-            {headers.map(
-              ({
+            {columns.map((column) => {
+              const {
                 className: headerClassName,
                 render: renderHeader,
                 ...headerProps
-              }) => (
+              } = column.header;
+              return (
                 <th
+                  key={column.id}
                   {...headerProps}
                   scope="col"
                   className={twMerge(
@@ -45,34 +56,40 @@ export default function DataTable<T>({
                     ? renderHeader(list)
                     : renderHeader}
                 </th>
-              )
-            )}
+              );
+            })}
           </tr>
         </thead>
         <tbody className="bg-gray-100 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-          {list.map((item) => (
-            <tr className="hover:bg-white dark:hover:bg-gray-800">
-              {columns.map(
-                ({
-                  className: colClassName,
-                  render: renderCol,
-                  ...colProps
-                }) => (
-                  <td
-                    {...colProps}
-                    className={twMerge(
-                      "p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white",
-                      colClassName
-                    )}
-                  >
-                    {typeof renderCol === "function"
-                      ? renderCol(item)
-                      : renderCol}
-                  </td>
-                )
-              )}
-            </tr>
-          ))}
+          {list.length <= 0 ? (
+            <div>Data kosong</div>
+          ) : (
+            list.map((item, index) => (
+              <tr key={index} className="hover:bg-white dark:hover:bg-gray-800">
+                {columns.map((column) => {
+                  const {
+                    className: cellClassName,
+                    render: renderCell,
+                    ...cellProps
+                  } = column.cell;
+                  return (
+                    <td
+                      key={column.id}
+                      {...cellProps}
+                      className={twMerge(
+                        "p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white",
+                        cellClassName
+                      )}
+                    >
+                      {typeof renderCell === "function"
+                        ? renderCell(item)
+                        : renderCell}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

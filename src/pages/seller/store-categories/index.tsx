@@ -199,6 +199,7 @@ export default function StoreCategories() {
     queryClient.invalidateQueries({
       queryKey: [QueryKeys.STORE_CATEGORIES, storeSlug],
     });
+    toast.success("Success, " + result.message);
   };
 
   if (isLoadingStore || isLoadingStoreCategories) {

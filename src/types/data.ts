@@ -12,18 +12,18 @@ export type QueryState<T> = {
   limit: number;
   with?: string[];
   withCount?: string[];
-  orderBy: {
+  orderBy?: {
     field: keyof T;
     value: "asc" | "desc";
   };
   filters?: {
     field: keyof T;
-    value: "asc" | "desc";
+    value: string;
   }[];
   search?: {
     field: keyof T;
-    value: "asc" | "desc";
+    value: string;
   };
 
-  current_page: number;
+  page: number;
 };
