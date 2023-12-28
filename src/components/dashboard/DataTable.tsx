@@ -34,7 +34,7 @@ export default function DataTable<T>({
         </div>
       )}
       <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600 relative border-b border-gray-200 dark:border-gray-600">
-        <thead className="bg-white dark:bg-gray-800 sticky top-0 z-20 shadow">
+        <thead className="bg-white dark:bg-gray-800 sticky top-0 z-20 shadow-sm">
           <tr>
             {columns.map((column) => {
               const {

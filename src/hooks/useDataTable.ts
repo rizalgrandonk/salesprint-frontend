@@ -23,7 +23,7 @@ export default function useDataTable<T>(
       : defaultQueryState
   );
 
-  const debouncedQueryState = useDebounce(queryState, 500);
+  const debouncedQueryState = useDebounce(queryState, 200);
 
   const queryResult = useQuery({
     queryKey: [path, debouncedQueryState],

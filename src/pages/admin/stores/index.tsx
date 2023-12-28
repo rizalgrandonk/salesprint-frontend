@@ -8,17 +8,15 @@ import FormSelect from "@/components/utils/FormSelect";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import QueryKeys from "@/constants/queryKeys";
 import useDataTable from "@/hooks/useDataTable";
-import useDebounce from "@/hooks/useDebounce";
-import { getPaginatedStores, updateStoreStatus } from "@/lib/api/stores";
+import { updateStoreStatus } from "@/lib/api/stores";
 import { DEFAULT_STORE_IMAGE } from "@/lib/constants";
 import toast from "@/lib/toast";
 import { Store } from "@/types/Store";
-import { PaginatedData, QueryState } from "@/types/data";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { PaginatedData } from "@/types/data";
+import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns/format";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { MdChevronLeft, MdChevronRight, MdRefresh } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
 
@@ -301,6 +299,9 @@ export default function StoreListPage() {
                     onClick: () => handleUpdateStatus(store.slug, "rejected"),
                   },
                 ].filter((opt) => {
+                  if (store.id === "pending") {
+                    return false;
+                  }
                   if (opt.title === "Approve" && store.status === "approved") {
                     return false;
                   }
@@ -311,7 +312,7 @@ export default function StoreListPage() {
                 });
                 return (
                   <ButtonMenu
-                    title="Update Status"
+                    title="Perbarui Status"
                     variant="secondary"
                     options={options}
                   />

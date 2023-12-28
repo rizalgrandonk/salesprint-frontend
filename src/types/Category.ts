@@ -8,4 +8,5 @@ export type Category = {
   created_at: string;
   updated_at: string;
   products?: Product[];
+  products_count?: number;
 };

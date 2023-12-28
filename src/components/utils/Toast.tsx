@@ -23,6 +23,13 @@ const variantBgIcon = {
   info: "bg-blue-600 dark:bg-blue-600",
 };
 
+const variantBorderClass = {
+  success: "border-green-600 dark:border-green-600",
+  error: "border-red-600 dark:border-red-600",
+  warning: "border-amber-600 dark:border-amber-600",
+  info: "border-blue-600 dark:border-blue-600",
+};
+
 type ToastComponentProps = {
   t: Toast;
   variant?: keyof typeof variantIcon;
@@ -44,7 +51,8 @@ export default function ToastComponent({
     <BaseCard
       onClick={() => toast.dismiss(t.id)}
       className={twMerge(
-        "flex items-center gap-4 py-2 px-4 shadow-lg border-gray-500 cursor-pointer"
+        "flex items-center gap-4 py-2 px-4 shadow-lg border-gray-500 cursor-pointer border",
+        variantBorderClass[variant]
       )}
     >
       <div

@@ -5,6 +5,7 @@ import { JSXElementConstructor } from "react";
 import { IconType } from "react-icons";
 import {
   MdKeyboardArrowDown,
+  MdOutlineCategory,
   MdOutlineDashboardCustomize,
   MdOutlineInventory2,
   MdOutlinePerson,
@@ -76,6 +77,13 @@ export default function DashboardSidebar({
                         title="Daftar Toko"
                         icon={MdOutlineStorefront}
                         href="/admin/stores"
+                      />
+                    </li>
+                    <li>
+                      <MenuItem
+                        title="Daftar Kategori"
+                        icon={MdOutlineCategory}
+                        href="/admin/categories"
                       />
                     </li>
                   </>

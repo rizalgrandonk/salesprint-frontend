@@ -112,7 +112,7 @@ export default function StoreCategories() {
     });
   };
 
-  const createOrUpdateStoreBanner = async (
+  const createOrUpdateStoreCategory = async (
     storeSlug: string,
     data: FormData,
     token: string,
@@ -181,7 +181,7 @@ export default function StoreCategories() {
       );
     }
 
-    const result = await createOrUpdateStoreBanner(
+    const result = await createOrUpdateStoreCategory(
       store.slug,
       formData,
       userToken,
