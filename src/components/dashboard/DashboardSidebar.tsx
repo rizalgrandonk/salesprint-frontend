@@ -8,6 +8,7 @@ import {
   MdOutlineCategory,
   MdOutlineDashboardCustomize,
   MdOutlineInventory2,
+  MdOutlineLayers,
   MdOutlinePerson,
   MdOutlineStore,
   MdOutlineStorefront,
@@ -84,6 +85,13 @@ export default function DashboardSidebar({
                         title="Daftar Kategori"
                         icon={MdOutlineCategory}
                         href="/admin/categories"
+                      />
+                    </li>
+                    <li>
+                      <MenuItem
+                        title="Daftar Tipe Varian"
+                        icon={MdOutlineLayers}
+                        href="/admin/variant-types"
                       />
                     </li>
                   </>
