@@ -22,9 +22,9 @@ const LatestProductsItem = ({ product }: LatestProductsItemProps) => {
         <div className="w-40 lg:w-80 h-full bg-cover bg-center relative rounded overflow-hidden">
           <Image
             src={
-              product.product_images.find((image) => image.main_image)
+              product.product_images?.find((image) => image.main_image)
                 ?.image_url ||
-              product.product_images[0].image_url ||
+              product.product_images?.[0]?.image_url ||
               ""
             }
             alt={product.name}

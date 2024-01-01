@@ -7,6 +7,7 @@ import {
   MdKeyboardArrowDown,
   MdOutlineCategory,
   MdOutlineDashboardCustomize,
+  MdOutlineDns,
   MdOutlineInventory2,
   MdOutlineLayers,
   MdOutlinePerson,
@@ -119,6 +120,22 @@ export default function DashboardSidebar({
                         title="Etalase"
                         icon={MdOutlineStorefront}
                         href="/seller/store-categories"
+                      />
+                    </li>
+                    <li>
+                      <MenuDropdown
+                        title="Produk"
+                        icon={MdOutlineDns}
+                        childs={[
+                          {
+                            title: "Daftar Produk",
+                            href: `/seller/products`,
+                          },
+                          {
+                            title: "Tambah Produk",
+                            href: "/seller/products/create",
+                          },
+                        ]}
                       />
                     </li>
                   </>

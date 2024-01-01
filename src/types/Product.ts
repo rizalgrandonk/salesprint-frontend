@@ -10,7 +10,13 @@ export type Product = {
   price: number;
   stok: number;
   average_rating: number;
-  product_images: {
+  created_at: string;
+  updated_at: string;
+
+  category_id: string;
+  store_category_id?: string;
+
+  product_images?: {
     id: number;
     image_url: string;
     main_image: boolean;
@@ -18,11 +24,11 @@ export type Product = {
     created_at: string;
     updated_at: string;
   }[];
-  created_at: string;
-  updated_at: string;
   category?: Category;
   store_category?: Category;
   store?: Store;
   product_variants?: ProductVariant;
+
+  product_variants_count?: number;
   reviews_count?: number;
 };

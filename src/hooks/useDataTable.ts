@@ -2,7 +2,7 @@ import { getPaginatedData } from "@/lib/api/data";
 import { QueryStringifyParam, queryStringify } from "@/lib/formater";
 import { QueryState } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { useState } from "react";
 import useDebounce from "./useDebounce";
 
 const defaultQueryState = {
@@ -12,7 +12,8 @@ const defaultQueryState = {
 
 export default function useDataTable<T>(
   path: string,
-  initialQueryState?: Partial<QueryState<T>>
+  initialQueryState?: Partial<QueryState<T>>,
+  enabled?: boolean
 ) {
   const [queryState, setQueryState] = useState<QueryState<T>>(
     initialQueryState
@@ -30,6 +31,7 @@ export default function useDataTable<T>(
     queryFn: () =>
       getPaginatedData<T>(path, queryStateToQueryString(debouncedQueryState)),
     keepPreviousData: true,
+    enabled: enabled,
   });
 
   const requestData = queryResult.data;
@@ -67,8 +69,15 @@ export default function useDataTable<T>(
     return setQueryState((prev) => {
       const { orderBy, ...rest } = prev;
       if (!val || !val.field || !val.value) {
+        if (!initialQueryState?.orderBy) {
+          return {
+            ...rest,
+            page: 1,
+          };
+        }
         return {
           ...rest,
+          orderBy: initialQueryState.orderBy,
           page: 1,
         };
       }

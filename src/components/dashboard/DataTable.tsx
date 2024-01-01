@@ -48,7 +48,7 @@ export default function DataTable<T>({
                   {...headerProps}
                   scope="col"
                   className={twMerge(
-                    "p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400",
+                    "p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap",
                     headerClassName
                   )}
                 >
@@ -62,7 +62,13 @@ export default function DataTable<T>({
         </thead>
         <tbody className="bg-gray-100 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
           {list.length <= 0 ? (
-            <div>Data kosong</div>
+            <tr>
+              <td colSpan={columns.length}>
+                <div className="w-full flex justify-center items-center py-10 px-4 text-5xl font-semibold text-gray-500">
+                  Data Kosong
+                </div>
+              </td>
+            </tr>
           ) : (
             list.map((item, index) => (
               <tr key={index} className="hover:bg-white dark:hover:bg-gray-800">
