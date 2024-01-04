@@ -1,3 +1,4 @@
+import { DEFAULT_STORE_CATEGORY_IMAGE } from "@/lib/constants";
 import { formatPrice } from "@/lib/formater";
 import { Product } from "@/types/Product";
 import Image from "next/image";
@@ -14,10 +15,10 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="w-full h-36 lg:h-60 bg-cover bg-center relative rounded overflow-hidden">
         <Image
           src={
-            product.product_images.find((image) => image.main_image)
+            product.product_images?.find((image) => image.main_image)
               ?.image_url ||
-            product.product_images[0].image_url ||
-            ""
+            product.product_images?.[0]?.image_url ||
+            DEFAULT_STORE_CATEGORY_IMAGE
           }
           alt={product.name}
           fill

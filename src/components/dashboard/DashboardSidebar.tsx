@@ -1,9 +1,11 @@
 import { Disclosure, Transition } from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { JSXElementConstructor } from "react";
+import { JSXElementConstructor, useState } from "react";
 import { IconType } from "react-icons";
 import {
+  MdChevronLeft,
+  MdChevronRight,
   MdKeyboardArrowDown,
   MdOutlineCategory,
   MdOutlineDashboardCustomize,
@@ -20,11 +22,15 @@ import SearchMenu from "./SearchMenu";
 type DashboardSidebarProps = {
   mobileOpen: boolean;
   toggleOpen: (val?: boolean) => void;
+  isExpand: boolean;
+  toggleExpand: (val?: boolean) => void;
 };
 
 export default function DashboardSidebar({
   mobileOpen,
   toggleOpen,
+  isExpand,
+  toggleExpand,
 }: DashboardSidebarProps) {
   const { data: session } = useSession();
   const user = session?.user;
@@ -37,8 +43,9 @@ export default function DashboardSidebar({
       <aside
         id="sidebar"
         className={twMerge(
-          "fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 w-64 h-full pt-16 font-normal duration-75 lg:flex transition-width",
-          !mobileOpen ? "hidden" : ""
+          "fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 h-full pt-16 font-normal duration-75 lg:flex transition-all group/sidebar",
+          !mobileOpen ? "hidden" : "",
+          isExpand ? "w-64" : "w-16"
         )}
         aria-label="Sidebar"
       >
@@ -54,6 +61,7 @@ export default function DashboardSidebar({
                     title="Dashboard"
                     href={`/${user?.role || ""}`}
                     icon={MdOutlineDashboardCustomize}
+                    isExpand={isExpand}
                   />
                 </li>
                 {/* <li>
@@ -79,6 +87,7 @@ export default function DashboardSidebar({
                         title="Daftar Toko"
                         icon={MdOutlineStorefront}
                         href="/admin/stores"
+                        isExpand={isExpand}
                       />
                     </li>
                     <li>
@@ -86,6 +95,7 @@ export default function DashboardSidebar({
                         title="Daftar Kategori"
                         icon={MdOutlineCategory}
                         href="/admin/categories"
+                        isExpand={isExpand}
                       />
                     </li>
                     <li>
@@ -93,6 +103,7 @@ export default function DashboardSidebar({
                         title="Daftar Tipe Varian"
                         icon={MdOutlineLayers}
                         href="/admin/variant-types"
+                        isExpand={isExpand}
                       />
                     </li>
                   </>
@@ -113,6 +124,7 @@ export default function DashboardSidebar({
                             href: "/seller/store/settings",
                           },
                         ]}
+                        isExpand={isExpand}
                       />
                     </li>
                     <li>
@@ -120,6 +132,7 @@ export default function DashboardSidebar({
                         title="Etalase"
                         icon={MdOutlineStorefront}
                         href="/seller/store-categories"
+                        isExpand={isExpand}
                       />
                     </li>
                     <li>
@@ -136,6 +149,7 @@ export default function DashboardSidebar({
                             href: "/seller/products/create",
                           },
                         ]}
+                        isExpand={isExpand}
                       />
                     </li>
                   </>
@@ -144,8 +158,12 @@ export default function DashboardSidebar({
             </div>
           </div>
 
-          {/* <div className="absolute bottom-0 left-0 justify-center hidden w-full p-4 space-x-4 bg-white lg:flex dark:bg-gray-800">
-          </div> */}
+          <div
+            onClick={() => toggleExpand()}
+            className="absolute top-12 right-0 translate-x-1/2 justify-center items-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 text-gray-800 dark:text-gray-200 cursor-pointer hidden group-hover/sidebar:flex transition-all"
+          >
+            {isExpand ? <MdChevronLeft /> : <MdChevronRight />}
+          </div>
         </div>
       </aside>
 
@@ -168,6 +186,7 @@ type MenuItemProps = {
   className?: string;
   icon?: IconType;
   onClick?: () => void;
+  isExpand?: boolean;
 };
 
 function MenuItem({
@@ -177,6 +196,7 @@ function MenuItem({
   icon: Icon,
   onClick: onMenuClick,
   active,
+  isExpand,
 }: MenuItemProps) {
   const router = useRouter();
 
@@ -203,11 +223,11 @@ function MenuItem({
         <Icon
           className={twMerge(
             "text-2xl transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
-            !!isCurrentPage ? "text-gray-900 dark:text-white" : "text-gray-500"
+            !!isCurrentPage ? "text-primary dark:text-primary" : ""
           )}
         />
       )}
-      <span className="ml-3">{title}</span>
+      {isExpand && <span className="ml-3">{title}</span>}
     </button>
   );
 }
@@ -216,37 +236,63 @@ type MenuDropdownProps = {
   title: string;
   childs: MenuItemProps[];
   icon?: IconType;
+  isExpand?: boolean;
 };
 
-function MenuDropdown({ title, childs, icon: Icon }: MenuDropdownProps) {
+function MenuDropdown({
+  title,
+  childs,
+  icon: Icon,
+  isExpand,
+}: MenuDropdownProps) {
   const { pathname } = useRouter();
+
+  const isActive = childs.some((child) => pathname === child.href);
+
   return (
-    <Disclosure defaultOpen={childs.some((item) => item.href === pathname)}>
+    <Disclosure defaultOpen={isActive}>
       {({ open }) => (
         <>
-          <Disclosure.Button className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
-            {!!Icon && (
-              <Icon className="text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+          <Disclosure.Button
+            className={twMerge(
+              "flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 text-clip overflow-hidden text-nowrap whitespace-nowrap",
+              !!isActive ? "bg-gray-100 dark:bg-gray-700" : "",
+              !!isActive ? "text-primary dark:text-primary" : ""
             )}
-            <span className="flex-1 ml-3 text-left whitespace-nowrap">
-              {title}
-            </span>
-            <MdKeyboardArrowDown
-              className={twMerge(
-                "text-2xl transition duration-75",
-                !open ? "rotate-90" : ""
-              )}
-            />
+          >
+            {!!Icon && (
+              <Icon
+                className={twMerge(
+                  "text-2xl transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
+                  !!isActive ? "text-primary dark:text-primary" : ""
+                )}
+              />
+            )}
+            {isExpand && (
+              <>
+                <span className="flex-1 ml-3 text-left whitespace-nowrap">
+                  {title}
+                </span>
+                <MdKeyboardArrowDown
+                  className={twMerge(
+                    "text-2xl transition duration-75",
+                    !open ? "rotate-90" : ""
+                  )}
+                />
+              </>
+            )}
           </Disclosure.Button>
-          <Disclosure.Panel>
-            <ul id="dropdown-layouts" className="py-1 space-y-1">
-              {childs.map((child, index) => (
-                <li key={child.title + index}>
-                  <MenuItem className="pl-8" {...child} />
-                </li>
-              ))}
-            </ul>
-          </Disclosure.Panel>
+          {isExpand && (
+            <Disclosure.Panel>
+              <ul id="dropdown-layouts" className="py-1 space-y-1">
+                {childs.map((child, index) => (
+                  <li key={child.title + index}>
+                    <MenuItem className="pl-8" {...child} isExpand={isExpand} />
+                  </li>
+                ))}
+              </ul>
+            </Disclosure.Panel>
+          )}
         </>
       )}
     </Disclosure>
