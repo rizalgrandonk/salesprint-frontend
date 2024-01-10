@@ -160,7 +160,7 @@ export default function DashboardSidebar({
 
           <div
             onClick={() => toggleExpand()}
-            className="absolute top-12 right-0 translate-x-1/2 justify-center items-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 text-gray-800 dark:text-gray-200 cursor-pointer hidden group-hover/sidebar:flex transition-all"
+            className="absolute top-12 right-0 translate-x-1/2 justify-center items-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 text-gray-800 dark:text-gray-200 cursor-pointer hidden group-hover/sidebar:lg:flex transition-all"
           >
             {isExpand ? <MdChevronLeft /> : <MdChevronRight />}
           </div>

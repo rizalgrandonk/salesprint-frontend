@@ -6,6 +6,8 @@ type FormAreaType = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   id: string;
   label: string;
   error?: string;
+  labelClassName?: string;
+  errorClassName?: string;
   leftel?: ReactNode;
   info?: ReactNode;
 };
@@ -14,7 +16,13 @@ const FormArea = forwardRef<HTMLTextAreaElement, FormAreaType>(
   function FormArea(props: FormAreaType, ref) {
     return (
       <div className="space-y-1">
-        <label htmlFor={props.id} className="text-gray-600 dark:text-gray-200">
+        <label
+          htmlFor={props.id}
+          className={twMerge(
+            "text-gray-600 dark:text-gray-200",
+            props.labelClassName
+          )}
+        >
           {props.label}
         </label>
         <div className="relative">
@@ -31,13 +39,19 @@ const FormArea = forwardRef<HTMLTextAreaElement, FormAreaType>(
             className={twMerge(
               "bg-inherit block w-full px-4 py-2 text-gray-700 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:text-gray-300 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800",
               props.className,
-              !!props.leftel ? "pl-14" : ""
+              !!props.leftel ? "pl-14" : "",
+              !!props.error ? "border-rose-500 dark:border-rose-500" : ""
             )}
           />
         </div>
         {!!props.info && <div>{props.info}</div>}
         {!!props.error && (
-          <span className="text-sm text-rose-500 inline-flex items-center gap-1">
+          <span
+            className={twMerge(
+              "text-sm text-rose-500 inline-flex items-center gap-1",
+              props.errorClassName
+            )}
+          >
             <MdWarningAmber />
             {props.error}
           </span>

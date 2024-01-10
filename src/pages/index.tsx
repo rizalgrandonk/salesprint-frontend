@@ -33,7 +33,11 @@ export default function Home({
   // [2,4]
 
   if (!products || !categories) {
-    return <LoadingSpinner />;
+    return (
+      <div className="w-full px-28 py-44">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (

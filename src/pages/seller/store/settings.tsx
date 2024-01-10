@@ -198,13 +198,6 @@ export default function StoreSettings() {
           ]}
         />
 
-        {/* {!!requestState.error && (
-          <Alerts variant="danger">Error: {requestState.error}</Alerts>
-        )}
-        {requestState.success && (
-          <Alerts variant="success">Data berhasil diperbarui</Alerts>
-        )} */}
-
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
             Ubah Info Toko

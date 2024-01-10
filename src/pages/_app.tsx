@@ -2,6 +2,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import AppLayout from "@/components/Layout";
 import LoadingLogo from "@/components/utils/LoadingLogo";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import "@/styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
@@ -48,10 +49,12 @@ export default function MyApp({
         refetchInterval={5 * 60}
       >
         <QueryClientProvider client={queryClient}>
-          <WrapperLayout layout={layout}>
-            <Component {...pageProps} />
-            <Toaster position="top-right" />
-          </WrapperLayout>
+          <ThemeProvider>
+            <WrapperLayout layout={layout}>
+              <Component {...pageProps} />
+              <Toaster position="top-right" />
+            </WrapperLayout>
+          </ThemeProvider>
         </QueryClientProvider>
       </SessionProvider>
     </>

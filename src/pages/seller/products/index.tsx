@@ -126,7 +126,11 @@ export default function StoreProductListPage() {
   );
 
   if (isLoadingStore || isLoadingProducts) {
-    return <LoadingSpinner />;
+    return (
+      <div className="w-full px-28 py-44">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (!store) {

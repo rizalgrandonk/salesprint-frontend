@@ -148,7 +148,7 @@ export default function RegisterPage() {
                 label="Nomor telepon"
                 placeholder="Masukan nomor telepon anda"
                 error={errors.phone_number?.message}
-                leftel="62"
+                leftEl="62"
               />
               <FormInput
                 {...register("password", {
