@@ -6,54 +6,60 @@ type FormAreaType = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   id: string;
   label: string;
   error?: string;
-  labelClassName?: string;
-  errorClassName?: string;
-  leftel?: ReactNode;
+  classNameLabel?: string;
+  classNameError?: string;
   info?: ReactNode;
 };
 
 const FormArea = forwardRef<HTMLTextAreaElement, FormAreaType>(
-  function FormArea(props: FormAreaType, ref) {
+  function FormArea(
+    {
+      id,
+      label,
+      name,
+      classNameLabel,
+      className,
+      error,
+      info,
+      classNameError,
+      ...props
+    }: FormAreaType,
+    ref
+  ) {
     return (
       <div className="space-y-1">
         <label
-          htmlFor={props.id}
+          htmlFor={id}
           className={twMerge(
             "text-gray-600 dark:text-gray-200",
-            props.labelClassName
+            classNameLabel
           )}
         >
-          {props.label}
+          {label}
         </label>
         <div className="relative">
-          {!!props.leftel && (
-            <div className="absolute inset-y-0 left-0 flex items-center h-4/6 pl-4 pr-3 pointer-events-none border-r border-gray-400 dark:border-gray-500 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
-              {props.leftel}
-            </div>
-          )}
           <textarea
             ref={ref}
             {...props}
-            name={props.name || props.id}
-            id={props.id}
+            name={name || id}
+            id={id}
             className={twMerge(
               "bg-inherit block w-full px-4 py-2 text-gray-700 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:text-gray-300 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800",
-              props.className,
-              !!props.leftel ? "pl-14" : "",
-              !!props.error ? "border-rose-500 dark:border-rose-500" : ""
+              className,
+              !!error ? "border-rose-500 dark:border-rose-500" : ""
             )}
           />
         </div>
-        {!!props.info && <div>{props.info}</div>}
-        {!!props.error && (
+        {!!info && <div>{info}</div>}
+        {!!error && (
           <span
             className={twMerge(
               "text-sm text-rose-500 inline-flex items-center gap-1",
-              props.errorClassName
+              classNameError
             )}
           >
             <MdWarningAmber />
-            {props.error}
+            {error}
           </span>
         )}
       </div>

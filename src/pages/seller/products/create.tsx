@@ -29,7 +29,11 @@ export default function CreateProductPage() {
         </div>
       </div>
 
-      <ProductForm />
+      <ProductForm
+        onSubmit={async (formData) => {
+          console.log(formData);
+        }}
+      />
     </div>
   );
 }

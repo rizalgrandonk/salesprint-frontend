@@ -2,11 +2,15 @@ import BaseCard from "@/components/utils/BaseCard";
 import { Button } from "@/components/utils/Button";
 import FormInput from "@/components/utils/FormInput";
 import FormSelect from "@/components/utils/FormSelect";
+import QueryKeys from "@/constants/queryKeys";
 import { useTheme } from "@/contexts/ThemeContext";
+import { getAllCategories } from "@/lib/api/categories";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { Editor } from "@tinymce/tinymce-react";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   MdAdd,
   MdAddAPhoto,
@@ -14,7 +18,10 @@ import {
   MdOutlineDelete,
   MdWarningAmber,
 } from "react-icons/md";
+import { RiInformationLine } from "react-icons/ri";
+import { twMerge } from "tailwind-merge";
 import { z } from "zod";
+import Alerts from "../utils/Alerts";
 
 type VariantType = {
   variantType: string;
@@ -65,19 +72,24 @@ type StringValues<T> = {
   [K in keyof T]: string;
 };
 
-type BaseForm = StringValues<z.infer<typeof baseSchema>>;
+// type BaseValue = z.infer<typeof baseSchema>;
 
-const defaultBaseForm: BaseForm = {
-  name: "",
-  category_id: "",
-  height: "",
-  length: "",
-  weight: "",
-  width: "",
-  description: "",
+type BaseForm = z.infer<typeof baseSchema>;
+
+type FormData = {
+  baseInfo: BaseForm;
+  images: File[];
+  mainImage: File;
+  variants: VariantType[];
+  variantCombinations: VariantCombination[];
 };
 
-export default function ProductForm() {
+type ProductFormProps = {
+  defaultData?: FormData;
+  onSubmit?: (formData: FormData) => void;
+};
+
+export default function ProductForm({ onSubmit }: ProductFormProps) {
   const { isDarkMode } = useTheme();
   const {
     register,
@@ -89,13 +101,37 @@ export default function ProductForm() {
     mode: "all",
   });
 
+  const { data: categories, error: errorCategories } = useQuery({
+    queryKey: [QueryKeys.ALL_CATEGORIES],
+    queryFn: () => getAllCategories(),
+  });
+
   const [variants, setVariants] = useState<VariantType[]>([]);
 
   const [variantCombinations, setVariantCombinations] = useState<
     VariantCombination[]
   >([]);
 
+  const [images, setImages] = useState<File[]>([]);
+  const [mainImage, setMainImages] = useState<File | null>(null);
+
+  const [formErrors, setFormErrors] = useState({
+    variant: "",
+    combination: "",
+    images: "",
+    mainImage: "",
+  });
+
   useEffect(() => {
+    if (variants.length <= 0) {
+      setVariantCombinations([
+        {
+          price: "",
+          sku: "",
+          stok: "",
+        },
+      ]);
+    }
     setVariantCombinations(generateCombinations(variants));
   }, [variants]);
 
@@ -194,8 +230,104 @@ export default function ProductForm() {
     );
   };
 
+  const onChangeVariantComb = (field: string, value: string, index: number) => {
+    return setVariantCombinations((prev) =>
+      prev.map((comb, i) => {
+        if (index === i) {
+          return {
+            ...comb,
+            [field]: value,
+          };
+        }
+        return comb;
+      })
+    );
+  };
+
+  const onFormSubmit: SubmitHandler<BaseForm> = async (data) => {
+    if (images.length <= 0) {
+      setFormErrors((prev) => ({
+        ...prev,
+        images: "Gambar produk harus diisi",
+      }));
+      return null;
+    }
+    setFormErrors((prev) => ({
+      ...prev,
+      images: "",
+    }));
+
+    if (!mainImage) {
+      setFormErrors((prev) => ({
+        ...prev,
+        mainImage: "Gambar utama harus diisi",
+      }));
+      return null;
+    }
+    setFormErrors((prev) => ({
+      ...prev,
+      mainImage: "",
+    }));
+
+    if (variants.length > 0) {
+      const isAllVariantFilled = variants.every((type) =>
+        Object.values(type).every((val) => !!val && val !== "")
+      );
+      if (!isAllVariantFilled) {
+        setFormErrors((prev) => ({
+          ...prev,
+          variant: "Semua varian input harus diisi",
+        }));
+        return null;
+      }
+      setFormErrors((prev) => ({
+        ...prev,
+        variant: "",
+      }));
+    }
+
+    if (variantCombinations.length > 0) {
+      const isAllCombFilled = variantCombinations.every((comb) =>
+        Object.values(comb).every((val) => !!val && val !== "")
+      );
+      if (!isAllCombFilled) {
+        setFormErrors((prev) => ({
+          ...prev,
+          combination: "Semua varian input harus diisi",
+        }));
+        return null;
+      }
+      setFormErrors((prev) => ({
+        ...prev,
+        combination: "",
+      }));
+    }
+
+    onSubmit &&
+      onSubmit({
+        baseInfo: data,
+        images: images,
+        mainImage: mainImage,
+        variants: variants,
+        variantCombinations: variantCombinations,
+      });
+    return;
+  };
+
+  if (errorCategories) {
+    return (
+      <Alerts variant="danger">
+        <RiInformationLine className="text-lg" />
+        Error Loading Categories
+      </Alerts>
+    );
+  }
+
   return (
-    <form className="space-y-2 lg:space-y-4">
+    <form
+      className="space-y-2 lg:space-y-4"
+      onSubmit={handleSubmit(onFormSubmit)}
+    >
       <BaseCard className="space-y-4">
         <h2 className="text-xl font-semibold">Informasi Dasar</h2>
         <div className="space-y-4">
@@ -208,7 +340,7 @@ export default function ProductForm() {
             placeholder="Masukan nama produk anda"
             className="text-sm px-2 py-1.5"
             error={baseErrors.name?.message}
-            errorClassName="text-xs"
+            classNameError="text-xs"
           />
           <FormSelect
             {...register("category_id")}
@@ -217,27 +349,93 @@ export default function ProductForm() {
             label="Kategori produk"
             placeholder="Pilih kategori"
             className="text-sm px-2 py-1.5"
-            options={[]}
+            options={categories?.map((category) => ({
+              title: category.name,
+              value: category.id,
+            }))}
             error={baseErrors.category_id?.message}
-            errorClassName="text-xs"
+            classNameError="text-xs"
           />
 
           <div className="space-y-1">
             <label htmlFor="product_images">Foto Produk</label>
             <div className="p-4 flex items-center gap-4 bg-gray-100 dark:bg-gray-900">
-              <div className="w-20 h-20 rounded border border-dashed border-gray-500 flex justify-center items-center cursor-pointer group">
-                <MdAdd className="text-6xl text-gray-500 group-hover:text-primary" />
-              </div>
+              {images.map((image, index) => (
+                <div
+                  key={`image_${index}`}
+                  className="w-20 h-20 rounded relative group"
+                >
+                  <Image
+                    src={URL.createObjectURL(image)}
+                    alt={"Gambar produk"}
+                    fill
+                    sizes="5rem"
+                    loading="lazy"
+                    className="object-cover rounded"
+                  />
+                  <div className="absolute inset-0 flex justify-center items-center bg-black/50 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-all">
+                    <MdOutlineDelete
+                      className="text-2xl opacity-60 cursor-pointer hover:opacity-100"
+                      onClick={() =>
+                        setImages((prev) => prev.filter((_, i) => i !== index))
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+              <ImageInput
+                className="w-20 h-20 rounded"
+                onChange={(file) => setImages((prev) => [...prev, file])}
+              />
             </div>
+
+            {!!formErrors.images && (
+              <div>
+                <span className="text-xs text-rose-500 inline-flex items-center gap-1">
+                  <MdWarningAmber />
+                  {formErrors.images}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-1">
             <label htmlFor="main_image">Gambar Utama</label>
             <div className="p-4 flex items-center gap-4 bg-gray-100 dark:bg-gray-900 lg:w-1/2">
-              <div className="w-20 h-20 rounded border border-dashed border-gray-500 flex justify-center items-center cursor-pointer group">
-                <MdAdd className="text-6xl text-gray-500 group-hover:text-primary" />
-              </div>
+              {!!mainImage && (
+                <div className="w-20 h-20 rounded relative group">
+                  <Image
+                    src={URL.createObjectURL(mainImage)}
+                    alt={"Gambar produk"}
+                    fill
+                    sizes="5rem"
+                    loading="lazy"
+                    className="object-cover rounded"
+                  />
+                  <div className="absolute inset-0 flex justify-center items-center bg-black/50 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-all">
+                    <MdOutlineDelete
+                      className="text-2xl opacity-60 cursor-pointer hover:opacity-100"
+                      onClick={() => setMainImages(null)}
+                    />
+                  </div>
+                </div>
+              )}
+              {!mainImage && (
+                <ImageInput
+                  className="w-20 h-20 rounded"
+                  onChange={(file) => setMainImages((prev) => prev ?? file)}
+                />
+              )}
             </div>
+
+            {!!formErrors.mainImage && (
+              <div>
+                <span className="text-xs text-rose-500 inline-flex items-center gap-1">
+                  <MdWarningAmber />
+                  {formErrors.mainImage}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </BaseCard>
@@ -272,6 +470,13 @@ export default function ProductForm() {
                   onChange={(e) =>
                     onChangeVariantType(e.target.value, typeIndex)
                   }
+                  error={
+                    !!formErrors.variant &&
+                    (!variant.variantType || variant.variantType === "")
+                      ? "Tipe varian harus diisi"
+                      : undefined
+                  }
+                  classNameError="text-xs"
                 />
 
                 <div className="space-y-1">
@@ -296,6 +501,12 @@ export default function ProductForm() {
                               optIndex
                             )
                           }
+                          error={
+                            !!formErrors.variant && (!opt || opt === "")
+                              ? "Opsi varian harus diisi"
+                              : undefined
+                          }
+                          classNameError="text-xs"
                         />
                         <MdOutlineDelete
                           onClick={() =>
@@ -320,9 +531,20 @@ export default function ProductForm() {
             );
           })}
 
-        <Button variant="outline" type="button" onClick={addVariantType}>
-          Tambah Varian
-        </Button>
+        {!!formErrors.variant && (
+          <div>
+            <span className="text-xs text-rose-500 inline-flex items-center gap-1">
+              <MdWarningAmber />
+              {formErrors.variant}
+            </span>
+          </div>
+        )}
+
+        {variants.length < 2 && (
+          <Button variant="outline" type="button" onClick={addVariantType}>
+            Tambah Varian
+          </Button>
+        )}
 
         <div className="space-y-1">
           <label htmlFor="parice_stock">Harga & Stok</label>
@@ -355,7 +577,7 @@ export default function ProductForm() {
                   {variants.map((variant) => (
                     <td
                       key={variant.variantType + idx}
-                      className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600"
+                      className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
                     >
                       {comb[variant.variantType] ?? ""}
                     </td>
@@ -367,7 +589,18 @@ export default function ProductForm() {
                       name="price"
                       placeholder="Masukan tinggi produk anda"
                       className="text-sm px-2 py-1.5"
-                      leftEl="Rp"
+                      elementLeft="Rp"
+                      value={comb.price}
+                      onChange={(e) =>
+                        onChangeVariantComb("price", e.target.value, idx)
+                      }
+                      error={
+                        !!formErrors.combination &&
+                        (!comb.price || comb.price === "")
+                          ? "Tipe varian harus diisi"
+                          : undefined
+                      }
+                      classNameError="text-xs hidden"
                     />
                   </td>
                   <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
@@ -377,6 +610,17 @@ export default function ProductForm() {
                       name="stok"
                       placeholder="Masukan tinggi produk anda"
                       className="text-sm px-2 py-1.5"
+                      value={comb.stok}
+                      onChange={(e) =>
+                        onChangeVariantComb("stok", e.target.value, idx)
+                      }
+                      error={
+                        !!formErrors.combination &&
+                        (!comb.price || comb.price === "")
+                          ? "Tipe varian harus diisi"
+                          : undefined
+                      }
+                      classNameError="text-xs hidden"
                     />
                   </td>
                   <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
@@ -386,12 +630,32 @@ export default function ProductForm() {
                       name="variant_sku"
                       placeholder="Masukan tinggi produk anda"
                       className="text-sm px-2 py-1.5"
+                      value={comb.sku}
+                      onChange={(e) =>
+                        onChangeVariantComb("sku", e.target.value, idx)
+                      }
+                      error={
+                        !!formErrors.combination &&
+                        (!comb.price || comb.price === "")
+                          ? "Tipe varian harus diisi"
+                          : undefined
+                      }
+                      classNameError="text-xs hidden"
                     />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {!!formErrors.variant && (
+            <div>
+              <span className="text-xs text-rose-500 inline-flex items-center gap-1">
+                <MdWarningAmber />
+                {formErrors.combination}
+              </span>
+            </div>
+          )}
         </div>
       </BaseCard>
 
@@ -407,7 +671,7 @@ export default function ProductForm() {
                 key={isDarkMode ? "dark" : "light"}
                 apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
                 init={{
-                  height: 500,
+                  height: 300,
                   menubar: true,
                   plugins:
                     "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount",
@@ -441,7 +705,7 @@ export default function ProductForm() {
             label="Berat produk (gram)"
             placeholder="Masukan berat produk anda"
             className="text-sm px-2 py-1.5"
-            rightEl="gram"
+            elementRight="gram"
             error={baseErrors.weight?.message}
           />
           <div className="space-y-1">
@@ -456,9 +720,9 @@ export default function ProductForm() {
                 name="length"
                 placeholder="Masukan panjang produk anda"
                 className="text-sm px-2 py-1.5"
-                rightEl="cm"
+                elementRight="cm"
                 error={baseErrors.length?.message}
-                errorClassName="hidden"
+                classNameError="hidden"
               />
               <span>x</span>
               <FormInput
@@ -468,9 +732,9 @@ export default function ProductForm() {
                 name="width"
                 placeholder="Masukan lebar produk anda"
                 className="text-sm px-2 py-1.5"
-                rightEl="cm"
+                elementRight="cm"
                 error={baseErrors.width?.message}
-                errorClassName="hidden"
+                classNameError="hidden"
               />
               <span>x</span>
               <FormInput
@@ -480,9 +744,9 @@ export default function ProductForm() {
                 name="height"
                 placeholder="Masukan tinggi produk anda"
                 className="text-sm px-2 py-1.5"
-                rightEl="cm"
+                elementRight="cm"
                 error={baseErrors.height?.message}
-                errorClassName="hidden"
+                classNameError="hidden"
               />
             </div>
           </div>
@@ -490,10 +754,51 @@ export default function ProductForm() {
       </BaseCard>
 
       <BaseCard className="flex items-center justify-end gap-4">
-        <Button variant="outline">Simpan Draft</Button>
+        <Button type="button" variant="outline">
+          Simpan Draft
+        </Button>
         <Button type="submit">Submit</Button>
       </BaseCard>
     </form>
+  );
+}
+
+type ImageInputProps = {
+  className?: string;
+  onChange?: (file: File) => void;
+};
+
+function ImageInput({ className, onChange }: ImageInputProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFileImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onChange && onChange(file);
+    }
+  };
+
+  return (
+    <>
+      <div
+        onClick={() => fileInputRef.current?.click()}
+        className={twMerge(
+          "w-20 h-20 rounded border border-dashed border-gray-500 flex justify-center items-center cursor-pointer group",
+          className
+        )}
+      >
+        <MdAdd className="text-6xl text-gray-500 group-hover:text-primary" />
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        name="file-image"
+        id="file-image"
+        hidden
+        onChange={handleFileImageChange}
+      />
+    </>
   );
 }
 
