@@ -5,91 +5,44 @@ import FormSelect from "@/components/utils/FormSelect";
 import QueryKeys from "@/constants/queryKeys";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getAllCategories } from "@/lib/api/categories";
+import { getStoreCategories } from "@/lib/api/storeCategories";
+import {
+  BaseForm,
+  VariantCombination,
+  VariantType,
+  baseSchema,
+} from "@/types/Product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Editor } from "@tinymce/tinymce-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import {
-  MdAdd,
-  MdAddAPhoto,
-  MdAddBox,
-  MdOutlineDelete,
-  MdWarningAmber,
-} from "react-icons/md";
+import { MdAdd, MdOutlineDelete, MdWarningAmber } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 import Alerts from "../utils/Alerts";
 
-type VariantType = {
-  variantType: string;
-  variantOptions: string[];
-};
-
-type VariantCombination = {
-  [key: string]: string;
-  price: string;
-  stok: string;
-  sku: string;
-};
-
-const baseSchema = z.object({
-  name: z
-    .string({ required_error: "Nama harus diisi" })
-    .trim()
-    .min(1, "Nama harus diisi")
-    .max(50, "Nama tidak boleh lebih dari 50 karakter"),
-  description: z
-    .string({ required_error: "Deskripsi harus diisi" })
-    .trim()
-    .min(1, "Deskripsi harus diisi")
-    .max(5000, "Deskripsi tidak boleh lebih dari 5000 karakter"),
-  category_id: z
-    .string({ required_error: "Kategori harus diisi" })
-    .trim()
-    .min(1, "Kategori harus diisi"),
-  weight: z.coerce
-    .number({ required_error: "Berat harus diisi" })
-    .gt(0, "Kurang dari batas minimal")
-    .lt(100000, "Melebihi batas makasimal"),
-  length: z.coerce
-    .number({ required_error: "Berat harus diisi" })
-    .gt(0, "Kurang dari batas minimal")
-    .lt(10000, "Melebihi batas makasimal"),
-  width: z.coerce
-    .number({ required_error: "Berat harus diisi" })
-    .gt(0, "Kurang dari batas minimal")
-    .lt(10000, "Melebihi batas makasimal"),
-  height: z.coerce
-    .number({ required_error: "Berat harus diisi" })
-    .gt(0, "Kurang dari batas minimal")
-    .lt(10000, "Melebihi batas makasimal"),
-});
-
-type StringValues<T> = {
-  [K in keyof T]: string;
-};
-
-// type BaseValue = z.infer<typeof baseSchema>;
-
-type BaseForm = z.infer<typeof baseSchema>;
-
-type FormData = {
-  baseInfo: BaseForm;
+export type ProductData = BaseForm & {
   images: File[];
-  mainImage: File;
+  main_image: File;
   variants: VariantType[];
-  variantCombinations: VariantCombination[];
+  variant_combinations: VariantCombination[];
 };
 
 type ProductFormProps = {
-  defaultData?: FormData;
-  onSubmit?: (formData: FormData) => void;
+  storeSlug: string;
+  defaultData?: ProductData;
+  isLoadingRequest?: boolean;
+  onSubmit?: (formData: ProductData) => void;
 };
 
-export default function ProductForm({ onSubmit }: ProductFormProps) {
+export default function ProductForm({
+  onSubmit,
+  storeSlug,
+  isLoadingRequest = false,
+}: ProductFormProps) {
   const { isDarkMode } = useTheme();
   const {
     register,
@@ -104,6 +57,12 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
   const { data: categories, error: errorCategories } = useQuery({
     queryKey: [QueryKeys.ALL_CATEGORIES],
     queryFn: () => getAllCategories(),
+  });
+
+  const { data: storeCategories, error: errorStoreCategories } = useQuery({
+    queryKey: [QueryKeys.STORE_CATEGORIES, storeSlug],
+    queryFn: () => (storeSlug ? getStoreCategories(storeSlug) : null),
+    enabled: !!storeSlug,
   });
 
   const [variants, setVariants] = useState<VariantType[]>([]);
@@ -144,8 +103,8 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
       return [
         ...prev,
         {
-          variantType: "",
-          variantOptions: [],
+          variant_type: "",
+          variant_options: [],
         },
       ];
     });
@@ -157,7 +116,7 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
         if (typeIndex === i) {
           return {
             ...item,
-            variantOptions: [...(item.variantOptions || []), ""],
+            variant_options: [...(item.variant_options || []), ""],
           };
         }
         return item;
@@ -175,7 +134,7 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
         if (typeIndex === i) {
           return {
             ...item,
-            variantOptions: (item.variantOptions || []).filter(
+            variant_options: (item.variant_options || []).filter(
               (_, i) => i !== optIndex
             ),
           };
@@ -195,7 +154,7 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
         if (typeIndex === i) {
           return {
             ...item,
-            variantType: value ?? "",
+            variant_type: value ?? "",
           };
         }
         return item;
@@ -217,7 +176,7 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
         if (typeIndex === i) {
           return {
             ...item,
-            variantOptions: item.variantOptions?.map((opt, optI) => {
+            variant_options: item.variant_options?.map((opt, optI) => {
               if (optIndex === optI) {
                 return value;
               }
@@ -305,11 +264,11 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
 
     onSubmit &&
       onSubmit({
-        baseInfo: data,
+        ...data,
         images: images,
-        mainImage: mainImage,
+        main_image: mainImage,
         variants: variants,
-        variantCombinations: variantCombinations,
+        variant_combinations: variantCombinations,
       });
     return;
   };
@@ -319,6 +278,14 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
       <Alerts variant="danger">
         <RiInformationLine className="text-lg" />
         Error Loading Categories
+      </Alerts>
+    );
+  }
+  if (errorStoreCategories) {
+    return (
+      <Alerts variant="danger">
+        <RiInformationLine className="text-lg" />
+        Error Loading Store Categories
       </Alerts>
     );
   }
@@ -354,6 +321,20 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
               value: category.id,
             }))}
             error={baseErrors.category_id?.message}
+            classNameError="text-xs"
+          />
+          <FormSelect
+            {...register("store_category_id")}
+            id="store_category_id"
+            name="store_category_id"
+            label="Pilih Etalase (opsional)"
+            placeholder="Pilih etalase (opsional)"
+            className="text-sm px-2 py-1.5"
+            options={storeCategories?.map((category) => ({
+              title: category.name,
+              value: category.id,
+            }))}
+            error={baseErrors.store_category_id?.message}
             classNameError="text-xs"
           />
 
@@ -445,7 +426,7 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
 
         {!!variants &&
           variants.map((variant, typeIndex) => {
-            const variantOptions = variant.variantOptions;
+            const variant_options = variant.variant_options;
             return (
               <div
                 key={typeIndex}
@@ -466,13 +447,13 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
                   label="Tipe varian"
                   placeholder="Masukan tipe varian anda"
                   className="text-sm px-2 py-1.5 bg-white dark:bg-gray-800"
-                  value={variant.variantType}
+                  value={variant.variant_type}
                   onChange={(e) =>
                     onChangeVariantType(e.target.value, typeIndex)
                   }
                   error={
                     !!formErrors.variant &&
-                    (!variant.variantType || variant.variantType === "")
+                    (!variant.variant_type || variant.variant_type === "")
                       ? "Tipe varian harus diisi"
                       : undefined
                   }
@@ -482,7 +463,7 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
                 <div className="space-y-1">
                   <label htmlFor="parice_stock">Opsi pilihan varian</label>
                   <div className="space-y-2">
-                    {variantOptions?.map((opt, optIndex) => (
+                    {variant_options?.map((opt, optIndex) => (
                       <BaseCard
                         key={optIndex}
                         className="flex items-center justify-between"
@@ -554,10 +535,10 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
               <tr>
                 {variants.map((variant) => (
                   <th
-                    key={variant.variantType}
+                    key={variant.variant_type}
                     className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600"
                   >
-                    {variant.variantType}
+                    {variant.variant_type}
                   </th>
                 ))}
                 <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
@@ -576,10 +557,10 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
                 <tr key={idx}>
                   {variants.map((variant) => (
                     <td
-                      key={variant.variantType + idx}
+                      key={variant.variant_type + idx}
                       className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
                     >
-                      {comb[variant.variantType] ?? ""}
+                      {comb[variant.variant_type] ?? ""}
                     </td>
                   ))}
                   <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
@@ -754,10 +735,16 @@ export default function ProductForm({ onSubmit }: ProductFormProps) {
       </BaseCard>
 
       <BaseCard className="flex items-center justify-end gap-4">
-        <Button type="button" variant="outline">
+        {/* <Button type="button" variant="outline">
           Simpan Draft
+        </Button> */}
+        <Button
+          type="submit"
+          isLoading={isLoadingRequest}
+          disabled={isLoadingRequest}
+        >
+          Submit
         </Button>
-        <Button type="submit">Submit</Button>
       </BaseCard>
     </form>
   );
@@ -795,6 +782,7 @@ function ImageInput({ className, onChange }: ImageInputProps) {
         type="file"
         name="file-image"
         id="file-image"
+        accept="image/png, image/gif, image/jpeg"
         hidden
         onChange={handleFileImageChange}
       />
@@ -819,10 +807,10 @@ function generateCombinations(
 
     const currentType = variantTypes[index];
 
-    for (const option of currentType.variantOptions) {
+    for (const option of currentType.variant_options) {
       generateCombination(index + 1, {
         ...currentCombination,
-        [currentType.variantType]: option,
+        [currentType.variant_type]: option,
       });
     }
   }
@@ -832,3 +820,55 @@ function generateCombinations(
 
   return result;
 }
+
+// const formData = {
+//   name: "String name",
+//   description: "String deskription",
+//   category_id: "String category_id",
+//   weight: 10, // Number weight
+//   length: 10, // Number length
+//   width: 10, // Number width
+//   height: 10, // Number height
+//   images: [File, File], // Array of File
+//   main_image: File,
+//   variant: [
+//     {
+//       vatiantType: "Warna",
+//       variant_options: ["Black", "White"],
+//     },
+//     {
+//       vatiantType: "Ukuran",
+//       variant_options: ["M", "L"],
+//     },
+//   ],
+//   variant_combinations: [
+//     {
+//       price: 1000,
+//       stok: 10,
+//       sku: "QWE",
+//       Warna: "Black",
+//       Ukuran: "M",
+//     },
+//     {
+//       price: 1000,
+//       stok: 10,
+//       sku: "QWE",
+//       Warna: "Black",
+//       Ukuran: "L",
+//     },
+//     {
+//       price: 1000,
+//       stok: 10,
+//       sku: "QWE",
+//       Warna: "White",
+//       Ukuran: "M",
+//     },
+//     {
+//       price: 1000,
+//       stok: 10,
+//       sku: "QWE",
+//       Warna: "White",
+//       Ukuran: "L",
+//     },
+//   ],
+// };

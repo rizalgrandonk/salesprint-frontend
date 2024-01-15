@@ -176,7 +176,7 @@ export default function StoreProductListPage() {
             Daftar Produk
           </h1>
 
-          <ButtonLink href="/#">
+          <ButtonLink href="/seller/products/create">
             <MdAdd className="text-xl" />
             Tambah Produk Baru
           </ButtonLink>
