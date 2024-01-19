@@ -501,7 +501,8 @@ export default function ProductForm({
                     <Button
                       onClick={() => addVariantOption(typeIndex)}
                       type="button"
-                      variant="outline"
+                      variant="base"
+                      outline
                       size="sm"
                     >
                       Tambah Opsi
@@ -522,7 +523,7 @@ export default function ProductForm({
         )}
 
         {variants.length < 2 && (
-          <Button variant="outline" type="button" onClick={addVariantType}>
+          <Button variant="base" outline type="button" onClick={addVariantType}>
             Tambah Varian
           </Button>
         )}

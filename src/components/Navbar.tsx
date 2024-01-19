@@ -121,7 +121,12 @@ export default function Navbar() {
                 <ButtonLink size="sm" variant="primary" href="/auth/register">
                   Daftar
                 </ButtonLink>
-                <ButtonLink size="sm" variant="outline" href="/auth/login">
+                <ButtonLink
+                  size="sm"
+                  variant="primary"
+                  outline
+                  href="/auth/login"
+                >
                   Masuk
                 </ButtonLink>
               </div>

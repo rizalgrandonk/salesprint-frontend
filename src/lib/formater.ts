@@ -70,3 +70,11 @@ export function queryStringify(
     })
     .join("&");
 }
+
+export function htmlToPlainText(htmlString: string) {
+  if (!document) {
+    return htmlString;
+  }
+  const html = new DOMParser().parseFromString(htmlString, "text/html");
+  return html.body.textContent || htmlString;
+}

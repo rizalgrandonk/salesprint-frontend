@@ -252,7 +252,8 @@ export default function CreateStore() {
 
               <div className="py-4 flex items-center justify-end gap-4">
                 <Button
-                  variant="outline"
+                  variant="primary"
+                  outline
                   onClick={async () => {
                     const newSession = await updateSession();
                   }}

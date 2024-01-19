@@ -11,7 +11,7 @@ import { getAllCategories } from "@/lib/api/categories";
 import { getStoreCategories } from "@/lib/api/storeCategories";
 import { getUserStore } from "@/lib/api/stores";
 import { DEFAULT_STORE_CATEGORY_IMAGE } from "@/lib/constants";
-import { formatPrice } from "@/lib/formater";
+import { formatPrice, htmlToPlainText } from "@/lib/formater";
 import { Product } from "@/types/Product";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns/format";
@@ -21,6 +21,8 @@ import {
   MdAdd,
   MdChevronLeft,
   MdChevronRight,
+  MdOutlineDelete,
+  MdOutlineEdit,
   MdRefresh,
 } from "react-icons/md";
 import { RiInformationLine, RiStarFill } from "react-icons/ri";
@@ -295,7 +297,7 @@ export default function StoreProductListPage() {
                   <div className="flex flex-col gap-2 w-52">
                     <span>{item.name}</span>
                     <p className="text-xs font-light text-gray-500 dark:text-gray-400 line-clamp-4">
-                      {item.description}
+                      {htmlToPlainText(item.description)}
                     </p>
                   </div>
                 </div>
@@ -375,42 +377,31 @@ export default function StoreProductListPage() {
                 format(new Date(item.created_at), "dd MMM yyyy"),
             },
           },
-          // {
-          //   id: "action",
-          //   header: {
-          //     render: "Aksi",
-          //   },
-          //   cell: {
-          //     render: (item) => {
-          //       if (item.id === "pending") {
-          //         return null;
-          //       }
-          //       return (
-          //         <div className="flex items-center gap-2">
-          //           <Button
-          //             onClick={() => toggleModalOpen(item)}
-          //             size="sm"
-          //             variant="info"
-          //           >
-          //             <MdOutlineEdit />
-          //             Ubah
-          //           </Button>
-          //           <Button
-          //             onClick={() => {
-          //               setSelectedCategory(item);
-          //               setIsDeleteModalOpen(true);
-          //             }}
-          //             size="sm"
-          //             variant="danger"
-          //           >
-          //             <MdOutlineDelete />
-          //             Hapus
-          //           </Button>
-          //         </div>
-          //       );
-          //     },
-          //   },
-          // },
+          {
+            id: "action",
+            header: {
+              render: "Aksi",
+            },
+            cell: {
+              render: (item) => {
+                if (item.id === "pending") {
+                  return null;
+                }
+                return (
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="info" outline>
+                      <MdOutlineEdit />
+                      Ubah
+                    </Button>
+                    <Button size="sm" variant="danger" outline>
+                      <MdOutlineDelete />
+                      Hapus
+                    </Button>
+                  </div>
+                );
+              },
+            },
+          },
         ]}
       />
 

@@ -18,24 +18,40 @@ const sizeClass = {
 };
 
 const variantClass = {
-  primary: "bg-primary",
-  danger: "bg-rose-500",
-  warning: "bg-amber-500",
-  info: "bg-sky-500",
-  success: "bg-green-500",
-  secondary: "bg-gray-500",
-  base: "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200",
-  outline:
-    "bg-transparent border border-primary text-primary hover:text-gray-50 hover:bg-primary dark:hover:bg-primary",
+  primary:
+    "bg-primary text-gray-50 hover:text-gray-50 hover:bg-primary/90 dark:hover:bg-primary/90 border border-primary hover:border-primary/90 dark:hover:border-primary/90",
+  danger:
+    "bg-rose-500 text-gray-50 hover:text-gray-50 hover:bg-rose-500/90 dark:hover:bg-rose-500/90 border border-rose-500 hover:border-rose-500/90 dark:hover:border-rose-500/90",
+  warning:
+    "bg-amber-500 text-gray-50 hover:text-gray-50 hover:bg-amber-500/90 dark:hover:bg-amber-500/90 border border-amber-500 hover:border-amber-500/90 dark:hover:border-amber-500/90",
+  info: "bg-sky-500 text-gray-50 hover:text-gray-50 hover:bg-sky-500/90 dark:hover:bg-sky-500/90 border border-sky-500 hover:border-sky-500/90 dark:hover:border-sky-500/90",
+  success:
+    "bg-green-500 text-gray-50 hover:text-gray-50 hover:bg-green-500/90 dark:hover:bg-green-500/90 border border-green-500 hover:border-green-500/90 dark:hover:border-green-500/90",
+  secondary:
+    "bg-gray-500 text-gray-50 hover:text-gray-50 hover:bg-gray-500/90 dark:hover:bg-gray-500/90 border border-gray-500 hover:border-gray-500/90 dark:hover:border-gray-500/90",
+
+  base: "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-white/90 dark:hover:bg-gray-800/90 border border-white dark:border-gray-800",
+};
+
+const outlineClass = {
+  primary: "text-primary bg-transparent",
+  danger: "text-rose-500 bg-transparent",
+  warning: "text-amber-500 bg-transparent",
+  info: "text-sky-500 bg-transparent",
+  success: "text-green-500 bg-transparent",
+  secondary: "text-gray-500 bg-transparent",
+
+  base: "border-gray-400 dark:border-gray-600 bg-transparent dark:bg-transparent",
 };
 
 const buttonBaseClass =
-  "items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-gray-50 rounded hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-all duration-100";
+  "items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded transition-all duration-100";
 
 type BtnProps = {
   href?: string;
   size?: keyof typeof sizeClass;
   variant?: keyof typeof variantClass;
+  outline?: boolean;
   fullWidth?: boolean;
   isLoading?: boolean;
 };
@@ -45,26 +61,27 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & BtnProps;
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
     {
-      variant,
-      size,
+      variant = "primary",
+      size = "md",
       fullWidth,
       className,
       children,
       isLoading,
+      outline,
       ...props
     }: ButtonProps,
     ref
   ) {
-    const selectedVariantClass = variant
-      ? variantClass[variant]
-      : variantClass["primary"];
-    const selectedSizeClass = size ? sizeClass[size] : sizeClass["md"];
+    const selectedVariantClass = variantClass[variant];
+    const selectedSizeClass = sizeClass[size];
+    const outlineClassName = outline ? outlineClass[variant] : "";
 
     const buttonClass = twMerge(
       fullWidth ? "flex w-full" : "inline-flex",
       buttonBaseClass,
       selectedVariantClass,
       selectedSizeClass,
+      outlineClassName,
       className
     );
 
@@ -89,26 +106,27 @@ type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> &
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
   function ButtonLink(
     {
-      variant,
-      size,
+      variant = "primary",
+      size = "md",
       fullWidth,
       className,
       children,
       isLoading,
+      outline,
       ...props
     }: ButtonLinkProps,
     ref
   ) {
-    const selectedVariantClass = variant
-      ? variantClass[variant]
-      : variantClass["primary"];
-    const selectedSizeClass = size ? sizeClass[size] : sizeClass["md"];
+    const selectedVariantClass = variantClass[variant];
+    const selectedSizeClass = sizeClass[size];
+    const outlineClassName = outline ? outlineClass[variant] : "";
 
     const buttonClass = twMerge(
       fullWidth ? "flex w-full" : "inline-flex",
       buttonBaseClass,
       selectedVariantClass,
       selectedSizeClass,
+      outlineClassName,
       className
     );
 
@@ -143,12 +161,14 @@ export function ButtonMenu({
   className,
   title,
   options,
+  outline,
 }: ButtonMenuProps) {
   const buttonClass = twMerge(
     fullWidth ? "flex w-full" : "inline-flex",
     buttonBaseClass,
     variantClass[variant],
     sizeClass[size],
+    outline ? outlineClass[variant] : "",
     className
   );
   return (
