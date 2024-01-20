@@ -188,7 +188,7 @@ export default function StoreListPage() {
           />
 
           <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
-            <Button onClick={() => refetch()} variant="base">
+            <Button onClick={() => refetch()} variant="base" outline>
               <MdRefresh className="text-base" />
             </Button>
             <FormSelect
@@ -317,7 +317,8 @@ export default function StoreListPage() {
                 return (
                   <ButtonMenu
                     title="Perbarui Status"
-                    variant="secondary"
+                    variant="base"
+                    outline
                     options={options}
                   />
                 );

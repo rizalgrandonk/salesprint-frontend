@@ -266,7 +266,7 @@ export default function CategoryListPage() {
             />
 
             <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
-              <Button onClick={() => refetch()} variant="base">
+              <Button onClick={() => refetch()} variant="base" outline>
                 <MdRefresh className="text-base" />
               </Button>
               <Button onClick={() => toggleModalOpen(null)}>
@@ -340,6 +340,7 @@ export default function CategoryListPage() {
                         onClick={() => toggleModalOpen(item)}
                         size="sm"
                         variant="info"
+                        outline
                       >
                         <MdOutlineEdit />
                         Ubah
@@ -351,6 +352,7 @@ export default function CategoryListPage() {
                         }}
                         size="sm"
                         variant="danger"
+                        outline
                       >
                         <MdOutlineDelete />
                         Hapus

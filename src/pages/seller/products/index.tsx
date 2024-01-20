@@ -199,7 +199,7 @@ export default function StoreProductListPage() {
           />
 
           <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
-            <Button onClick={() => refetch()} variant="base">
+            <Button onClick={() => refetch()} variant="base" outline>
               <MdRefresh className="text-base" />
             </Button>
 
@@ -391,7 +391,7 @@ export default function StoreProductListPage() {
                   <div className="flex items-center gap-2">
                     <Button size="sm" variant="info" outline>
                       <MdOutlineEdit />
-                      Ubah
+                      Atur
                     </Button>
                     <Button size="sm" variant="danger" outline>
                       <MdOutlineDelete />
