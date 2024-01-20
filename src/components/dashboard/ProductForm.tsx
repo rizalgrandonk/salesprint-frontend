@@ -32,6 +32,7 @@ export type ProductData = BaseForm & {
 };
 
 type ProductFormProps = {
+  className?: string;
   storeSlug: string;
   defaultData?: ProductData;
   isLoadingRequest?: boolean;
@@ -39,6 +40,7 @@ type ProductFormProps = {
 };
 
 export default function ProductForm({
+  className,
   onSubmit,
   storeSlug,
   isLoadingRequest = false,
@@ -292,7 +294,7 @@ export default function ProductForm({
 
   return (
     <form
-      className="space-y-2 lg:space-y-4"
+      className={twMerge("space-y-2 lg:space-y-4", className)}
       onSubmit={handleSubmit(onFormSubmit)}
     >
       <BaseCard className="space-y-4">
@@ -327,7 +329,7 @@ export default function ProductForm({
             {...register("store_category_id")}
             id="store_category_id"
             name="store_category_id"
-            label="Pilih Etalase (opsional)"
+            label="Etalase Produk (opsional)"
             placeholder="Pilih etalase (opsional)"
             className="text-sm px-2 py-1.5"
             options={storeCategories?.map((category) => ({

@@ -57,11 +57,8 @@ const FormSelect = forwardRef<HTMLSelectElement, FormSelectType>(
             name={id}
             id={id}
             className={twMerge(
-              "bg-inherit block w-full px-4 py-2 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800 cursor-pointer disabled:cursor-not-allowed",
+              "bg-inherit text-gray-700 dark:text-gray-300 block w-full px-4 py-2 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800 cursor-pointer disabled:cursor-not-allowed",
               className,
-              props.value
-                ? "text-gray-700 dark:text-gray-300"
-                : "text-gray-500 dark:text-gray-500",
               !!elementLeft ? "pl-14" : "",
               !!elementRight ? "pr-14" : "",
               !!error ? "border-rose-500 dark:border-rose-500" : ""

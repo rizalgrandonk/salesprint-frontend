@@ -116,7 +116,11 @@ export default function Home({
 }
 
 export const getStaticProps = (async () => {
-  const products = (await getAllProducts()) || [];
+  const products =
+    (await getAllProducts({
+      with: ["product_images", "store"],
+      withCount: ["reviews"],
+    })) || [];
   const categories = (await getAllCategories()) || [];
 
   return {

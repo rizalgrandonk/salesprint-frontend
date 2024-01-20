@@ -52,7 +52,12 @@ export default function StoreCategories() {
   const { data: storeCategories, isLoading: isLoadingStoreCategories } =
     useQuery({
       queryKey: [QueryKeys.STORE_CATEGORIES, storeSlug],
-      queryFn: () => (storeSlug ? getStoreCategories(storeSlug) : null),
+      queryFn: () =>
+        storeSlug
+          ? getStoreCategories(storeSlug, {
+              withCount: ["products"],
+            })
+          : null,
       enabled: !!storeSlug,
     });
 

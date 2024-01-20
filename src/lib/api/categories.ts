@@ -1,10 +1,13 @@
 import { Category } from "@/types/Category";
 import { protectedRequest, publicRequest } from ".";
 
-export async function getAllCategories() {
+export async function getAllCategories(
+  params?: Record<string, string | string[]>
+) {
   const result = await publicRequest<Category[]>({
     method: "GET",
     path: "/categories/",
+    params: params,
   });
 
   if (!result.success) {

@@ -34,7 +34,12 @@ export default function DataTable<T>({
         </div>
       )}
       <div className="overflow-auto w-full h-full relative">
-        <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600 relative border-b border-gray-200 dark:border-gray-600">
+        <table
+          className={twMerge(
+            "min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600 relative dark:border-gray-600",
+            list.length > 0 ? "border-b border-gray-200" : ""
+          )}
+        >
           <thead className="bg-white dark:bg-gray-800 sticky top-0 z-20 shadow-sm">
             <tr>
               {columns.map((column) => {

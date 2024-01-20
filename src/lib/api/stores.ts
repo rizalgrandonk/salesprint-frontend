@@ -19,13 +19,17 @@ export async function getPaginatedStores(params?: string) {
   return result.data;
 }
 
-export async function getUserStore(token?: string) {
+export async function getUserStore(
+  token?: string,
+  params?: Record<string, string | string[]>
+) {
   if (!token) {
     return null;
   }
   const result = await protectedRequest<Store>({
     method: "GET",
     path: "/stores/mystore",
+    params: params,
     token,
   });
 
@@ -69,11 +73,16 @@ export async function updateStoreStatus(
   });
 }
 
-export async function getStoreBySlug(slug: string, signal?: AbortSignal) {
+export async function getStoreBySlug(
+  slug: string,
+  signal?: AbortSignal,
+  params?: Record<string, string | string[]>
+) {
   const result = await publicRequest<Store>(
     {
       method: "GET",
       path: `/stores/${slug}`,
+      params: params,
     },
     { signal: signal }
   );

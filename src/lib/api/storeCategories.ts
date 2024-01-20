@@ -1,10 +1,14 @@
 import { StoreCategory } from "@/types/Store";
 import { protectedRequest, publicRequest } from ".";
 
-export async function getStoreCategories(slug: string) {
+export async function getStoreCategories(
+  slug: string,
+  params?: Record<string, string | string[]>
+) {
   const result = await publicRequest<StoreCategory[]>({
     method: "GET",
     path: `/stores/${slug}/categories`,
+    params: params,
   });
 
   if (!result.success) {

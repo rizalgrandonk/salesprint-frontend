@@ -127,15 +127,18 @@ export default function CreateProductPage() {
         </div>
       </div>
 
-      <ProductForm
-        storeSlug={store.slug}
-        onSubmit={async (formData) => {
-          setIsLoadingRequest(true);
-          await handleSubmit(formData);
-          setIsLoadingRequest(false);
-        }}
-        isLoadingRequest={isLoadingRequest}
-      />
+      <div className="grid grid-cols-4">
+        <ProductForm
+          className="col-span-full lg:col-span-3"
+          storeSlug={store.slug}
+          onSubmit={async (formData) => {
+            setIsLoadingRequest(true);
+            await handleSubmit(formData);
+            setIsLoadingRequest(false);
+          }}
+          isLoadingRequest={isLoadingRequest}
+        />
+      </div>
     </div>
   );
 }

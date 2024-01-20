@@ -7,10 +7,13 @@ import {
 } from "@/types/Product";
 import { protectedRequest, publicRequest } from ".";
 
-export async function getAllProducts() {
+export async function getAllProducts(
+  params?: Record<string, string | string[]>
+) {
   const result = await publicRequest<Product[]>({
     method: "GET",
     path: "/products/",
+    params: params,
   });
 
   if (!result.success) {

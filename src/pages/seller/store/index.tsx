@@ -25,7 +25,10 @@ export default function SellerStore() {
 
   const { data: store, isLoading } = useQuery({
     queryKey: [QueryKeys.USER_STORE, userId],
-    queryFn: () => getUserStore(userToken),
+    queryFn: () =>
+      getUserStore(userToken, {
+        with: ["store_banners", "store_categories"],
+      }),
     enabled: !!userId && !!userToken,
   });
 
