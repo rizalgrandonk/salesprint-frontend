@@ -19,6 +19,10 @@ export type Product = {
   description: string;
   price: number;
   stok: number;
+  weight: number;
+  length: number;
+  width: number;
+  height: number;
   average_rating: number;
   created_at: string;
   updated_at: string;
@@ -30,7 +34,7 @@ export type Product = {
   category?: Category;
   store_category?: Category;
   store?: Store;
-  product_variants?: ProductVariant;
+  product_variants?: ProductVariant[];
 
   product_variants_count?: number;
   reviews_count?: number;

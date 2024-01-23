@@ -5,7 +5,9 @@ import FormSelect from "@/components/utils/FormSelect";
 import QueryKeys from "@/constants/queryKeys";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getAllCategories } from "@/lib/api/categories";
+import { deleteProductImage } from "@/lib/api/products";
 import { getStoreCategories } from "@/lib/api/storeCategories";
+import toast from "@/lib/toast";
 import {
   BaseForm,
   VariantCombination,
@@ -15,6 +17,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Editor } from "@tinymce/tinymce-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -25,8 +28,8 @@ import { z } from "zod";
 import Alerts from "../utils/Alerts";
 
 export type ProductData = BaseForm & {
-  images: File[];
-  main_image: File;
+  images: (File | string)[];
+  main_image: File | string;
   variants: VariantType[];
   variant_combinations: VariantCombination[];
 };
@@ -34,6 +37,7 @@ export type ProductData = BaseForm & {
 type ProductFormProps = {
   className?: string;
   storeSlug: string;
+  productSlug?: string;
   defaultData?: ProductData;
   isLoadingRequest?: boolean;
   onSubmit?: (formData: ProductData) => void;
@@ -43,18 +47,40 @@ export default function ProductForm({
   className,
   onSubmit,
   storeSlug,
+  productSlug,
   isLoadingRequest = false,
+  defaultData,
 }: ProductFormProps) {
   const { isDarkMode } = useTheme();
+  const { data: session } = useSession();
+
+  const userId = session?.user?.id;
+  const userToken = session?.user?.access_token;
+
+  const {
+    images: defaultImages,
+    main_image: defaultMainImage,
+    variants: defaultVariants,
+    variant_combinations: defaultVariantCombinations,
+    ...defaultBaseForm
+  } = defaultData ?? {};
+
   const {
     register,
     control,
     handleSubmit,
+    watch,
     formState: { errors: baseErrors },
   } = useForm<BaseForm>({
     resolver: zodResolver(baseSchema),
     mode: "all",
+    defaultValues: defaultBaseForm,
   });
+
+  const {
+    category_id: currentCategoryId,
+    store_category_id: currentStoreCategoryId,
+  } = watch();
 
   const { data: categories, error: errorCategories } = useQuery({
     queryKey: [QueryKeys.ALL_CATEGORIES],
@@ -67,14 +93,18 @@ export default function ProductForm({
     enabled: !!storeSlug,
   });
 
-  const [variants, setVariants] = useState<VariantType[]>([]);
+  const [variants, setVariants] = useState<VariantType[]>(
+    defaultVariants ?? []
+  );
 
   const [variantCombinations, setVariantCombinations] = useState<
     VariantCombination[]
-  >([]);
+  >(defaultVariantCombinations ?? []);
 
-  const [images, setImages] = useState<File[]>([]);
-  const [mainImage, setMainImages] = useState<File | null>(null);
+  const [images, setImages] = useState<(File | string)[]>(defaultImages ?? []);
+  const [mainImage, setMainImages] = useState<File | string | null>(
+    defaultMainImage ?? null
+  );
 
   const [formErrors, setFormErrors] = useState({
     variant: "",
@@ -93,7 +123,7 @@ export default function ProductForm({
         },
       ]);
     }
-    setVariantCombinations(generateCombinations(variants));
+    setVariantCombinations((prev) => generateCombinations(variants, prev));
   }, [variants]);
 
   const addVariantType = () => {
@@ -313,6 +343,7 @@ export default function ProductForm({
           />
           <FormSelect
             {...register("category_id")}
+            value={currentCategoryId}
             id="category_id"
             name="category_id"
             label="Kategori produk"
@@ -327,6 +358,7 @@ export default function ProductForm({
           />
           <FormSelect
             {...register("store_category_id")}
+            value={currentStoreCategoryId ?? undefined}
             id="store_category_id"
             name="store_category_id"
             label="Etalase Produk (opsional)"
@@ -349,7 +381,7 @@ export default function ProductForm({
                   className="w-20 h-20 rounded relative group"
                 >
                   <Image
-                    src={URL.createObjectURL(image)}
+                    src={getImagePreview(image)}
                     alt={"Gambar produk"}
                     fill
                     sizes="5rem"
@@ -357,16 +389,21 @@ export default function ProductForm({
                     className="object-cover rounded"
                   />
                   <div className="absolute inset-0 flex justify-center items-center bg-black/50 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-all">
-                    <MdOutlineDelete
-                      className="text-2xl opacity-60 cursor-pointer hover:opacity-100"
-                      onClick={() =>
-                        setImages((prev) => prev.filter((_, i) => i !== index))
-                      }
-                    />
+                    {!isLoadingRequest && (
+                      <MdOutlineDelete
+                        className="text-2xl opacity-60 cursor-pointer hover:opacity-100"
+                        onClick={() =>
+                          setImages((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          )
+                        }
+                      />
+                    )}
                   </div>
                 </div>
               ))}
               <ImageInput
+                disabled={isLoadingRequest}
                 className="w-20 h-20 rounded"
                 onChange={(file) => setImages((prev) => [...prev, file])}
               />
@@ -388,7 +425,7 @@ export default function ProductForm({
               {!!mainImage && (
                 <div className="w-20 h-20 rounded relative group">
                   <Image
-                    src={URL.createObjectURL(mainImage)}
+                    src={getImagePreview(mainImage)}
                     alt={"Gambar produk"}
                     fill
                     sizes="5rem"
@@ -396,15 +433,18 @@ export default function ProductForm({
                     className="object-cover rounded"
                   />
                   <div className="absolute inset-0 flex justify-center items-center bg-black/50 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-all">
-                    <MdOutlineDelete
-                      className="text-2xl opacity-60 cursor-pointer hover:opacity-100"
-                      onClick={() => setMainImages(null)}
-                    />
+                    {!isLoadingRequest && (
+                      <MdOutlineDelete
+                        className="text-2xl opacity-60 cursor-pointer hover:opacity-100"
+                        onClick={() => setMainImages(null)}
+                      />
+                    )}
                   </div>
                 </div>
               )}
               {!mainImage && (
                 <ImageInput
+                  disabled={isLoadingRequest}
                   className="w-20 h-20 rounded"
                   onChange={(file) => setMainImages((prev) => prev ?? file)}
                 />
@@ -536,14 +576,22 @@ export default function ProductForm({
           <table className="min-w-full border border-gray-200 dark:border-gray-600 border-collapse table-fixed relative">
             <thead className="bg-gray-100 dark:bg-gray-900">
               <tr>
-                {variants.map((variant) => (
-                  <th
-                    key={variant.variant_type}
-                    className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600"
-                  >
-                    {variant.variant_type}
-                  </th>
-                ))}
+                {variants
+                  .filter(
+                    (variant) =>
+                      variant.variant_type &&
+                      variant.variant_type !== "" &&
+                      variant.variant_options.length > 0 &&
+                      !variant.variant_options.some((opt) => opt && opt === "")
+                  )
+                  .map((variant) => (
+                    <th
+                      key={variant.variant_type}
+                      className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600"
+                    >
+                      {variant.variant_type}
+                    </th>
+                  ))}
                 <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
                   Harga
                 </th>
@@ -558,14 +606,19 @@ export default function ProductForm({
             <tbody>
               {variantCombinations.map((comb, idx) => (
                 <tr key={idx}>
-                  {variants.map((variant) => (
-                    <td
-                      key={variant.variant_type + idx}
-                      className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
-                    >
-                      {comb[variant.variant_type] ?? ""}
-                    </td>
-                  ))}
+                  {variants.map((variant) => {
+                    if (comb[variant.variant_type]) {
+                      return (
+                        <td
+                          key={variant.variant_type + idx}
+                          className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
+                        >
+                          {comb[variant.variant_type] ?? ""}
+                        </td>
+                      );
+                    }
+                    return null;
+                  })}
                   <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
                     <FormInput
                       type="number"
@@ -756,9 +809,10 @@ export default function ProductForm({
 type ImageInputProps = {
   className?: string;
   onChange?: (file: File) => void;
+  disabled?: boolean;
 };
 
-function ImageInput({ className, onChange }: ImageInputProps) {
+function ImageInput({ className, onChange, disabled }: ImageInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleFileImageChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -774,11 +828,17 @@ function ImageInput({ className, onChange }: ImageInputProps) {
       <div
         onClick={() => fileInputRef.current?.click()}
         className={twMerge(
-          "w-20 h-20 rounded border border-dashed border-gray-500 flex justify-center items-center cursor-pointer group",
+          "w-20 h-20 rounded border border-dashed border-gray-500 flex justify-center items-center group",
+          !disabled ? "cursor-pointer" : "cursor-not-allowed",
           className
         )}
       >
-        <MdAdd className="text-6xl text-gray-500 group-hover:text-primary" />
+        <MdAdd
+          className={twMerge(
+            "text-6xl text-gray-500",
+            !disabled ? "group-hover:text-primary" : ""
+          )}
+        />
       </div>
       <input
         ref={fileInputRef}
@@ -787,28 +847,54 @@ function ImageInput({ className, onChange }: ImageInputProps) {
         id="file-image"
         accept="image/png, image/gif, image/jpeg"
         hidden
+        disabled={disabled}
         onChange={handleFileImageChange}
       />
     </>
   );
 }
 
+function getImagePreview(image: File | string) {
+  if (typeof image === "string") {
+    return image;
+  }
+  return URL.createObjectURL(image);
+}
+
 function generateCombinations(
-  variantTypes: VariantType[]
+  variantTypes: VariantType[],
+  prevComb: VariantCombination[]
 ): VariantCombination[] {
   const result: VariantCombination[] = [];
+  const variants = variantTypes.filter(
+    (variant) =>
+      variant.variant_type &&
+      variant.variant_type !== "" &&
+      variant.variant_options.length > 0 &&
+      !variant.variant_options.some((opt) => opt && opt === "")
+  );
+
+  console.log({
+    variantTypes,
+    variants,
+  });
 
   // Helper function to recursively generate combinations
   function generateCombination(
     index: number,
     currentCombination: VariantCombination
   ): void {
-    if (index === variantTypes.length) {
-      result.push({ ...currentCombination, price: "", stok: "", sku: "" });
+    if (index === variants.length) {
+      result.push({
+        ...currentCombination,
+        price: "",
+        stok: "",
+        sku: "",
+      });
       return;
     }
 
-    const currentType = variantTypes[index];
+    const currentType = variants[index];
 
     for (const option of currentType.variant_options) {
       generateCombination(index + 1, {
@@ -821,7 +907,12 @@ function generateCombinations(
   // Start generating combinations
   generateCombination(0, {} as VariantCombination);
 
-  return result;
+  return result.map((res, i) => ({
+    ...res,
+    sku: prevComb?.[i]?.sku ?? "",
+    stok: prevComb?.[i]?.stok ?? "",
+    price: prevComb?.[i]?.price ?? "",
+  }));
 }
 
 // const formData = {

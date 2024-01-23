@@ -389,10 +389,15 @@ export default function StoreProductListPage() {
                 }
                 return (
                   <div className="flex items-center gap-2">
-                    <Button size="sm" variant="info" outline>
+                    <ButtonLink
+                      href={`/seller/products/edit/${item.slug}`}
+                      size="sm"
+                      variant="info"
+                      outline
+                    >
                       <MdOutlineEdit />
                       Atur
-                    </Button>
+                    </ButtonLink>
                     <Button size="sm" variant="danger" outline>
                       <MdOutlineDelete />
                       Hapus
