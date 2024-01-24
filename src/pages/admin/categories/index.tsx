@@ -464,7 +464,7 @@ function DeleteCategoryModal({
       className="w-full max-w-xl overflow-hidden transition-all"
     >
       <div className="pb-2">
-        <h3 className="text-2xl font-medium leading-6">Tambah Kategori</h3>
+        <h3 className="text-2xl font-medium leading-6">Hapus Kategori</h3>
       </div>
       <div className="py-4 space-y-4">Anda yakin ingin menghapus kategori</div>
       <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">

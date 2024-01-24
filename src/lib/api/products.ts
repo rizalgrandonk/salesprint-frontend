@@ -74,6 +74,18 @@ export async function updateProduct(
   });
 }
 
+export async function deleteProduct(
+  storeSlug: string,
+  productSlug: string,
+  token: string
+) {
+  return await protectedRequest<Product>({
+    method: "DELETE",
+    path: `/stores/${storeSlug}/products/${productSlug}`,
+    token,
+  });
+}
+
 export async function createProductImages(
   storeSlug: string,
   productSlug: string,
