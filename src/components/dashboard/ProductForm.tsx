@@ -374,7 +374,7 @@ export default function ProductForm({
 
           <div className="space-y-1">
             <label htmlFor="product_images">Foto Produk</label>
-            <div className="p-4 flex items-center gap-4 bg-gray-100 dark:bg-gray-900">
+            <div className="p-4 flex items-center gap-4 bg-gray-50 dark:bg-gray-900">
               {images.map((image, index) => (
                 <div
                   key={`image_${index}`}
@@ -421,7 +421,7 @@ export default function ProductForm({
 
           <div className="space-y-1">
             <label htmlFor="main_image">Gambar Utama</label>
-            <div className="p-4 flex items-center gap-4 bg-gray-100 dark:bg-gray-900 lg:w-1/2">
+            <div className="p-4 flex items-center gap-4 bg-gray-50 dark:bg-gray-900 lg:w-1/2">
               {!!mainImage && (
                 <div className="w-20 h-20 rounded relative group">
                   <Image
@@ -472,7 +472,7 @@ export default function ProductForm({
             return (
               <div
                 key={typeIndex}
-                className="px-4 py-3 rounded bg-gray-100 dark:bg-gray-900 space-y-4"
+                className="px-4 py-3 rounded bg-gray-50 dark:bg-gray-900 space-y-4"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">Varian {typeIndex + 1}</h3>
@@ -574,7 +574,7 @@ export default function ProductForm({
           <label htmlFor="parice_stock">Harga & Stok</label>
 
           <table className="min-w-full border border-gray-200 dark:border-gray-600 border-collapse table-fixed relative">
-            <thead className="bg-gray-100 dark:bg-gray-900">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 {variants
                   .filter(

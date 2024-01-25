@@ -56,7 +56,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed z-20 w-full h-16 lg:h-20 transition-all bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-sm border-b border-gray-300 dark:border-gray-600`}
+        className={`fixed z-20 w-full h-16 lg:h-20 transition-all bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-sm border-b border-gray-300 dark:border-gray-600`}
       >
         <div className="container h-full mx-auto flex justify-between items-center">
           <div className="h-full py-5">
@@ -91,7 +91,7 @@ export default function Navbar() {
               <input
                 type="text"
                 name="nav_search"
-                className="bg-gray-100 border border-gray-300 dark:border-gray-600 text-gray-900 rounded focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-900 dark:placeholder-gray-400 dark:text-gray-100 outline-none"
+                className="bg-gray-50 border border-gray-300 dark:border-gray-600 text-gray-900 rounded focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-900 dark:placeholder-gray-400 dark:text-gray-100 outline-none"
                 placeholder="Search"
               />
             </div>
@@ -270,7 +270,7 @@ function UserPanel() {
             <li>
               <Link
                 href={"/user/orders"}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Pesanan
@@ -279,7 +279,7 @@ function UserPanel() {
             <li>
               <Link
                 href={`/user/profile`}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Profil
@@ -288,7 +288,7 @@ function UserPanel() {
             <li>
               <button
                 onClick={() => signOut()}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Keluar
@@ -371,7 +371,7 @@ function StorePanel() {
                 <li>
                   <Link
                     href={"/seller/orders"}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                     role="menuitem"
                   >
                     Pesanan
@@ -380,7 +380,7 @@ function StorePanel() {
                 <li>
                   <Link
                     href={`/seller/store`}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                     role="menuitem"
                   >
                     Info

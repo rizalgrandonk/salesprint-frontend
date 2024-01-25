@@ -50,7 +50,7 @@ export default function DashboardNav({
               onClick={() => toggleSidebarOpen()}
               aria-expanded="true"
               aria-controls="sidebar"
-              className="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-50 focus:bg-gray-50 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {mobileSidebarOpen ? <MdClose /> : <MdMenu />}
             </button>
@@ -76,7 +76,7 @@ export default function DashboardNav({
               onClick={() => toggleSidebarOpen()}
               id="toggleSidebarMobileSearch"
               type="button"
-              className="text-2xl p-2 text-gray-500 rounded lg:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="text-2xl p-2 text-gray-500 rounded lg:hidden hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               <span className="sr-only">Search</span>
               <MdSearch />
@@ -84,7 +84,7 @@ export default function DashboardNav({
 
             <NotificatiionPanel dashboardUrl={dashboardUrl} />
 
-            <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700" />
+            <DarkModeToggle className="text-2xl p-2 text-gray-500 rounded sm:flex hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700" />
 
             <div className="flex items-center ml-3">
               <UserPanel dashboardUrl={dashboardUrl} />
@@ -143,7 +143,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
             <li>
               <Link
                 href={dashboardUrl}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Dashboard
@@ -152,7 +152,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
             <li>
               <Link
                 href={`${dashboardUrl}/settings`}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Pengaturan
@@ -161,7 +161,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
             <li>
               <Link
                 href={`${dashboardUrl}/report`}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Laporan
@@ -170,7 +170,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
             <li>
               <Link
                 href="/"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Kembali ke beranda
@@ -179,7 +179,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
             <li>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                 role="menuitem"
               >
                 Keluar
@@ -195,7 +195,7 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
 function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
   return (
     <Popover className="relative">
-      <Popover.Button className="text-2xl p-2 text-gray-500 rounded hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none">
+      <Popover.Button className="text-2xl p-2 text-gray-500 rounded hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none">
         <span className="sr-only">Lihat notifikasi</span>
         <MdNotifications />
       </Popover.Button>
@@ -219,7 +219,7 @@ function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
           <div>
             <Link
               href={`${dashboardUrl}`}
-              className="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+              className="flex px-4 py-3 border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-600"
             >
               <div className="flex-shrink-0">
                 <div className="w-11 h-11 relative">
@@ -245,7 +245,7 @@ function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
           </div>
           <Link
             href={`${dashboardUrl}/notifications`}
-            className="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline"
+            className="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:hover:underline"
           >
             <div className="inline-flex items-center gap-2">
               <MdVisibility className="text-2xl" />

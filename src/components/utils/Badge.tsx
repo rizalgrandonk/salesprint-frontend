@@ -16,7 +16,7 @@ const variantClass = {
   secondary: "bg-gray-500",
   base: "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200",
   outline:
-    "bg-gray-100 dark:bg-gray-900 border border-primary text-primary hover:text-gray-50 hover:bg-primary dark:hover:bg-primary",
+    "bg-gray-50 dark:bg-gray-900 border border-primary text-primary hover:text-gray-50 hover:bg-primary dark:hover:bg-primary",
 };
 
 const baseClass =

@@ -66,7 +66,7 @@ export default function DataTable<T>({
               })}
             </tr>
           </thead>
-          <tbody className="bg-gray-100 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-gray-50 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
             {list.length <= 0 ? (
               <tr>
                 <td colSpan={columns.length}>

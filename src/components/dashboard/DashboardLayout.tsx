@@ -44,7 +44,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         mobileSidebarOpen={mobileSidebarOpen}
         toggleSidebarOpen={toggleSidebarOpen}
       />
-      <div className="flex pt-20 overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-screen">
+      <div className="flex pt-20 overflow-hidden bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-screen">
         <DashboardSidebar
           mobileOpen={mobileSidebarOpen}
           toggleOpen={toggleSidebarOpen}
@@ -54,7 +54,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         <div
           id="main-content"
           className={twMerge(
-            "relative w-full h-full overflow-y-auto bg-gray-100 dark:bg-gray-900 transition-all duration-75",
+            "relative w-full h-full overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-all duration-75",
             isSidebarExpand ? "lg:ml-64" : "lg:ml-16"
           )}
         >

@@ -212,8 +212,8 @@ function MenuItem({
     <button
       onClick={handleClick}
       className={twMerge(
-        "w-full flex items-center p-2 text-base text-gray-900 rounded hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700",
-        !!isCurrentPage ? "bg-gray-100 dark:bg-gray-700" : "",
+        "w-full flex items-center p-2 text-base text-gray-900 rounded hover:bg-gray-50 group dark:text-gray-200 dark:hover:bg-gray-700",
+        !!isCurrentPage ? "bg-gray-50 dark:bg-gray-700" : "",
         !!isCurrentPage ? "text-primary dark:text-primary" : "",
 
         className
@@ -255,8 +255,8 @@ function MenuDropdown({
         <>
           <Disclosure.Button
             className={twMerge(
-              "flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 text-clip overflow-hidden text-nowrap whitespace-nowrap",
-              !!isActive ? "bg-gray-100 dark:bg-gray-700" : "",
+              "flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded group hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700 text-clip overflow-hidden text-nowrap whitespace-nowrap",
+              !!isActive ? "bg-gray-50 dark:bg-gray-700" : "",
               !!isActive ? "text-primary dark:text-primary" : ""
             )}
           >
