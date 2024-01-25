@@ -86,7 +86,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Meta title="Salesprint | Daftar" />
+      <Meta title="Daftar | Salesprint" />
 
       <div className="flex items-center w-full h-full max-w-2xl py-16 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100 relative">
         <div className="w-full max-h-full overflow-y-auto px-16">

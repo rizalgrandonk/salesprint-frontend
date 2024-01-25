@@ -160,7 +160,7 @@ export default function CreateStore() {
 
   return (
     <>
-      <Meta title="Salesprint | Buka Toko" />
+      <Meta title="Buka Toko | Salesprint" />
 
       <div className="flex items-center w-full h-full max-w-xl py-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 relative">
         <div className="w-full max-h-full overflow-y-auto px-16">

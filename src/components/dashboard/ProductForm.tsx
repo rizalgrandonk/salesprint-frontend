@@ -114,15 +114,15 @@ export default function ProductForm({
   });
 
   useEffect(() => {
-    if (variants.length <= 0) {
-      setVariantCombinations([
-        {
-          price: "",
-          sku: "",
-          stok: "",
-        },
-      ]);
-    }
+    // if (variants.length <= 0) {
+    //   setVariantCombinations([
+    //     {
+    //       price: "",
+    //       sku: "",
+    //       stok: "",
+    //     },
+    //   ]);
+    // }
     setVariantCombinations((prev) => generateCombinations(variants, prev));
   }, [variants]);
 
@@ -606,19 +606,14 @@ export default function ProductForm({
             <tbody>
               {variantCombinations.map((comb, idx) => (
                 <tr key={idx}>
-                  {variants.map((variant) => {
-                    if (comb[variant.variant_type]) {
-                      return (
-                        <td
-                          key={variant.variant_type + idx}
-                          className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
-                        >
-                          {comb[variant.variant_type] ?? ""}
-                        </td>
-                      );
-                    }
-                    return null;
-                  })}
+                  {variants.map((variant) => (
+                    <td
+                      key={variant.variant_type + idx}
+                      className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
+                    >
+                      {comb[variant.variant_type] ?? ""}
+                    </td>
+                  ))}
                   <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
                     <FormInput
                       type="number"
@@ -874,11 +869,6 @@ function generateCombinations(
       !variant.variant_options.some((opt) => opt && opt === "")
   );
 
-  console.log({
-    variantTypes,
-    variants,
-  });
-
   // Helper function to recursively generate combinations
   function generateCombination(
     index: number,
@@ -906,6 +896,13 @@ function generateCombinations(
 
   // Start generating combinations
   generateCombination(0, {} as VariantCombination);
+
+  console.log({
+    variantTypes,
+    variants,
+    prevComb,
+    result,
+  });
 
   return result.map((res, i) => ({
     ...res,

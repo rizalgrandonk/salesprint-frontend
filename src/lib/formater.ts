@@ -72,9 +72,17 @@ export function queryStringify(
 }
 
 export function htmlToPlainText(htmlString: string) {
-  if (!document) {
-    return htmlString;
-  }
-  const html = new DOMParser().parseFromString(htmlString, "text/html");
-  return html.body.textContent || htmlString;
+  // if (!document) {
+  //   return htmlString;
+  // }
+  // const html = new DOMParser().parseFromString(htmlString, "text/html");
+  // return html.body.textContent || htmlString;
+  let str = htmlString;
+
+  str = str.replace(/<[^>]*>?/g, "");
+  return str;
+}
+
+export function capitalizeString(text: string) {
+  return text.replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase());
 }

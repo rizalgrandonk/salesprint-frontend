@@ -1,3 +1,4 @@
+import { capitalizeString } from "@/lib/formater";
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { PropsWithChildren, useEffect, useState } from "react";
@@ -37,7 +38,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      <Meta title={`Salesprint ${session.user.role}`} />
+      <Meta title={`${capitalizeString(session.user.role)} | Salesprint`} />
 
       <DashboardNav
         mobileSidebarOpen={mobileSidebarOpen}

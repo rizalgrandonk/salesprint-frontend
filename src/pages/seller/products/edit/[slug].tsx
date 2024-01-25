@@ -226,10 +226,10 @@ function transformProductVariants(productVariants?: ProductVariant[]) {
   const variantTypesMap = new Map<string, VariantType>();
 
   productVariants.forEach((product) => {
-    product.variant_options.forEach((option) => {
+    product.variant_options?.forEach((option) => {
       if (!variantTypesMap.has(option.variant_type_id)) {
         variantTypesMap.set(option.variant_type_id, {
-          variant_type: option.variant_type.name,
+          variant_type: option.variant_type?.name ?? "",
           variant_options: [],
         });
       }
@@ -246,7 +246,7 @@ function transformProductVariants(productVariants?: ProductVariant[]) {
       sku: product.sku,
     };
 
-    product.variant_options.forEach((option) => {
+    product.variant_options?.forEach((option) => {
       const variantType = variantTypesMap.get(option.variant_type_id);
       if (variantType) {
         comb[variantType.variant_type] = option.value;

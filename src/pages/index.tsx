@@ -78,11 +78,11 @@ export default function Home({
         </div>
         <div className="w-full lg:w-1/2 h-full flex justify-center items-center">
           <div className="lg:px-20">
-            <p className="text-sm text-center my-6">Salesprint</p>
-            <h3 className="text-center text-4xl font-bold my-4">
-              Telusuri dan temukan di Salesprint
+            <p className="text-lg text-center my-6 text-primary">Salesprint</p>
+            <h3 className="text-center text-4xl font-bold my-4 leading-tight">
+              Inovasi Terbaru dalam Pengalaman Belanja Online Anda!
             </h3>
-            <Link
+            {/* <Link
               href="/products"
               className="flex items-center justify-center my-10 text-2xl space-x-2 text-primary hover:text-primary-dark"
             >
@@ -90,7 +90,7 @@ export default function Home({
                 Lihat semua produk
               </span>
               <FaAngleDoubleRight />
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>

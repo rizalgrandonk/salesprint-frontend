@@ -16,17 +16,23 @@ export default function Meta(seo: MetaProps) {
   const { asPath } = useRouter();
 
   const defaultSeo: SeoData = {
-    title: "Salesprint | Sale on a big sale",
-    keywords: "merch, clothing, brand",
+    title: "Situs Jual Beli Online dengan Inovasi Terbaru | Salesprint",
+    keywords:
+      "e-commerce, market, marketplace, jual beli, online, toko, inovasi",
     description:
-      "Grandonk Merch is a place to get the nice looking clothes and merch",
-    shareImage:
-      "https://res.cloudinary.com/grandonk-merch/image/upload/v1630526973/banner_o3vmy7.jpg",
-    url: `https://grandonkmerch.vercel.app${asPath}`,
+      "Salesprint adalah destinasi belanja daring yang menghadirkan pengalaman tanpa batas bagi para konsumen yang mencari kecepatan, kemudahan, dan hemat dalam satu tempat. Dengan koleksi produk yang beragam dan harga yang terjangkau, Salesprint memberikan akses langsung ke berbagai kebutuhan konsumen sehari-hari. Dibangun dengan inovasi terkini, platform ini menawarkan kecepatan dalam proses transaksi, serta menyuguhkan fitur-fitur eksklusif yang membuat pengalaman belanja semakin menyenangkan. Salesprint tidak hanya sekadar e-commerce, tetapi merupakan akselerator belanja bagi mereka yang menghargai efisiensi tanpa mengorbankan kualitas. Selamat datang di Salesprint, di mana setiap langkah belanja Anda adalah sprint menuju kepuasan yang sejati!",
+    shareImage: "https://salesprint.vercel.app/images/banner.png",
+    url: `https://salesprint.vercel.app${asPath}`,
     article: false,
   };
 
-  const fullSeo = { ...defaultSeo, ...seo };
+  const fullSeo: SeoData = {
+    ...defaultSeo,
+    ...seo,
+    keywords: `${seo.keywords ? seo.keywords + ", " : ""}${
+      defaultSeo.keywords
+    }`,
+  };
 
   return (
     <Head>

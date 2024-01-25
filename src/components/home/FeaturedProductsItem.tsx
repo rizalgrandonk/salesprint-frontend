@@ -16,7 +16,7 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
 
   return (
     <Link
-      href={`/products/${product.slug}`}
+      href={`/${product.store?.slug}/${product.slug}`}
       className="w-full h-[50vh] relative block m-auto rounded overflow-hidden group"
     >
       <Image

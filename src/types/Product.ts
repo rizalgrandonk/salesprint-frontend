@@ -38,6 +38,7 @@ export type Product = {
 
   product_variants_count?: number;
   reviews_count?: number;
+  order_items_count?: number;
 };
 
 export type VariantType = {

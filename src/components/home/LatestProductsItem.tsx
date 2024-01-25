@@ -15,7 +15,7 @@ const LatestProductsItem = ({ product }: LatestProductsItemProps) => {
 
   return (
     <Link
-      href={`/products/${product.slug}`}
+      href={`/${product.store?.slug}/${product.slug}`}
       className="block w-full h-80 p-1 lg:p-3"
     >
       <div className="px-3 py-4 flex w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700">

@@ -9,7 +9,7 @@ import ProductRating from "./utils/ProductRating";
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
-      href={product.slug}
+      href={`/${product.store?.slug}/${product.slug}`}
       className="w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700 p-2"
     >
       <div className="w-full h-36 lg:h-60 bg-cover bg-center relative rounded overflow-hidden">
