@@ -265,10 +265,13 @@ export default function StoreProductListPage() {
                   }))}
                   value={categoryFilter?.value}
                   onChange={(e) =>
-                    setFilter({
-                      field: "category_id",
-                      value: e.target.value || null,
-                    })
+                    setFilter([
+                      {
+                        field: "category_id",
+                        value: e.target.value || null,
+                        operator: "==",
+                      },
+                    ])
                   }
                 />
               )}
@@ -284,10 +287,13 @@ export default function StoreProductListPage() {
                   }))}
                   value={storeCategoryFilter?.value}
                   onChange={(e) =>
-                    setFilter({
-                      field: "store_category_id",
-                      value: e.target.value || null,
-                    })
+                    setFilter([
+                      {
+                        field: "store_category_id",
+                        value: e.target.value || null,
+                        operator: "==",
+                      },
+                    ])
                   }
                 />
               )}

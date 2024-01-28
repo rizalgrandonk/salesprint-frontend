@@ -18,6 +18,7 @@ export type QueryState<T> = {
   };
   filters?: {
     field: keyof T;
+    operator: "==" | "!=" | ">" | "<" | ">=" | "<=";
     value: string;
   }[];
   search?: {
@@ -26,4 +27,10 @@ export type QueryState<T> = {
   };
 
   page: number;
+};
+
+export type QueryParams<T> = Partial<Omit<QueryState<T>, "page">>;
+
+export type MakePropertiesRequired<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]-?: T[P];
 };

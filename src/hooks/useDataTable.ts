@@ -1,5 +1,9 @@
 import { getPaginatedData } from "@/lib/api/data";
-import { QueryStringifyParam, queryStringify } from "@/lib/formater";
+import {
+  QueryStringifyParam,
+  queryStateToQueryString,
+  queryStringify,
+} from "@/lib/formater";
 import { QueryState } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -41,6 +45,7 @@ export default function useDataTable<T>(
         from: requestData?.from,
         to: requestData?.to,
         total: requestData?.total,
+        last_page: requestData?.last_page,
       }
     : undefined;
 
@@ -89,26 +94,35 @@ export default function useDataTable<T>(
     });
   };
 
-  const setFilter = (val: { field: keyof T; value: string | null } | null) => {
+  const setFilter = (
+    vals:
+      | {
+          field: keyof T;
+          operator: Required<QueryState<T>>["filters"][number]["operator"];
+          value: string | null;
+        }[]
+      | null
+  ) => {
     return setQueryState((prev) => {
       const { filters, ...rest } = prev;
-      if (!val) {
+      if (!vals) {
         return rest;
       }
 
-      const filtered = (filters || []).filter((fil) => fil.field !== val.field);
-      const filterValue = val.value;
+      const filtered = (filters || []).filter(
+        (fil) =>
+          !vals.some(
+            (val) => val.field === fil.field && val.operator === fil.operator
+          )
+      );
 
-      if (!filterValue) {
-        return {
-          ...rest,
-          filters: filtered,
-        };
-      }
+      const nonEmptyNewFilters = vals.filter((val) => !!val.value) as Required<
+        QueryState<T>
+      >["filters"];
 
       return {
         ...rest,
-        filters: [...filtered, { field: val.field, value: filterValue }],
+        filters: [...filtered, ...nonEmptyNewFilters],
       };
     });
   };
@@ -154,6 +168,11 @@ export default function useDataTable<T>(
     }));
   };
 
+  const availablePages = Array.from(
+    { length: requestData?.last_page ?? 0 },
+    (_, i) => i + 1
+  );
+
   return {
     ...queryResult,
     data: requestData?.data,
@@ -168,42 +187,6 @@ export default function useDataTable<T>(
     setOrderBy: setOrderBy,
     setLimit: setLimit,
     setFilter: setFilter,
+    availablePages: availablePages,
   };
-}
-
-function queryStateToQueryString<T>(state: QueryState<T>) {
-  const queryObject: QueryStringifyParam = {};
-
-  if (state.limit) {
-    queryObject["limit"] = state.limit;
-  }
-  if (state.with) {
-    queryObject["with"] = state.with;
-  }
-  if (state.withCount) {
-    queryObject["withCount"] = state.withCount;
-  }
-  if (state.orderBy) {
-    queryObject["orderBy"] = {
-      [state.orderBy.field]: state.orderBy.value,
-    };
-  }
-  if (state.filters) {
-    queryObject["filters"] = state.filters.reduce((acc, curr) => {
-      return {
-        ...acc,
-        [curr.field]: curr.value,
-      };
-    }, {} as QueryStringifyParam);
-  }
-  if (state.search) {
-    queryObject["search"] = {
-      [state.search.field]: state.search.value,
-    };
-  }
-  if (state.page) {
-    queryObject["page"] = state.page;
-  }
-
-  return queryStringify(queryObject);
 }

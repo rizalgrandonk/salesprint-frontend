@@ -120,6 +120,10 @@ export const getStaticProps = (async () => {
     (await getAllProducts({
       with: ["product_images", "store"],
       withCount: ["reviews"],
+      orderBy: {
+        field: "average_rating",
+        value: "desc",
+      },
     })) || [];
   const categories = (await getAllCategories()) || [];
 

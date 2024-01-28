@@ -1,14 +1,16 @@
 import { StoreCategory } from "@/types/Store";
+import { QueryParams } from "@/types/data";
 import { protectedRequest, publicRequest } from ".";
+import { queryStateToQueryString } from "../formater";
 
 export async function getStoreCategories(
   slug: string,
-  params?: Record<string, string | string[]>
+  params?: QueryParams<StoreCategory>
 ) {
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
   const result = await publicRequest<StoreCategory[]>({
     method: "GET",
-    path: `/stores/${slug}/categories`,
-    params: params,
+    path: `/stores/${slug}/categories` + queryParams,
   });
 
   if (!result.success) {

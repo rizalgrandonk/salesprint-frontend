@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Category } from "./Category";
 import { Store } from "./Store";
+import { User } from "./User";
 import { ProductVariant } from "./Variant";
 
 export type ProductImage = {
@@ -15,6 +16,7 @@ export type ProductImage = {
 export type Product = {
   id: string;
   slug: string;
+  slug_with_store: string;
   name: string;
   description: string;
   price: number;
@@ -35,10 +37,24 @@ export type Product = {
   store_category?: Category;
   store?: Store;
   product_variants?: ProductVariant[];
+  reviews?: Review[];
 
   product_variants_count?: number;
   reviews_count?: number;
   order_items_count?: number;
+};
+
+export type Review = {
+  id: string;
+  coment: string;
+  rating: number;
+  product_id: string;
+  user_id: string;
+  product_variant_id: string;
+  created_at: string;
+  updated_at: string;
+
+  user?: User;
 };
 
 export type VariantType = {

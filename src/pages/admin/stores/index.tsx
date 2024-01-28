@@ -198,10 +198,13 @@ export default function StoreListPage() {
               options={statusOptions}
               value={statusFilter?.value}
               onChange={(e) =>
-                setFilter({
-                  field: "status",
-                  value: e.target.value,
-                })
+                setFilter([
+                  {
+                    field: "status",
+                    value: e.target.value,
+                    operator: "==",
+                  },
+                ])
               }
             />
           </div>

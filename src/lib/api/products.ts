@@ -5,15 +5,17 @@ import {
   VariantCombination,
   VariantType,
 } from "@/types/Product";
+import { MakePropertiesRequired, QueryParams } from "@/types/data";
 import { protectedRequest, publicRequest } from ".";
+import { queryStateToQueryString } from "../formater";
 
-export async function getAllProducts(
-  params?: Record<string, string | string[]>
+export async function getAllProducts<K extends keyof Product>(
+  params?: QueryParams<Product>
 ) {
-  const result = await publicRequest<Product[]>({
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
+  const result = await publicRequest<MakePropertiesRequired<Product, K>[]>({
     method: "GET",
-    path: "/products/",
-    params: params,
+    path: "/products/" + queryParams,
   });
 
   if (!result.success) {
@@ -23,15 +25,32 @@ export async function getAllProducts(
   return result.data;
 }
 
-export async function getProduct(
+export async function getStoreProducts<K extends keyof Product>(
+  storeSlug: string,
+  params?: QueryParams<Product>
+) {
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
+  const result = await publicRequest<MakePropertiesRequired<Product, K>[]>({
+    method: "GET",
+    path: `/stores/${storeSlug}/products/` + queryParams,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getProduct<K extends keyof Product>(
   storeSlug: string,
   productSlug: string,
-  params?: Record<string, string | string[]>
+  params?: QueryParams<Product>
 ) {
-  const result = await publicRequest<Product>({
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
+  const result = await publicRequest<MakePropertiesRequired<Product, K>>({
     method: "GET",
-    path: `/products/${storeSlug}/${productSlug}/`,
-    params: params,
+    path: `/products/${storeSlug}/${productSlug}/` + queryParams,
   });
 
   if (!result.success) {

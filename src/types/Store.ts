@@ -25,6 +25,8 @@ export type Store = {
   store_banners_count?: number;
   store_categories_count?: number;
   products_count?: number;
+  reviews_count?: number;
+  order_items_count?: number;
 };
 
 export const createStoreSchema = z.object({

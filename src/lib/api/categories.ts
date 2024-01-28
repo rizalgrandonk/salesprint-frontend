@@ -1,13 +1,13 @@
 import { Category } from "@/types/Category";
+import { QueryParams } from "@/types/data";
 import { protectedRequest, publicRequest } from ".";
+import { queryStateToQueryString } from "../formater";
 
-export async function getAllCategories(
-  params?: Record<string, string | string[]>
-) {
+export async function getAllCategories(params?: QueryParams<Category>) {
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
   const result = await publicRequest<Category[]>({
     method: "GET",
-    path: "/categories/",
-    params: params,
+    path: "/categories/" + queryParams,
   });
 
   if (!result.success) {

@@ -1,3 +1,5 @@
+import { QueryState } from "@/types/data";
+
 export function formatPrice(price: number) {
   const priceFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -69,6 +71,43 @@ export function queryStringify(
       return `${key}=${encodeURIComponent(String(value))}`;
     })
     .join("&");
+}
+
+export function queryStateToQueryString<T>(state: Partial<QueryState<T>>) {
+  const queryObject: QueryStringifyParam = {};
+
+  if (state.limit) {
+    queryObject["limit"] = state.limit;
+  }
+  if (state.with) {
+    queryObject["with"] = state.with;
+  }
+  if (state.withCount) {
+    queryObject["withCount"] = state.withCount;
+  }
+  if (state.orderBy) {
+    queryObject["orderBy"] = {
+      [state.orderBy.field]: state.orderBy.value,
+    };
+  }
+  if (state.filters) {
+    queryObject["filters"] = state.filters.reduce((acc, curr) => {
+      return {
+        ...acc,
+        [curr.field]: `${curr.operator};${curr.value}`,
+      };
+    }, {} as QueryStringifyParam);
+  }
+  if (state.search) {
+    queryObject["search"] = {
+      [state.search.field]: state.search.value,
+    };
+  }
+  if (state.page) {
+    queryObject["page"] = state.page;
+  }
+
+  return queryStringify(queryObject);
 }
 
 export function htmlToPlainText(htmlString: string) {
