@@ -202,7 +202,7 @@ export default function StoreListPage() {
                   {
                     field: "status",
                     value: e.target.value,
-                    operator: "==",
+                    operator: "=",
                   },
                 ])
               }

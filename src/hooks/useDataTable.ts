@@ -99,7 +99,7 @@ export default function useDataTable<T>(
       | {
           field: keyof T;
           operator: Required<QueryState<T>>["filters"][number]["operator"];
-          value: string | null;
+          value: string | number | null;
         }[]
       | null
   ) => {

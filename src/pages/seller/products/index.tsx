@@ -269,7 +269,7 @@ export default function StoreProductListPage() {
                       {
                         field: "category_id",
                         value: e.target.value || null,
-                        operator: "==",
+                        operator: "=",
                       },
                     ])
                   }
@@ -291,7 +291,7 @@ export default function StoreProductListPage() {
                       {
                         field: "store_category_id",
                         value: e.target.value || null,
-                        operator: "==",
+                        operator: "=",
                       },
                     ])
                   }

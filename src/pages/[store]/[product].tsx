@@ -5,6 +5,7 @@ import FormInput from "@/components/utils/FormInput";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import Meta from "@/components/utils/Meta";
 import ProductRating from "@/components/utils/ProductRating";
+import Spinner from "@/components/utils/Spinner";
 import QueryKeys from "@/constants/queryKeys";
 import useDataTable from "@/hooks/useDataTable";
 import { getPaginatedData } from "@/lib/api/data";
@@ -28,8 +29,9 @@ import { format } from "date-fns/format";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import {
   MdArrowDropDown,
@@ -41,6 +43,7 @@ import {
   MdShoppingCart,
 } from "react-icons/md";
 import { useInView } from "react-intersection-observer";
+import { twMerge } from "tailwind-merge";
 
 export const getServerSideProps = (async (ctx) => {
   const storeSlug = ctx.query.store?.toString();
@@ -101,10 +104,16 @@ export const getServerSideProps = (async (ctx) => {
       : null,
   ]);
 
+  if (!product || !store) {
+    return {
+      notFound: true,
+    };
+  }
+
   return { props: { product, store, storeProducts } };
 }) satisfies GetServerSideProps<{
-  product: Product | null;
-  store: Store | null;
+  product: Product;
+  store: Store;
   storeProducts: Product[] | null;
 }>;
 
@@ -113,16 +122,48 @@ export default function ProductPage({
   store,
   storeProducts,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  if (!product || !store) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center text-4xl">
-        Halaman Tidak ditemukan
-      </div>
-    );
-  }
-
   const { variantsTypeOptions, variantCombinations } = transformProductVariants(
     product.product_variants
+  );
+
+  const [isDescriptionExpand, setIsDescriptionExpand] = useState(false);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const selectedVariants = findSelectedVariants(
+    variantsTypeOptions,
+    searchParams
+  );
+
+  const selectVariant = (type: string, option: string) => {
+    const selectedVariantTypeOption = variantsTypeOptions.find(
+      (vars) =>
+        vars.variant_type.name === type &&
+        vars.variant_options.some((opt) => opt.value === option)
+    );
+    if (!selectedVariantTypeOption) {
+      return;
+    }
+
+    const queryStrings: string[] = [];
+    Object.keys(selectedVariants).forEach((key) => {
+      if (key === type) {
+        queryStrings.push(`${key}=${option}`);
+        return;
+      }
+      if (!selectedVariants[key]) {
+        return;
+      }
+      queryStrings.push(`${key}=${selectedVariants[key]}`);
+      return;
+    });
+
+    router.push(`/${store.slug}/${product.slug}?${queryStrings.join("&")}`);
+  };
+
+  const isAllVariantSelected = !variantsTypeOptions.some(
+    (vars) => !selectedVariants[vars.variant_type.name]
   );
 
   return (
@@ -141,41 +182,7 @@ export default function ProductPage({
 
       <div className="py-8 space-y-12">
         <section className="container p-4 flex flex-col lg:flex-row lg:gap-2 rounded-sm">
-          <div className="w-full lg:w-1/2 flex flex-col lg:flex-row-reverse gap-2">
-            <div className="relative w-full lg:w-5/6 aspect-square bg-white dark:bg-gray-800 rounded-sm overflow-hidden">
-              <Image
-                src={
-                  product.product_images?.find((image) => image.main_image)
-                    ?.image_url ||
-                  product.product_images?.[0]?.image_url ||
-                  DEFAULT_STORE_CATEGORY_IMAGE
-                }
-                alt={product.name}
-                fill
-                loading="lazy"
-                className="object-contain"
-                sizes="50vw"
-              />
-            </div>
-            <div className="w-full lg:w-1/6 flex lg:flex-col items-center gap-2">
-              {product.product_images &&
-                product.product_images.map((image) => (
-                  <div
-                    key={image.id}
-                    className="relative h-40 lg:w-full lg:h-auto aspect-square bg-white dark:bg-gray-800 rounded-sm overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-primary hover:dark:border-primary"
-                  >
-                    <Image
-                      src={image.image_url}
-                      alt={product.name}
-                      fill
-                      loading="lazy"
-                      className="object-contain"
-                      sizes="20vw"
-                    />
-                  </div>
-                ))}
-            </div>
-          </div>
+          <ImageSection product={product} />
           <div className="w-full lg:w-1/2 space-y-3 py-6 lg:py-2 lg:pl-12">
             <h1 className="text-3xl font-medium">{product.name}</h1>
             <div className="flex items-center divide-x divide-gray-500">
@@ -244,9 +251,21 @@ export default function ProductPage({
                   <div className="w-4/5 flex items-center flex-wrap gap-2">
                     {variantsTypeOption.variant_options.map((option) => (
                       <Button
+                        onClick={() =>
+                          selectVariant(
+                            variantsTypeOption.variant_type.name,
+                            option.value
+                          )
+                        }
                         type="button"
                         key={option.id}
-                        variant="base"
+                        variant={
+                          selectedVariants[
+                            variantsTypeOption.variant_type.name
+                          ] === option.value
+                            ? "primary"
+                            : "base"
+                        }
                         outline
                       >
                         {option.value}
@@ -292,6 +311,7 @@ export default function ProductPage({
               variant="primary"
               size="lg"
               className="text-lg h-12"
+              disabled={!isAllVariantSelected}
             >
               <MdShoppingCart className="text-2xl" />
               Masukan Keranjang
@@ -361,14 +381,25 @@ export default function ProductPage({
               <h3 className="font-semibold text-2xl">Deskripsi Produk</h3>
               <div
                 dangerouslySetInnerHTML={{ __html: product.description }}
-                className="prose dark:prose-invert line-clamp-6 max-w-none"
+                className={twMerge(
+                  "prose dark:prose-invert max-w-none transition-all",
+                  isDescriptionExpand ? "" : "line-clamp-6"
+                )}
               />
               <button
                 type="button"
                 className="text-primary text-sm bg-transparent outline-none flex items-center gap-1 hover:text-primary/90 transition-all"
+                onClick={() => setIsDescriptionExpand((prev) => !prev)}
               >
-                Tampilkan lebih banyak
-                <MdKeyboardArrowDown className="text-lg" />
+                {`Tampilkan lebih ${
+                  isDescriptionExpand ? "sedikit" : "banyak"
+                }`}
+                <MdKeyboardArrowDown
+                  className={twMerge(
+                    "text-lg transition-all",
+                    isDescriptionExpand ? "rotate-180" : "rotate-0"
+                  )}
+                />
               </button>
             </section>
 
@@ -412,6 +443,51 @@ export default function ProductPage({
   );
 }
 
+type ImageSectionProps = {
+  product: Product;
+};
+function ImageSection({ product }: ImageSectionProps) {
+  const [selectedImage, setSelectedImage] = useState(
+    product.product_images?.find((image) => image.main_image)?.image_url ??
+      product.product_images?.[0]?.image_url ??
+      DEFAULT_STORE_CATEGORY_IMAGE
+  );
+
+  return (
+    <div className="w-full lg:w-1/2 flex flex-col lg:flex-row-reverse gap-2">
+      <div className="relative w-full lg:w-5/6 aspect-square bg-white dark:bg-gray-800 rounded-sm overflow-hidden">
+        <Image
+          src={selectedImage}
+          alt={product.name}
+          fill
+          loading="lazy"
+          className="object-contain"
+          sizes="50vw"
+        />
+      </div>
+      <div className="w-full lg:w-1/6 flex lg:flex-col items-center gap-2">
+        {product.product_images &&
+          product.product_images.map((image) => (
+            <div
+              onMouseEnter={() => setSelectedImage(image.image_url)}
+              key={image.id}
+              className="relative h-40 lg:w-full lg:h-auto aspect-square bg-white dark:bg-gray-800 rounded-sm overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-primary hover:dark:border-primary"
+            >
+              <Image
+                src={image.image_url}
+                alt={product.name}
+                fill
+                loading="lazy"
+                className="object-contain"
+                sizes="20vw"
+              />
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
 type ReviewsSectionProps = {
   storeSlug: string;
   productSlug: string;
@@ -450,10 +526,17 @@ function ReviewsSection({
     inView
   );
 
+  const selectedFilterRating = queryState.filters?.find(
+    (fil) => fil.field === "rating" && fil.operator === "="
+  )?.value;
+
   return (
     <div ref={ref}>
       {isLoading ? (
-        <div>Memuat Reviews...</div>
+        <div className="py-8 flex items-center justify-center gap-2">
+          <Spinner className="w-8 h-8 text-primary" />
+          <span className="text-lg">Memuat...</span>
+        </div>
       ) : !reviews ? (
         <div>Belum ada review</div>
       ) : (
@@ -470,22 +553,100 @@ function ReviewsSection({
               />
             </div>
             <div className="flex items-center flex-wrap gap-2">
-              <Button type="button" variant="base" outline>
+              <Button
+                type="button"
+                variant={!selectedFilterRating ? "primary" : "base"}
+                outline
+                onClick={() =>
+                  setFilter([
+                    {
+                      field: "rating",
+                      operator: "=",
+                      value: null,
+                    },
+                  ])
+                }
+              >
                 Semua
               </Button>
-              <Button type="button" variant="base" outline>
+              <Button
+                type="button"
+                variant={selectedFilterRating === 5 ? "primary" : "base"}
+                outline
+                onClick={() =>
+                  setFilter([
+                    {
+                      field: "rating",
+                      operator: "=",
+                      value: 5,
+                    },
+                  ])
+                }
+              >
                 5 Bintang
               </Button>
-              <Button type="button" variant="base" outline>
+              <Button
+                type="button"
+                variant={selectedFilterRating === 4 ? "primary" : "base"}
+                outline
+                onClick={() =>
+                  setFilter([
+                    {
+                      field: "rating",
+                      operator: "=",
+                      value: 4,
+                    },
+                  ])
+                }
+              >
                 4 Bintang
               </Button>
-              <Button type="button" variant="base" outline>
+              <Button
+                type="button"
+                variant={selectedFilterRating === 3 ? "primary" : "base"}
+                outline
+                onClick={() =>
+                  setFilter([
+                    {
+                      field: "rating",
+                      operator: "=",
+                      value: 3,
+                    },
+                  ])
+                }
+              >
                 3 Bintang
               </Button>
-              <Button type="button" variant="base" outline>
+              <Button
+                type="button"
+                variant={selectedFilterRating === 2 ? "primary" : "base"}
+                outline
+                onClick={() =>
+                  setFilter([
+                    {
+                      field: "rating",
+                      operator: "=",
+                      value: 2,
+                    },
+                  ])
+                }
+              >
                 2 Bintang
               </Button>
-              <Button type="button" variant="base" outline>
+              <Button
+                type="button"
+                variant={selectedFilterRating === 1 ? "primary" : "base"}
+                outline
+                onClick={() =>
+                  setFilter([
+                    {
+                      field: "rating",
+                      operator: "=",
+                      value: 1,
+                    },
+                  ])
+                }
+              >
                 1 Bintang
               </Button>
             </div>
@@ -592,13 +753,9 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
     }
   }, [lastItemInView, fetchNextPage, hasNextPage]);
 
-  console.log({ data });
-
   return (
     <div ref={sectionStartRef}>
-      {!data ? (
-        <div>Kosong</div>
-      ) : (
+      {!data ? null : (
         <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
           {data.pages.map((group, idx) =>
             group?.data.map((product, i) => (
@@ -616,19 +773,34 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
         </div>
       )}
 
-      {(isFetching || isFetchingNextPage) && <div>Memuat...</div>}
-
-      {/* {!(isFetching || isFetchingNextPage) && <div ref={ref}></div>} */}
+      {(isFetching || isFetchingNextPage) && (
+        <div className="py-8 flex items-center justify-center gap-2">
+          <Spinner className="w-8 h-8 text-primary" />
+          <span className="text-lg">Memuat...</span>
+        </div>
+      )}
     </div>
   );
+}
 
-  // return (
-  //   <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
-  //     {[].map((product) => (
-  //       <ProductCard key={product.id} product={product} />
-  //     ))}
-  //   </div>
-  // );
+function findSelectedVariants(
+  variantsTypeOptions: {
+    variant_type: VariantType;
+    variant_options: VariantOption[];
+  }[],
+  searchParams: ReadonlyURLSearchParams
+) {
+  const selectedVariants: { [type: string]: string | null } = {};
+  variantsTypeOptions.forEach((vars) => {
+    const selectedOption = searchParams.get(vars.variant_type.name);
+    selectedVariants[vars.variant_type.name] =
+      selectedOption &&
+      vars.variant_options.some((opt) => opt.value === selectedOption)
+        ? selectedOption
+        : null;
+  });
+
+  return selectedVariants;
 }
 
 function transformProductVariants(productVariants?: ProductVariant[]) {

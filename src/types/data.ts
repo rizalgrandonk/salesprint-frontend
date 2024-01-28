@@ -18,8 +18,8 @@ export type QueryState<T> = {
   };
   filters?: {
     field: keyof T;
-    operator: "==" | "!=" | ">" | "<" | ">=" | "<=";
-    value: string;
+    operator: "=" | "!=" | ">" | "<" | ">=" | "<=";
+    value: string | number;
   }[];
   search?: {
     field: keyof T;
