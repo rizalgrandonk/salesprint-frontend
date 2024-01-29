@@ -12,7 +12,7 @@ type ProductCardProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 
 export const ProductCard = forwardRef<HTMLAnchorElement, ProductCardProps>(
-  ({ product }, ref) => {
+  function ProductCard({ product }, ref) {
     return (
       <Link
         ref={ref}
