@@ -27,6 +27,7 @@ import { MakePropertiesRequired } from "@/types/data";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns/format";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
@@ -182,7 +183,7 @@ export default function ProductPage({
 
       <div className="py-8 space-y-12">
         <section className="container p-4 flex flex-col lg:flex-row lg:gap-2 rounded-sm">
-          <ImageSection product={product} />
+          <ImageSection product={product} key={product.id} />
           <div className="w-full lg:w-1/2 space-y-3 py-6 lg:py-2 lg:pl-12">
             <h1 className="text-3xl font-medium">{product.name}</h1>
             <div className="flex items-center divide-x divide-gray-500">
@@ -457,6 +458,7 @@ function ImageSection({ product }: ImageSectionProps) {
     <div className="w-full lg:w-1/2 flex flex-col lg:flex-row-reverse gap-2">
       <div className="relative w-full lg:w-5/6 aspect-square bg-white dark:bg-gray-800 rounded-sm overflow-hidden">
         <Image
+          key={selectedImage}
           src={selectedImage}
           alt={product.name}
           fill
@@ -465,24 +467,31 @@ function ImageSection({ product }: ImageSectionProps) {
           sizes="50vw"
         />
       </div>
-      <div className="w-full lg:w-1/6 flex lg:flex-col items-center gap-2">
+      <div className="w-full lg:w-1/6 flex lg:flex-col items-center gap-2 overflow-auto lg:max-h-[80vh] snap-both">
         {product.product_images &&
-          product.product_images.map((image) => (
-            <div
-              onMouseEnter={() => setSelectedImage(image.image_url)}
-              key={image.id}
-              className="relative h-40 lg:w-full lg:h-auto aspect-square bg-white dark:bg-gray-800 rounded-sm overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-primary hover:dark:border-primary"
-            >
-              <Image
-                src={image.image_url}
-                alt={product.name}
-                fill
-                loading="lazy"
-                className="object-contain"
-                sizes="20vw"
-              />
-            </div>
-          ))}
+          product.product_images.map((image) => {
+            return (
+              <div
+                onMouseEnter={() => setSelectedImage(image.image_url)}
+                key={image.image_url}
+                className={twMerge(
+                  "snap-start flex-shrink-0 relative h-40 lg:w-full lg:h-auto aspect-square bg-white dark:bg-gray-800 rounded-sm overflow-hidden border-2 hover:border-primary hover:dark:border-primary",
+                  image.image_url === selectedImage
+                    ? "border-primary dark:border-primary"
+                    : "border-gray-200 dark:border-gray-700"
+                )}
+              >
+                <Image
+                  src={image.image_url}
+                  alt={product.name}
+                  fill
+                  loading="lazy"
+                  className="object-contain"
+                  sizes="20vw"
+                />
+              </div>
+            );
+          })}
       </div>
     </div>
   );
@@ -708,6 +717,11 @@ type RecomendationSectionProps = {
   product: Product;
 };
 function RecomendationSection({ product }: RecomendationSectionProps) {
+  const { data: session } = useSession();
+
+  const userId = session?.user?.id;
+  const userToken = session?.user?.access_token;
+
   const { ref: sectionStartRef, inView: sectionStartInView } = useInView();
   const { ref: lastItemRef, inView: lastItemInView } = useInView();
   const {
@@ -718,19 +732,15 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["/paginated/products"],
+    queryKey: ["/paginated/products", userId],
     queryFn: ({ pageParam = 1 }) =>
       getPaginatedData<Product>(
-        "/paginated/products",
+        "/paginated/products/recomendation",
         queryStateToQueryString<Product>({
           limit: 8,
           page: pageParam,
           with: ["product_images", "category", "store"],
           withCount: ["reviews", "order_items"],
-          orderBy: {
-            field: "average_rating",
-            value: "desc",
-          },
           filters: [
             {
               field: "slug_with_store",
@@ -738,7 +748,8 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
               value: product.slug_with_store,
             },
           ],
-        })
+        }),
+        userToken
       ),
     getNextPageParam: (lastPage, allPages) =>
       lastPage && lastPage.current_page < lastPage.last_page

@@ -5,7 +5,12 @@ import {
   VariantCombination,
   VariantType,
 } from "@/types/Product";
-import { MakePropertiesRequired, QueryParams } from "@/types/data";
+import {
+  MakePropertiesRequired,
+  PaginatedData,
+  QueryParams,
+  QueryState,
+} from "@/types/data";
 import { protectedRequest, publicRequest } from ".";
 import { queryStateToQueryString } from "../formater";
 
@@ -16,6 +21,24 @@ export async function getAllProducts<K extends keyof Product>(
   const result = await publicRequest<MakePropertiesRequired<Product, K>[]>({
     method: "GET",
     path: "/products/" + queryParams,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getPaginatedProductsRecomend<K extends keyof Product>(
+  params?: Omit<QueryState<Product>, "orderBy">
+) {
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
+  const result = await publicRequest<
+    PaginatedData<MakePropertiesRequired<Product, K>[]>
+  >({
+    method: "GET",
+    path: "/paginated/products/recomendation/" + queryParams,
   });
 
   if (!result.success) {

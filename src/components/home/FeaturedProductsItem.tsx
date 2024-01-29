@@ -1,5 +1,5 @@
 import { DEFAULT_STORE_CATEGORY_IMAGE } from "@/lib/constants";
-import { formatPrice } from "@/lib/formater";
+import { formatPrice, htmlToPlainText } from "@/lib/formater";
 import { Product } from "@/types/Product";
 import Image from "next/image";
 import Link from "next/link";
@@ -65,7 +65,9 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
               </div>
             )}
           </div>
-          <p className="hidden lg:line-clamp-2">{product.description}</p>
+          <p className="hidden lg:line-clamp-2">
+            {htmlToPlainText(product.description)}
+          </p>
           <button className="inline-block px-5 py-3 bg-primary hover:bg-opacity-80 font-semibold tracking-wider uppercase">
             Telusuri
           </button>

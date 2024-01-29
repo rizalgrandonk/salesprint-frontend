@@ -1,4 +1,4 @@
-import { formatPrice } from "@/lib/formater";
+import { formatPrice, htmlToPlainText } from "@/lib/formater";
 import { Product } from "@/types/Product";
 import Image from "next/image";
 import Link from "next/link";
@@ -65,8 +65,8 @@ const LatestProductsItem = ({ product }: LatestProductsItemProps) => {
           <h2 className="text-xl lg:text-2xl font-semibold line-clamp-2">
             {product.name}
           </h2>
-          <p className="hidden lg:line-clamp-4 text-gray-600 dark:text-gray-400">
-            {product.description}
+          <p className="hidden lg:line-clamp-3 text-gray-600 dark:text-gray-400">
+            {htmlToPlainText(product.description)}
           </p>
           <span className="inline-block px-3 py-0.5 lg:text-lg font-semibold rounded-full border-2 border-primary">
             {`${formatPrice(product.price)}`}

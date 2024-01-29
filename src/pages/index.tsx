@@ -4,41 +4,38 @@ import FeaturedProductsCarousel from "@/components/home/FeaturedProductsCarousel
 import LatestProductsCarousel from "@/components/home/LatestProductsCarousel";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import Meta from "@/components/utils/Meta";
+import Spinner from "@/components/utils/Spinner";
 import { getAllCategories } from "@/lib/api/categories";
+import { getPaginatedData } from "@/lib/api/data";
 import { getAllProducts } from "@/lib/api/products";
+import { queryStateToQueryString } from "@/lib/formater";
 import { Category } from "@/types/Category";
 import { Product } from "@/types/Product";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 import { FaAngleDoubleRight } from "react-icons/fa";
+import { useInView } from "react-intersection-observer";
 
 export default function Home({
-  products,
+  featuredProducts,
+  latestProducts,
   categories,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const featuredProducts = products
-    .sort((a, b) => b.average_rating - a.average_rating)
-    .slice(0, 6);
-
-  const latestProducts = products.slice(0, 4);
-
-  const recomendations = products
-    .sort((itemA, itemB) => Math.random() - 0.5)
-    .slice(0, 12);
-  // (a, b) => a - b
-
-  // [1,2,3,4]
-  // [2,4,1,3]
-  // [2,4]
-
-  if (!products || !categories) {
+  if (!featuredProducts || !latestProducts || !categories) {
     return (
       <div className="w-full px-28 py-44">
         <LoadingSpinner />
       </div>
     );
   }
+
+  // const featuredProducts = recomendedProducts.slice(0, 6);
+
+  // const recomendations = recomendedProducts.slice(6);
 
   return (
     <>
@@ -105,36 +102,121 @@ export default function Home({
           Produk Rekomendasi
         </h2>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
+        {/* <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
           {recomendations.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
-        </div>
+        </div> */}
+        <RecomendationSection />
       </section>
     </>
   );
 }
 
+function RecomendationSection() {
+  const { data: session } = useSession();
+
+  const userId = session?.user?.id;
+  const userToken = session?.user?.access_token;
+
+  const { ref: sectionStartRef, inView: sectionStartInView } = useInView();
+  const { ref: lastItemRef, inView: lastItemInView } = useInView();
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["/paginated/products", userId],
+    queryFn: ({ pageParam = 1 }) =>
+      getPaginatedData<Product>(
+        "/paginated/products/recomendation",
+        queryStateToQueryString<Product>({
+          limit: 8,
+          page: pageParam,
+          with: ["product_images", "category", "store"],
+          withCount: ["reviews", "order_items"],
+        }),
+        userToken
+      ),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage && lastPage.current_page < lastPage.last_page
+        ? lastPage.current_page + 1
+        : null,
+    enabled: sectionStartInView,
+  });
+
+  useEffect(() => {
+    if (lastItemInView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [lastItemInView, fetchNextPage, hasNextPage]);
+
+  return (
+    <div ref={sectionStartRef}>
+      {!data ? null : (
+        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
+          {data.pages.map((group, idx) =>
+            group?.data.map((product, i) => (
+              <ProductCard
+                ref={
+                  data.pages.length === idx + 1 && group.data.length === i + 1
+                    ? lastItemRef
+                    : undefined
+                }
+                key={product.id}
+                product={product}
+              />
+            ))
+          )}
+        </div>
+      )}
+
+      {(isFetching || isFetchingNextPage) && (
+        <div className="py-8 flex items-center justify-center gap-2">
+          <Spinner className="w-8 h-8 text-primary" />
+          <span className="text-lg">Memuat...</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export const getStaticProps = (async () => {
-  const products =
-    (await getAllProducts({
+  const [featuredProducts, latestProducts, categories] = await Promise.all([
+    getAllProducts({
       with: ["product_images", "store"],
       withCount: ["reviews"],
       orderBy: {
         field: "average_rating",
         value: "desc",
       },
-    })) || [];
-  const categories = (await getAllCategories()) || [];
+      limit: 8,
+    }),
+    getAllProducts({
+      with: ["product_images", "store"],
+      withCount: ["reviews"],
+      orderBy: {
+        field: "created_at",
+        value: "desc",
+      },
+      limit: 8,
+    }),
+    await getAllCategories(),
+  ]);
 
   return {
     props: {
-      products,
-      categories,
+      featuredProducts: featuredProducts ?? [],
+      latestProducts: latestProducts ?? [],
+      categories: categories ?? [],
     },
-    revalidate: 20,
+    revalidate: 60,
   };
 }) satisfies GetStaticProps<{
-  products: Product[];
+  featuredProducts: Product[];
+  latestProducts: Product[];
   categories: Category[];
 }>;
