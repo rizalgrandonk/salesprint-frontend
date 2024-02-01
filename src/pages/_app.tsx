@@ -2,6 +2,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import AppLayout from "@/components/Layout";
 import LoadingLogo from "@/components/utils/LoadingLogo";
+import { CartProvider, useCart } from "@/contexts/CartContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "@/styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -50,10 +51,12 @@ export default function MyApp({
       >
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
-            <WrapperLayout layout={layout}>
-              <Component {...pageProps} />
-              <Toaster position="top-right" />
-            </WrapperLayout>
+            <CartProvider>
+              <WrapperLayout layout={layout}>
+                <Component {...pageProps} />
+                <Toaster position="top-right" />
+              </WrapperLayout>
+            </CartProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </SessionProvider>
@@ -66,6 +69,7 @@ function WrapperLayout({
   layout,
 }: { layout: "app" | "dashboard" | "auth" } & PropsWithChildren) {
   const { data: session, status } = useSession();
+  const { isLoading: isLoadingCart } = useCart();
 
   useEffect(() => {
     if (session?.user && session?.user.error) {
@@ -73,7 +77,7 @@ function WrapperLayout({
     }
   }, [session]);
 
-  if (status === "loading") {
+  if (status === "loading" || isLoadingCart) {
     return (
       <div className="h-screen w-screen text-primary">
         <LoadingLogo />

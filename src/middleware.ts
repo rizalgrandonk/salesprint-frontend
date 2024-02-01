@@ -33,7 +33,10 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
 
     if (
       (pathname.startsWith("/admin") && token.user.role !== "admin") ||
-      (pathname.startsWith("/seller") && token.user.role !== "seller")
+      (pathname.startsWith("/seller") && token.user.role !== "seller") ||
+      (!pathname.startsWith("/admin") &&
+        !pathname.startsWith("/seller") &&
+        token.user.role !== "user")
     ) {
       const url = new URL(`/403`, request.url);
       return NextResponse.rewrite(url);

@@ -129,7 +129,7 @@ function RecomendationSection() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["/paginated/products", userId],
+    queryKey: ["/paginated/products/recomendation", userId],
     queryFn: ({ pageParam = 1 }) =>
       getPaginatedData<Product>(
         "/paginated/products/recomendation",

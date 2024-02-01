@@ -20,6 +20,7 @@ import {
 } from "react-icons/ri";
 
 import QueryKeys from "@/constants/queryKeys";
+import { useCart } from "@/contexts/CartContext";
 import { getUserStore } from "@/lib/api/stores";
 import { DEFAULT_STORE_IMAGE, DEFAULT_USER_IMAGE } from "@/lib/constants";
 import { Popover, Transition } from "@headlessui/react";
@@ -48,7 +49,9 @@ export default function Navbar() {
   //     window.removeEventListener("scroll", changeColor);
   //   };
   // }, []);
-  // const { totalItems } = useCart();
+
+  const { totalItems } = useCart();
+
   const { data: session } = useSession();
 
   const { asPath, locale } = useRouter();
@@ -105,11 +108,11 @@ export default function Navbar() {
               <span className="text-2xl">
                 <RiShoppingCartLine />
               </span>
-              {/* {totalItems > 0 && (
-                  <span className="absolute right-0 top-1 block h-5 w-5 text-sm text-center bg-red-600 rounded-full">
-                    {totalItems}
-                  </span>
-                )} */}
+              {totalItems > 0 && (
+                <span className="absolute right-0 top-1 block h-5 w-5 text-sm text-center text-white bg-primary rounded-full">
+                  {totalItems}
+                </span>
+              )}
             </Link>
 
             <DarkModeToggle className="text-2xl hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded">
@@ -178,11 +181,11 @@ export default function Navbar() {
             >
               <span className="text-4xl text-gray-200 relative focus:text-primary hover:text-primary">
                 <RiShoppingCartLine />
-                {/* {totalItems > 0 && (
-                    <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center bg-red-600 rounded-full text-gray-200">
-                      {totalItems}
-                    </span>
-                  )} */}
+                {totalItems > 0 && (
+                  <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center text-white bg-primary rounded-full">
+                    {totalItems}
+                  </span>
+                )}
               </span>
             </Link>
           </div>

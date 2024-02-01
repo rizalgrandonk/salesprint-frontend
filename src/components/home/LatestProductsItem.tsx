@@ -19,7 +19,7 @@ const LatestProductsItem = ({ product }: LatestProductsItemProps) => {
       className="block w-full h-80 p-1 lg:p-3"
     >
       <div className="px-3 py-4 flex w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700">
-        <div className="w-40 lg:w-80 h-full bg-cover bg-center relative rounded overflow-hidden">
+        <div className="flex-shrink-0 w-40 lg:w-56 h-full bg-cover bg-center relative rounded overflow-hidden">
           <Image
             src={
               product.product_images?.find((image) => image.main_image)

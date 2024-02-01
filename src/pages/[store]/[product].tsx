@@ -1,12 +1,14 @@
 import ProductCard from "@/components/ProductCard";
 import BaseCard from "@/components/utils/BaseCard";
-import { Button } from "@/components/utils/Button";
+import BaseModal from "@/components/utils/BaseModal";
+import { Button, ButtonLink } from "@/components/utils/Button";
 import FormInput from "@/components/utils/FormInput";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import Meta from "@/components/utils/Meta";
 import ProductRating from "@/components/utils/ProductRating";
 import Spinner from "@/components/utils/Spinner";
 import QueryKeys from "@/constants/queryKeys";
+import { useCart } from "@/contexts/CartContext";
 import useDataTable from "@/hooks/useDataTable";
 import { getPaginatedData } from "@/lib/api/data";
 import { getProduct, getStoreProducts } from "@/lib/api/products";
@@ -38,6 +40,7 @@ import {
   MdArrowDropDown,
   MdChevronLeft,
   MdChevronRight,
+  MdClose,
   MdKeyboardArrowDown,
   MdLocationPin,
   MdOutlineStorefront,
@@ -123,11 +126,15 @@ export default function ProductPage({
   store,
   storeProducts,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { addItem } = useCart();
+
   const { variantsTypeOptions, variantCombinations } = transformProductVariants(
     product.product_variants
   );
 
   const [isDescriptionExpand, setIsDescriptionExpand] = useState(false);
+  const [quantityInput, setQuantityInput] = useState("1");
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -167,6 +174,43 @@ export default function ProductPage({
     (vars) => !selectedVariants[vars.variant_type.name]
   );
 
+  const selectedProductVariant =
+    variantsTypeOptions.length <= 0 && product.product_variants.length === 1
+      ? product.product_variants[0]
+      : product.product_variants.find((prodVar) => {
+          return prodVar.variant_options?.some((opt) => {
+            return (
+              opt.variant_type?.name &&
+              !!selectedVariants[opt.variant_type.name] &&
+              selectedVariants[opt.variant_type.name] === opt.value
+            );
+          });
+        });
+
+  const addProductToCart = () => {
+    if (Number(quantityInput) <= 0) {
+      return;
+    }
+    if (!isAllVariantSelected) {
+      return;
+    }
+
+    if (!selectedProductVariant) {
+      return;
+    }
+
+    addItem({
+      product: {
+        ...product,
+        store: store,
+      },
+      productVariant: selectedProductVariant,
+      quantity: Number(quantityInput),
+    });
+    setQuantityInput("1");
+    setIsCartModalOpen(true);
+  };
+
   return (
     <>
       <Meta
@@ -181,8 +225,8 @@ export default function ProductPage({
         }
       />
 
-      <div className="py-8 space-y-12">
-        <section className="container p-4 flex flex-col lg:flex-row lg:gap-2 rounded-sm">
+      <div className="py-8 space-y-16">
+        <section className="container flex flex-col lg:flex-row lg:gap-2 rounded-sm">
           <ImageSection product={product} key={product.id} />
           <div className="w-full lg:w-1/2 space-y-3 py-6 lg:py-2 lg:pl-12">
             <h1 className="text-3xl font-medium">{product.name}</h1>
@@ -287,19 +331,35 @@ export default function ProductPage({
                     className="rounded-r-none"
                     variant="base"
                     outline
+                    onClick={() => {
+                      if (Number(quantityInput) > 1) {
+                        setQuantityInput(`${Number(quantityInput) - 1}`);
+                      }
+                    }}
                   >
                     -
                   </Button>
                   <FormInput
                     id="quantity"
                     className="w-16 text-sm h-9 rounded-none text-center"
-                    defaultValue="1"
+                    type="number"
+                    min={1}
+                    value={quantityInput}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value && Number(value) > 0) {
+                        setQuantityInput(value);
+                      }
+                    }}
                   />
                   <Button
                     type="button"
                     className="rounded-l-none"
                     variant="base"
                     outline
+                    onClick={() => {
+                      setQuantityInput(`${Number(quantityInput) + 1}`);
+                    }}
                   >
                     +
                   </Button>
@@ -313,6 +373,7 @@ export default function ProductPage({
               size="lg"
               className="text-lg h-12"
               disabled={!isAllVariantSelected}
+              onClick={() => addProductToCart()}
             >
               <MdShoppingCart className="text-2xl" />
               Masukan Keranjang
@@ -322,7 +383,7 @@ export default function ProductPage({
 
         <div className="container flex items-stretch gap-16">
           {/* <div className="lg:col-span-2 h-24 bg-gray-500">Store</div> */}
-          <div className="flex-grow space-y-10">
+          <div className="flex-grow space-y-12">
             <section className="p-4 flex flex-col lg:flex-row lg:gap-2 lg:items-start lg:justify-between border-t border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-4">
                 <div className="relative h-24 aspect-square rounded-full overflow-hidden">
@@ -378,7 +439,7 @@ export default function ProductPage({
               </div>
             </section>
 
-            <section className="p-4 space-y-6">
+            <section className="space-y-6">
               <h3 className="font-semibold text-2xl">Deskripsi Produk</h3>
               <div
                 dangerouslySetInnerHTML={{ __html: product.description }}
@@ -404,7 +465,7 @@ export default function ProductPage({
               </button>
             </section>
 
-            <section className="p-4 space-y-6">
+            <section className="space-y-6">
               <h3 className="font-semibold text-2xl">Review</h3>
               <ReviewsSection
                 product={product}
@@ -435,11 +496,64 @@ export default function ProductPage({
           </section>
         </div>
 
-        <section className="container p-4 space-y-6">
+        <section className="container space-y-6">
           <h3 className="font-semibold text-2xl">Anda mungkin tertarik</h3>
           <RecomendationSection product={product} />
         </section>
       </div>
+
+      <BaseModal
+        isOpen={isCartModalOpen}
+        onClose={() => setIsCartModalOpen(false)}
+        className="w-full max-w-2xl overflow-hidden transition-all"
+      >
+        <div className="pb-2 flex items-center justify-between">
+          <h3 className="text-xl font-medium leading-6">
+            Berhasil menambah ke keranjang
+          </h3>
+          <MdClose
+            onClick={() => setIsCartModalOpen(false)}
+            className="text-xl cursor-pointer opacity-80 hover:opacity-100"
+          />
+        </div>
+        <BaseCard className="flex items-center justify-between">
+          <div className="flex items-start gap-2">
+            <div className="h-20 aspect-square bg-cover bg-center relative rounded overflow-hidden">
+              <Image
+                src={
+                  product.product_images?.find((image) => image.main_image)
+                    ?.image_url ||
+                  product.product_images?.[0]?.image_url ||
+                  DEFAULT_STORE_CATEGORY_IMAGE
+                }
+                alt={product.name}
+                fill
+                loading="lazy"
+                className="object-cover"
+                sizes="25vw"
+              />
+            </div>
+            <div className="space-y-1">
+              <p>{product.name}</p>
+              <div className="flex items-center gap-2">
+                {selectedProductVariant?.variant_options?.map((opt) => (
+                  <span className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600">
+                    {opt.value}
+                  </span>
+                ))}
+              </div>
+              {selectedProductVariant?.price && (
+                <p className="font-semibold text-lg">
+                  {formatPrice(selectedProductVariant.price)}
+                </p>
+              )}
+            </div>
+          </div>
+          <ButtonLink href="/cart" variant="primary" size="sm">
+            Lihat Keranjang
+          </ButtonLink>
+        </BaseCard>
+      </BaseModal>
     </>
   );
 }
@@ -732,7 +846,7 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["/paginated/products", userId],
+    queryKey: ["/paginated/products/recomendation", userId],
     queryFn: ({ pageParam = 1 }) =>
       getPaginatedData<Product>(
         "/paginated/products/recomendation",
