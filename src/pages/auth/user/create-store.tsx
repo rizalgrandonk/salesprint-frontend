@@ -7,12 +7,8 @@ import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
 import QueryKeys from "@/constants/queryKeys";
 import useDebounce from "@/hooks/useDebounce";
-import {
-  createStore,
-  getCities,
-  getProvince,
-  getStoreBySlug,
-} from "@/lib/api/stores";
+import { getCities, getProvince } from "@/lib/api/logistic";
+import { createStore, getStoreBySlug } from "@/lib/api/stores";
 import { CreateStoreInputs, createStoreSchema } from "@/types/Store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";

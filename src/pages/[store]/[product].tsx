@@ -537,7 +537,10 @@ export default function ProductPage({
               <p>{product.name}</p>
               <div className="flex items-center gap-2">
                 {selectedProductVariant?.variant_options?.map((opt) => (
-                  <span className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600">
+                  <span
+                    key={opt.id}
+                    className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
+                  >
                     {opt.value}
                   </span>
                 ))}

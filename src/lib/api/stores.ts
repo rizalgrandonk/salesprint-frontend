@@ -94,34 +94,3 @@ export async function getStoreBySlug<K extends keyof Store>(
 
   return result.data;
 }
-
-export async function getProvince() {
-  const result = await publicRequest<Province[]>({
-    method: "GET",
-    path: `/province`,
-  });
-
-  if (!result.success) {
-    return null;
-  }
-
-  return result.data;
-}
-
-export async function getCities(provinceId?: string) {
-  if (!provinceId) {
-    return null;
-  }
-
-  const result = await publicRequest<City[]>({
-    method: "GET",
-    path: `/city`,
-    params: { province_id: provinceId },
-  });
-
-  if (!result.success) {
-    return null;
-  }
-
-  return result.data;
-}

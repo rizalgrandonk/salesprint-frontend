@@ -7,17 +7,13 @@ import FormArea from "@/components/utils/FormArea";
 import FormInput from "@/components/utils/FormInput";
 import FormSelect from "@/components/utils/FormSelect";
 import QueryKeys from "@/constants/queryKeys";
+import { getCities, getProvince } from "@/lib/api/logistic";
 import {
   createStoreBanner,
   deleteStoreBanner,
   updateStoreBanner,
 } from "@/lib/api/storeBanners";
-import {
-  getCities,
-  getProvince,
-  getUserStore,
-  updateStore,
-} from "@/lib/api/stores";
+import { getUserStore, updateStore } from "@/lib/api/stores";
 import { sleep } from "@/lib/sleep";
 import toast from "@/lib/toast";
 import {

@@ -45,11 +45,11 @@ export default function CartPage() {
                 </Button>
               </BaseCard>
               {itemGroups.map((group) => (
-                <BaseCard className="space-y-4">
+                <BaseCard key={group.store.id} className="space-y-4">
                   <p className="font-semibold">{group.store.name}</p>
                   <div className="space-y-4">
                     {group.items.map((item) => (
-                      <CartItemCard item={item} />
+                      <CartItemCard key={item.productVariant.id} item={item} />
                     ))}
                   </div>
                 </BaseCard>
@@ -114,7 +114,10 @@ function CartItemCard({ item }: { item: CartItem }) {
           <p>{item.product.name}</p>
           <div className="flex items-center gap-2">
             {item.productVariant.variant_options?.map((opt) => (
-              <span className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600">
+              <span
+                key={opt.id}
+                className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
+              >
                 {opt.value}
               </span>
             ))}
