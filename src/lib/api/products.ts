@@ -20,7 +20,7 @@ export async function getAllProducts<K extends keyof Product>(
   const queryParams = params ? "?" + queryStateToQueryString(params) : "";
   const result = await publicRequest<MakePropertiesRequired<Product, K>[]>({
     method: "GET",
-    path: "/products/" + queryParams,
+    path: "/products" + queryParams,
   });
 
   if (!result.success) {
@@ -38,7 +38,7 @@ export async function getPaginatedProductsRecomend<K extends keyof Product>(
     PaginatedData<MakePropertiesRequired<Product, K>[]>
   >({
     method: "GET",
-    path: "/paginated/products/recomendation/" + queryParams,
+    path: "/paginated/products/recomendation" + queryParams,
   });
 
   if (!result.success) {
@@ -55,7 +55,7 @@ export async function getStoreProducts<K extends keyof Product>(
   const queryParams = params ? "?" + queryStateToQueryString(params) : "";
   const result = await publicRequest<MakePropertiesRequired<Product, K>[]>({
     method: "GET",
-    path: `/stores/${storeSlug}/products/` + queryParams,
+    path: `/stores/${storeSlug}/products` + queryParams,
   });
 
   if (!result.success) {
@@ -73,7 +73,7 @@ export async function getProduct<K extends keyof Product>(
   const queryParams = params ? "?" + queryStateToQueryString(params) : "";
   const result = await publicRequest<MakePropertiesRequired<Product, K>>({
     method: "GET",
-    path: `/products/${storeSlug}/${productSlug}/` + queryParams,
+    path: `/products/${storeSlug}/${productSlug}` + queryParams,
   });
 
   if (!result.success) {
@@ -96,7 +96,7 @@ export async function createProduct(
 ) {
   return await protectedRequest<Product>({
     method: "POST",
-    path: `/stores/${storeSlug}/products/`,
+    path: `/stores/${storeSlug}/products`,
     token,
     data,
   });

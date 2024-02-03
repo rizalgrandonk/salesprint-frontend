@@ -87,7 +87,7 @@ export default function StoreProductListPage() {
 
   const storeSlug = store?.slug;
 
-  const path = `/paginated/stores/${storeSlug}/products/`;
+  const path = `/paginated/stores/${storeSlug}/products`;
 
   const {
     data: products,

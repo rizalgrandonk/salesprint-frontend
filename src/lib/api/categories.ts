@@ -7,7 +7,7 @@ export async function getAllCategories(params?: QueryParams<Category>) {
   const queryParams = params ? "?" + queryStateToQueryString(params) : "";
   const result = await publicRequest<Category[]>({
     method: "GET",
-    path: "/categories/" + queryParams,
+    path: "/categories" + queryParams,
   });
 
   if (!result.success) {

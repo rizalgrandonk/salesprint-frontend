@@ -14,7 +14,7 @@ import { queryStateToQueryString } from "../formater";
 export async function getPaginatedStores(params?: string) {
   const result = await publicRequest<PaginatedData<Store[]>>({
     method: "GET",
-    path: `/paginated/stores/${params ? "?" + params : ""}`,
+    path: `/paginated/stores${params ? "?" + params : ""}`,
   });
 
   if (!result.success) {
