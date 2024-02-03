@@ -45,6 +45,7 @@ export async function protectedRequest<T = any>(
       params: params,
       headers: {
         Authorization: `Bearer ${token}`,
+        Accept: "application/json",
         ...headers,
       },
       ...config,
@@ -84,7 +85,10 @@ export async function publicRequest<T = any>(
       method: method || "GET",
       data: data,
       params: params,
-      headers: headers,
+      headers: {
+        Accept: "application/json",
+        ...headers,
+      },
       ...config,
     });
 
