@@ -79,7 +79,7 @@ function WrapperLayout({
 
   if (status === "loading" || isLoadingCart) {
     return (
-      <div className="h-screen w-screen text-primary">
+      <div className="bg-gray-50 dark:bg-gray-900 h-screen w-screen text-primary">
         <LoadingLogo />
       </div>
     );
