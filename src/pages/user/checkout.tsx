@@ -238,14 +238,29 @@ export default function CheckoutPage() {
 
     window.snap.pay(tokenSnap, {
       onSuccess: async (result) => {
+        if (!tokenSnap) {
+          console.log("Snap token not found");
+          setSnapToken(tokenSnap);
+          return;
+        }
         await handleSuccessResult(result, tokenSnap);
         setSnapToken(undefined);
       },
       onPending: async (result) => {
+        if (!tokenSnap) {
+          console.log("Snap token not found");
+          setSnapToken(tokenSnap);
+          return;
+        }
         await handleSuccessResult(result, tokenSnap);
         setSnapToken(undefined);
       },
       onError: async (result) => {
+        if (!tokenSnap) {
+          console.log("Snap token not found");
+          setSnapToken(tokenSnap);
+          return;
+        }
         await handleErrorResult(result, tokenSnap);
         setSnapToken(undefined);
       },
@@ -254,6 +269,7 @@ export default function CheckoutPage() {
           "customer close the popup window without the finishing the payment"
         );
         setSnapToken(tokenSnap);
+        return;
       },
     });
   };
