@@ -9,6 +9,7 @@ const QueryKeys = {
   STORE_GET_CITES: "/stores/get_cities",
   STORE_BANNERS: "/stores/banners",
   STORE_CATEGORIES: "/stores/categories",
+  LOGISTIC_COST: "/logistic/costs",
 };
 
 export default QueryKeys;

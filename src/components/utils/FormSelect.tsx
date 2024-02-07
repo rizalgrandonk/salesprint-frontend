@@ -8,6 +8,7 @@ type FormSelectType = SelectHTMLAttributes<HTMLSelectElement> & {
   error?: string;
   classNameLabel?: string;
   classNameError?: string;
+  classNameContainer?: string;
   elementLeft?: ReactNode;
   elementRight?: ReactNode;
   info?: ReactNode;
@@ -27,13 +28,14 @@ const FormSelect = forwardRef<HTMLSelectElement, FormSelectType>(
       error,
       info,
       classNameError,
+      classNameContainer,
       options = [],
       ...props
     }: FormSelectType,
     ref
   ) {
     return (
-      <div className="space-y-1">
+      <div className={twMerge("space-y-1", classNameContainer)}>
         {!!label && (
           <label
             htmlFor={id}

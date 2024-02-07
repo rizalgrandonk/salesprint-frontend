@@ -8,6 +8,7 @@ type FormInputType = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
   classNameLabel?: string;
   classNameError?: string;
+  classNameContainer?: string;
   elementLeft?: ReactNode;
   elementRight?: ReactNode;
   info?: ReactNode;
@@ -26,12 +27,13 @@ const FormInput = forwardRef<HTMLInputElement, FormInputType>(
       error,
       info,
       classNameError,
+      classNameContainer,
       ...props
     }: FormInputType,
     ref
   ) {
     return (
-      <div className="space-y-1">
+      <div className={twMerge("space-y-1", classNameContainer)}>
         {!!label && (
           <label
             htmlFor={id}

@@ -9,7 +9,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 import type { AppProps } from "next/app";
 import { Poppins } from "next/font/google";
-import { PropsWithChildren, useEffect } from "react";
+import { Router } from "next/router";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import "react-multi-carousel/lib/styles.css";
 
@@ -70,6 +71,26 @@ function WrapperLayout({
 }: { layout: "app" | "dashboard" | "auth" } & PropsWithChildren) {
   const { data: session, status } = useSession();
   const { isLoading: isLoadingCart } = useCart();
+  const [isLoadingRoute, setIsLoadingRoute] = useState(false);
+
+  useEffect(() => {
+    const start = () => {
+      console.log("start");
+      setIsLoadingRoute(true);
+    };
+    const end = () => {
+      console.log("findished");
+      setIsLoadingRoute(false);
+    };
+    Router.events.on("routeChangeStart", start);
+    Router.events.on("routeChangeComplete", end);
+    Router.events.on("routeChangeError", end);
+    return () => {
+      Router.events.off("routeChangeStart", start);
+      Router.events.off("routeChangeComplete", end);
+      Router.events.off("routeChangeError", end);
+    };
+  }, []);
 
   useEffect(() => {
     if (session?.user && session?.user.error) {
@@ -77,10 +98,12 @@ function WrapperLayout({
     }
   }, [session]);
 
-  if (status === "loading" || isLoadingCart) {
+  if (status === "loading" || isLoadingCart || isLoadingRoute) {
     return (
-      <div className="bg-gray-50 dark:bg-gray-900 h-screen w-screen text-primary">
-        <LoadingLogo />
+      <div className="bg-gray-50 dark:bg-gray-900 h-screen w-screen text-primary flex items-center justify-center flex-col gap-4">
+        <div className="h-[60vh] aspect-square">
+          <LoadingLogo />
+        </div>
       </div>
     );
   }

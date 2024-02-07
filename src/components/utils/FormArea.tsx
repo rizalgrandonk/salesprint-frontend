@@ -8,6 +8,7 @@ type FormAreaType = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   error?: string;
   classNameLabel?: string;
   classNameError?: string;
+  classNameContainer?: string;
   info?: ReactNode;
 };
 
@@ -22,12 +23,13 @@ const FormArea = forwardRef<HTMLTextAreaElement, FormAreaType>(
       error,
       info,
       classNameError,
+      classNameContainer,
       ...props
     }: FormAreaType,
     ref
   ) {
     return (
-      <div className="space-y-1">
+      <div className={twMerge("space-y-1", classNameContainer)}>
         <label
           htmlFor={id}
           className={twMerge(

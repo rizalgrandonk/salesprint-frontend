@@ -204,7 +204,7 @@ export const getStaticProps = (async () => {
       },
       limit: 8,
     }),
-    await getAllCategories(),
+    await getAllCategories({ limit: 6 }),
   ]);
 
   return {

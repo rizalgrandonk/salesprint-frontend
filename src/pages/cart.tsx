@@ -14,6 +14,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import { useInView } from "react-intersection-observer";
@@ -22,6 +23,8 @@ export default function CartPage() {
   const { cartTotal, totalItems, items, emptyCart } = useCart();
 
   const itemGroups = groupItemByStore(items);
+
+  const router = useRouter();
 
   return (
     <>
@@ -64,6 +67,8 @@ export default function CartPage() {
                 </span>
               </div>
               <Button
+                onClick={() => router.push("/user/checkout")}
+                type="button"
                 variant="primary"
                 size="lg"
                 className="w-full"
