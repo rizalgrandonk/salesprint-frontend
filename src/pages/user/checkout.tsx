@@ -231,6 +231,11 @@ export default function CheckoutPage() {
       tokenSnap = tokenResult.data.token;
     }
 
+    if (!tokenSnap) {
+      console.log("Snap token not found");
+      return;
+    }
+
     window.snap.pay(tokenSnap, {
       onSuccess: async (result) => {
         await handleSuccessResult(result, tokenSnap);
