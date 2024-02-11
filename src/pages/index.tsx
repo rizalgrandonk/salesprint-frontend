@@ -5,6 +5,7 @@ import LatestProductsCarousel from "@/components/home/LatestProductsCarousel";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import Meta from "@/components/utils/Meta";
 import Spinner from "@/components/utils/Spinner";
+import QueryKeys from "@/constants/queryKeys";
 import { getAllCategories } from "@/lib/api/categories";
 import { getPaginatedData } from "@/lib/api/data";
 import { getAllProducts } from "@/lib/api/products";
@@ -129,10 +130,10 @@ function RecomendationSection() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["/paginated/products/recomendation", userId],
+    queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
     queryFn: ({ pageParam = 1 }) =>
       getPaginatedData<Product>(
-        "/paginated/products/recomendation",
+        QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
         queryStateToQueryString<Product>({
           limit: 8,
           page: pageParam,

@@ -163,7 +163,7 @@ export default function CheckoutPage() {
     });
 
     emptyCart();
-    router.push("/");
+    router.push("/user/orders");
   };
   const handleErrorResult = async (
     result: TransactionErrorResult,
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
     });
 
     emptyCart();
-    router.push("/");
+    router.push("/user/orders");
   };
 
   const onSubmit: SubmitHandler<AddressInput> = async (data) => {

@@ -4,6 +4,7 @@ import { Button } from "@/components/utils/Button";
 import FormInput from "@/components/utils/FormInput";
 import Meta from "@/components/utils/Meta";
 import Spinner from "@/components/utils/Spinner";
+import QueryKeys from "@/constants/queryKeys";
 import { CartItem, useCart } from "@/contexts/CartContext";
 import { getPaginatedData } from "@/lib/api/data";
 import { DEFAULT_STORE_CATEGORY_IMAGE } from "@/lib/constants";
@@ -216,10 +217,10 @@ function RecomendationSection() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["/paginated/products/recomendation", userId],
+    queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
     queryFn: ({ pageParam = 1 }) =>
       getPaginatedData<Product>(
-        "/paginated/products/recomendation",
+        QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
         queryStateToQueryString<Product>({
           limit: 8,
           page: pageParam,

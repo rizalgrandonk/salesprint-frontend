@@ -17,8 +17,10 @@ const defaultQueryState = {
 export default function useDataTable<T>(
   path: string,
   initialQueryState?: Partial<QueryState<T>>,
-  enabled?: boolean
+  config: { enabled?: boolean; token?: string; queryKey?: unknown[] } = {}
 ) {
+  const { enabled, token, queryKey } = config;
+
   const [queryState, setQueryState] = useState<QueryState<T>>(
     initialQueryState
       ? {
@@ -31,9 +33,15 @@ export default function useDataTable<T>(
   const debouncedQueryState = useDebounce(queryState, 200);
 
   const queryResult = useQuery({
-    queryKey: [path, debouncedQueryState],
+    queryKey: queryKey
+      ? [...queryKey, debouncedQueryState]
+      : [path, debouncedQueryState],
     queryFn: () =>
-      getPaginatedData<T>(path, queryStateToQueryString(debouncedQueryState)),
+      getPaginatedData<T>(
+        path,
+        queryStateToQueryString(debouncedQueryState),
+        token
+      ),
     keepPreviousData: true,
     enabled: enabled,
   });

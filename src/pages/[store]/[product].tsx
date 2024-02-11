@@ -649,7 +649,7 @@ function ReviewsSection({
       limit: 5,
       with: ["user"],
     },
-    inView
+    { enabled: inView }
   );
 
   const selectedFilterRating = queryState.filters?.find(
@@ -849,10 +849,10 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["/paginated/products/recomendation", userId],
+    queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
     queryFn: ({ pageParam = 1 }) =>
       getPaginatedData<Product>(
-        "/paginated/products/recomendation",
+        QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
         queryStateToQueryString<Product>({
           limit: 8,
           page: pageParam,
