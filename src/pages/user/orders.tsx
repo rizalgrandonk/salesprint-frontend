@@ -21,6 +21,24 @@ import {
   MdOutlineShoppingBag,
   MdOutlineStore,
 } from "react-icons/md";
+import { twMerge } from "tailwind-merge";
+
+const ORDER_STATUS_MAP: { [key: string]: string } = {
+  UNPAID: "Belum Dibayar",
+  PAID: "Menunggu Konfirmasi",
+  PROCESSED: "Diproses",
+  SHIPPED: "Dikirim",
+  COMPLETED: "Selesai",
+  CANCELED: "Dibatalkan",
+};
+const ORDER_STATUS_CLASS_MAP: { [key: string]: string } = {
+  UNPAID: "text-yellow-500 bg-yellow-500/10",
+  PAID: "text-emerald-500 bg-emerald-500/10",
+  PROCESSED: "text-emerald-500 bg-emerald-500/10",
+  SHIPPED: "text-emerald-500 bg-emerald-500/10",
+  COMPLETED: "text-emerald-500 bg-emerald-500/10",
+  CANCELED: "text-rose-500 bg-rose-500/10",
+};
 
 export default function OrderPage() {
   const { data: session } = useSession();
@@ -173,8 +191,14 @@ function TransactionSection() {
             <span className="text-xs">
               {format(new Date(order.created_at), "dd MMM yyyy")}
             </span>
-            <span className="text-emerald-500 font-medium text-xs px-2 py-1 bg-emerald-500/10">
-              {order.order_status}
+            <span
+              className={twMerge(
+                "font-medium text-xs px-2 py-1",
+                ORDER_STATUS_CLASS_MAP[order.order_status] ??
+                  "text-emerald-500 bg-emerald-500/10"
+              )}
+            >
+              {ORDER_STATUS_MAP[order.order_status] ?? order.order_status}
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
               {order.transaction.serial_order}
