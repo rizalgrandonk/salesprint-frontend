@@ -112,7 +112,7 @@ export default function StoreProductListPage() {
       with: ["category", "store_category", "product_images"],
       withCount: ["reviews", "product_variants"],
     },
-    !!storeSlug
+    { enabled: !!storeSlug }
   );
 
   const { data: categories } = useQuery({
