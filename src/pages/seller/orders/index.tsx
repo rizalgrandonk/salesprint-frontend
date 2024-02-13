@@ -1,8 +1,9 @@
 import DataTable from "@/components/dashboard/DataTable";
 import Alerts from "@/components/utils/Alerts";
 import Badge from "@/components/utils/Badge";
+import BaseCard from "@/components/utils/BaseCard";
 import Breadcrumb from "@/components/utils/Breadcrumb";
-import { Button } from "@/components/utils/Button";
+import { Button, ButtonMenu } from "@/components/utils/Button";
 import FormInput from "@/components/utils/FormInput";
 import FormSelect from "@/components/utils/FormSelect";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
@@ -17,6 +18,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { MdChevronLeft, MdChevronRight, MdRefresh } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
+import { twMerge } from "tailwind-merge";
 
 const limitOptions = [10, 20, 30, 50, 100].map((limit) => ({
   title: limit.toString(),
@@ -82,6 +84,10 @@ export default function OrlderListPage() {
       token: userToken,
       queryKey: [QueryKeys.PAGINATED_STORE_ORDERS, userToken],
     }
+  );
+
+  const statusFilter = queryState.filters?.find(
+    (fil) => fil.field === "order_status"
   );
 
   if (isLoading) {
@@ -167,6 +173,45 @@ export default function OrlderListPage() {
             </div>
           </div>
         </div>
+
+        <BaseCard className="flex items-center gap-4">
+          <div className="flex-grow flex-shrink-0 font-medium text-center">
+            <span
+              className={twMerge(
+                "pb-1 px-2 border-b-4 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-white",
+                !statusFilter
+                  ? "text-primary dark:text-primary border-primary"
+                  : "border-transparent"
+              )}
+              onClick={() =>
+                setFilter([
+                  { field: "order_status", operator: "=", value: null },
+                ])
+              }
+            >
+              Semua
+            </span>
+          </div>
+          {Object.keys(ORDER_STATUS_MAP).map((key) => (
+            <div className="flex-grow flex-shrink-0 font-medium text-center">
+              <span
+                className={twMerge(
+                  "pb-1 px-2 border-b-4 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-white",
+                  statusFilter?.value === key
+                    ? "text-primary dark:text-primary border-primary"
+                    : "border-transparent"
+                )}
+                onClick={() =>
+                  setFilter([
+                    { field: "order_status", operator: "=", value: key },
+                  ])
+                }
+              >
+                {ORDER_STATUS_MAP[key]}
+              </span>
+            </div>
+          ))}
+        </BaseCard>
 
         <DataTable
           isFetching={isFetching || isLoading}
@@ -303,19 +348,42 @@ export default function OrlderListPage() {
             {
               id: "action",
               header: {
-                render: (list) => {
-                  return "Aksi";
-                },
+                render: "Aksi",
               },
               cell: {
                 className: "align-top",
                 render: (item) => {
-                  return null;
-                  // return (
-                  //   <div className="flex items-center gap-2">
-                  //     <Button outline>Terima Pesanan</Button>
-                  //   </div>
-                  // );
+                  return (
+                    <div className="flex flex-col items-stretch gap-2">
+                      {item.order_status === "PAID" && (
+                        <Button variant="primary" size="sm" className="w-full">
+                          Terima Pesanan
+                        </Button>
+                      )}
+                      {item.order_status === "PROCESSED" && (
+                        <Button variant="primary" size="sm" className="w-full">
+                          Atur Pengiriman
+                        </Button>
+                      )}
+                      <ButtonMenu
+                        title="Menu"
+                        variant="info"
+                        size="sm"
+                        className="w-full"
+                        outline
+                        options={[
+                          {
+                            title: "Detail Pesanan",
+                            onClick: () => undefined,
+                          },
+                          {
+                            title: "Batalkan Pesanan",
+                            onClick: () => undefined,
+                          },
+                        ]}
+                      />
+                    </div>
+                  );
                 },
               },
             },

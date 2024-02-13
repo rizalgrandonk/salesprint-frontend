@@ -169,6 +169,7 @@ export function ButtonMenu({
     variantClass[variant],
     sizeClass[size],
     outline ? outlineClass[variant] : "",
+    "justify-between",
     className
   );
   return (
