@@ -5,6 +5,7 @@ const QueryKeys = {
   PAGINATED_PRODUCTS_RECOMENDATION: "/paginated/products/recomendation",
   PAGINATED_USER_TRANSACTIONS: "/paginated/orders/user_transactions",
   PAGINATED_USER_ORDERS: "/paginated/orders/user_orders",
+  PAGINATED_STORE_ORDERS: "/paginated/orders/store_orders",
   ALL_CATEGORIES: "/categories",
   USER_STORE: "/users/user_store",
   PRODUCTS: "/products",

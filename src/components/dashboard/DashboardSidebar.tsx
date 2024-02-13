@@ -7,6 +7,7 @@ import {
   MdChevronLeft,
   MdChevronRight,
   MdKeyboardArrowDown,
+  MdOutlineArticle,
   MdOutlineCategory,
   MdOutlineDashboardCustomize,
   MdOutlineDns,
@@ -147,6 +148,19 @@ export default function DashboardSidebar({
                           {
                             title: "Tambah Produk",
                             href: "/seller/products/create",
+                          },
+                        ]}
+                        isExpand={isExpand}
+                      />
+                    </li>
+                    <li>
+                      <MenuDropdown
+                        title="Pesanan"
+                        icon={MdOutlineArticle}
+                        childs={[
+                          {
+                            title: "Daftar Pesanan",
+                            href: `/seller/orders`,
                           },
                         ]}
                         isExpand={isExpand}

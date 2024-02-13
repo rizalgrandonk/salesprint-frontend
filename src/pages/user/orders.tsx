@@ -8,7 +8,7 @@ import {
   DEFAULT_USER_IMAGE,
 } from "@/lib/constants";
 import { formatPrice } from "@/lib/formater";
-import { Order, Transaction } from "@/types/Order";
+import { ORDER_STATUS_MAP, Order, Transaction } from "@/types/Order";
 import { MakePropertiesRequired } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns/format";
@@ -23,14 +23,6 @@ import {
 } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 
-const ORDER_STATUS_MAP: { [key: string]: string } = {
-  UNPAID: "Belum Dibayar",
-  PAID: "Menunggu Konfirmasi",
-  PROCESSED: "Diproses",
-  SHIPPED: "Dikirim",
-  COMPLETED: "Selesai",
-  CANCELED: "Dibatalkan",
-};
 const ORDER_STATUS_CLASS_MAP: { [key: string]: string } = {
   UNPAID: "text-yellow-500 bg-yellow-500/10",
   PAID: "text-emerald-500 bg-emerald-500/10",
@@ -144,159 +136,163 @@ function TransactionSection() {
     }
   );
 
+  const statusFilter = queryState.filters?.find(
+    (fil) => fil.field === "order_status"
+  );
+
   return (
     <BaseCard className="w-full p-4 space-y-3">
       <div className="w-full flex items-center gap-4">
         <p className="font-semibold text-sm">Status</p>
         <div className="flex-grow flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <Button type="button" variant={"base"} outline>
+          <Button
+            type="button"
+            variant={!statusFilter ? "primary" : "base"}
+            outline
+            onClick={() =>
+              setFilter([{ field: "order_status", operator: "=", value: null }])
+            }
+          >
             Semua
           </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
-          <Button type="button" variant={"base"} outline>
-            Semua
-          </Button>
+          {Object.keys(ORDER_STATUS_MAP).map((key) => (
+            <Button
+              type="button"
+              variant={statusFilter?.value === key ? "primary" : "base"}
+              outline
+              onClick={() =>
+                setFilter([
+                  { field: "order_status", operator: "=", value: key },
+                ])
+              }
+            >
+              {ORDER_STATUS_MAP[key]}
+            </Button>
+          ))}
         </div>
       </div>
-      {orders?.map((order) => (
-        <BaseCard key={order.id} className="space-y-3">
-          <div className="flex items-center gap-2">
-            <MdOutlineShoppingBag className="text-lg text-gray-500 dark:text-gray-400" />
-            <span className="text-xs">
-              {format(new Date(order.created_at), "dd MMM yyyy")}
-            </span>
-            <span
-              className={twMerge(
-                "font-medium text-xs px-2 py-1",
-                ORDER_STATUS_CLASS_MAP[order.order_status] ??
-                  "text-emerald-500 bg-emerald-500/10"
-              )}
-            >
-              {ORDER_STATUS_MAP[order.order_status] ?? order.order_status}
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {order.transaction.serial_order}
-            </span>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-1">
-              <MdOutlineStore className="text-lg text-gray-500 dark:text-gray-400" />
-              <span className="font-semibold text-sm">{order.store.name}</span>
-            </div>
-            <div className="flex items-center divide-x divide-gray-200 dark:divide-gray-700">
-              <div className="flex-grow flex items-start gap-3">
-                <div className="relative h-16 aspect-square rounded overflow-hidden">
-                  <Image
-                    src={
-                      order.order_items[0].product?.product_images?.find(
-                        (image) => image.main_image
-                      )?.image_url ||
-                      order.order_items[0].product?.product_images?.[0]
-                        ?.image_url ||
-                      DEFAULT_STORE_CATEGORY_IMAGE
-                    }
-                    alt={order.order_items[0].product?.name ?? ""}
-                    fill
-                    loading="lazy"
-                    className="object-cover"
-                    sizes="25vw"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <p className="my-0 leading-none">
-                    {order.order_items[0].product?.name ?? ""}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
-                    {`${order.order_items[0].quantity} x ${
-                      order.order_items[0].product_variant?.price
-                        ? formatPrice(
-                            order.order_items[0].product_variant?.price
-                          )
-                        : ""
-                    }`}
-                  </p>
-                  {order.order_items.length - 1 > 0 && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
-                      {`+ ${order.order_items.length - 1} produk lain`}
-                    </p>
+
+      {!orders || orders.length <= 0 ? (
+        <p className="px-3 py-4 text-3xl text-center">Tidak ada data</p>
+      ) : (
+        <>
+          {orders?.map((order) => (
+            <BaseCard key={order.id} className="space-y-3">
+              <div className="flex items-center gap-2">
+                <MdOutlineShoppingBag className="text-lg text-gray-500 dark:text-gray-400" />
+                <span className="text-xs">
+                  {format(new Date(order.created_at), "dd MMM yyyy")}
+                </span>
+                <span
+                  className={twMerge(
+                    "font-medium text-xs px-2 py-1",
+                    ORDER_STATUS_CLASS_MAP[order.order_status] ??
+                      "text-emerald-500 bg-emerald-500/10"
                   )}
+                >
+                  {ORDER_STATUS_MAP[order.order_status] ?? order.order_status}
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {order.order_number}
+                </span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-1">
+                  <MdOutlineStore className="text-lg text-gray-500 dark:text-gray-400" />
+                  <span className="font-semibold text-sm">
+                    {order.store.name}
+                  </span>
+                </div>
+                <div className="flex items-center divide-x divide-gray-200 dark:divide-gray-700">
+                  <div className="flex-grow flex items-start gap-3">
+                    <div className="relative h-16 aspect-square rounded overflow-hidden">
+                      <Image
+                        src={
+                          order.order_items[0].product?.product_images?.find(
+                            (image) => image.main_image
+                          )?.image_url ||
+                          order.order_items[0].product?.product_images?.[0]
+                            ?.image_url ||
+                          DEFAULT_STORE_CATEGORY_IMAGE
+                        }
+                        alt={order.order_items[0].product?.name ?? ""}
+                        fill
+                        loading="lazy"
+                        className="object-cover"
+                        sizes="25vw"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="my-0 leading-none">
+                        {order.order_items[0].product?.name ?? ""}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
+                        {`${order.order_items[0].quantity} x ${
+                          order.order_items[0].product_variant?.price
+                            ? formatPrice(
+                                order.order_items[0].product_variant?.price
+                              )
+                            : ""
+                        }`}
+                      </p>
+                      {order.order_items.length - 1 > 0 && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
+                          {`+ ${order.order_items.length - 1} produk lain`}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="w-1/4 px-4 py-2">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Total Belanja
+                    </p>
+                    <p className="font-semibold">{formatPrice(order.total)}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-4 pt-4">
+                  <Button size="sm" variant="primary" outline>
+                    Detail Pesanan
+                  </Button>
+                  <Button size="sm" variant="primary">
+                    Beli Lagi
+                  </Button>
                 </div>
               </div>
-              <div className="w-1/4 px-4 py-2">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Total Belanja
-                </p>
-                <p className="font-semibold">{formatPrice(order.total)}</p>
-              </div>
-            </div>
+            </BaseCard>
+          ))}
 
-            <div className="flex items-center justify-end gap-4 pt-4">
-              <Button size="sm" variant="primary" outline>
-                Detail Pesanan
-              </Button>
-              <Button size="sm" variant="primary">
-                Beli Lagi
-              </Button>
-            </div>
+          <div className="flex items-center justify-center gap-4">
+            <Button
+              onClick={() => {
+                !!previousPage && previousPage();
+                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+              }}
+              size="sm"
+              variant="primary"
+              outline
+              disabled={!previousPage}
+            >
+              <MdChevronLeft className="text-xl" />
+              <span>Sebelumnya</span>
+            </Button>
+            <span>{queryState.page}</span>
+            <Button
+              onClick={() => {
+                !!nextPage && nextPage();
+                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+              }}
+              size="sm"
+              variant="primary"
+              outline
+              disabled={!nextPage}
+            >
+              <span>Berikutnya</span>
+              <MdChevronRight className="text-xl" />
+            </Button>
           </div>
-        </BaseCard>
-      ))}
-
-      <div className="flex items-center justify-center gap-4">
-        <Button
-          onClick={() => {
-            !!previousPage && previousPage();
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-          }}
-          size="sm"
-          variant="primary"
-          outline
-          disabled={!previousPage}
-        >
-          <MdChevronLeft className="text-xl" />
-          <span>Sebelumnya</span>
-        </Button>
-        <span>{queryState.page}</span>
-        <Button
-          onClick={() => {
-            !!nextPage && nextPage();
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-          }}
-          size="sm"
-          variant="primary"
-          outline
-          disabled={!nextPage}
-        >
-          <span>Berikutnya</span>
-          <MdChevronRight className="text-xl" />
-        </Button>
-      </div>
+        </>
+      )}
     </BaseCard>
   );
 }

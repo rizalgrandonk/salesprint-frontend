@@ -53,11 +53,6 @@ export const getServerSideProps = (async (ctx) => {
   const storeSlug = ctx.query.store?.toString();
   const productSlug = ctx.query.product?.toString();
 
-  // const product =
-  //   ;
-
-  // const store = ;
-
   const [product, store, storeProducts] = await Promise.all([
     storeSlug && productSlug
       ? getProduct<
@@ -167,7 +162,11 @@ export default function ProductPage({
       return;
     });
 
-    router.push(`/${store.slug}/${product.slug}?${queryStrings.join("&")}`);
+    router.push(
+      `/${store.slug}/${product.slug}?${queryStrings.join("&")}`,
+      undefined,
+      { shallow: true }
+    );
   };
 
   const isAllVariantSelected = !variantsTypeOptions.some(

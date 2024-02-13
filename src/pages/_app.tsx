@@ -75,11 +75,9 @@ function WrapperLayout({
 
   useEffect(() => {
     const start = () => {
-      console.log("start");
       setIsLoadingRoute(true);
     };
     const end = () => {
-      console.log("findished");
       setIsLoadingRoute(false);
     };
     Router.events.on("routeChangeStart", start);
