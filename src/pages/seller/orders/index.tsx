@@ -2,6 +2,7 @@ import DataTable from "@/components/dashboard/DataTable";
 import Alerts from "@/components/utils/Alerts";
 import Badge from "@/components/utils/Badge";
 import BaseCard from "@/components/utils/BaseCard";
+import BaseModal from "@/components/utils/BaseModal";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import { Button, ButtonMenu } from "@/components/utils/Button";
 import FormInput from "@/components/utils/FormInput";
@@ -9,14 +10,26 @@ import FormSelect from "@/components/utils/FormSelect";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import QueryKeys from "@/constants/queryKeys";
 import useDataTable from "@/hooks/useDataTable";
+import { acceptOrder, cancelOrder, shipOrder } from "@/lib/api/orders";
 import { DEFAULT_STORE_CATEGORY_IMAGE } from "@/lib/constants";
 import { formatPrice } from "@/lib/formater";
+import toast from "@/lib/toast";
 import { ORDER_STATUS_MAP, Order } from "@/types/Order";
 import { MakePropertiesRequired } from "@/types/data";
 import { format } from "date-fns/format";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { MdChevronLeft, MdChevronRight, MdRefresh } from "react-icons/md";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import {
+  MdCheck,
+  MdChevronLeft,
+  MdChevronRight,
+  MdClose,
+  MdOutlineCancelScheduleSend,
+  MdOutlineLocalShipping,
+  MdRefresh,
+} from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 
@@ -38,9 +51,18 @@ const sortOptions = [
 
 export default function OrlderListPage() {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const userId = session?.user?.id;
   const userToken = session?.user?.access_token;
+
+  const [selectedItem, setSelectedItem] = useState<MakePropertiesRequired<
+    Order,
+    "transaction" | "order_items" | "store" | "user"
+  > | null>(null);
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [isShipModalOpen, setIsShipModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const {
     data: orders,
@@ -67,6 +89,13 @@ export default function OrlderListPage() {
         field: "created_at",
         value: "desc",
       },
+      filters: [
+        {
+          field: "order_status",
+          operator: "=",
+          value: "PAID",
+        },
+      ],
       with: [
         "transaction",
         "order_items",
@@ -106,6 +135,84 @@ export default function OrlderListPage() {
       </Alerts>
     );
   }
+
+  const handleAcceptOrder = async () => {
+    if (!selectedItem) {
+      toast.error("No itemm selected");
+      return;
+    }
+    if (!userToken) {
+      toast.error("Unauthorize");
+      return;
+    }
+
+    const result = await acceptOrder(userToken, {
+      order_number: selectedItem.order_number,
+    });
+
+    if (!result.success) {
+      toast.error(result.message);
+      return;
+    }
+
+    toast.success("Berhasil Menerima Pesanan");
+    setIsAcceptModalOpen(false);
+    setSelectedItem(null);
+    refetch();
+  };
+  const handleShipOrder = async (data: {
+    shipping_tracking_number: string;
+    shipping_days_estimate: number;
+  }) => {
+    if (!selectedItem) {
+      toast.error("No itemm selected");
+      return;
+    }
+    if (!userToken) {
+      toast.error("Unauthorize");
+      return;
+    }
+
+    const result = await shipOrder(userToken, {
+      order_number: selectedItem.order_number,
+      ...data,
+    });
+
+    if (!result.success) {
+      toast.error(result.message);
+      return;
+    }
+
+    toast.success("Berhasil Atur Pengiriman");
+    setIsShipModalOpen(false);
+    setSelectedItem(null);
+    refetch();
+  };
+  const handleCancelOrder = async (data: { cancel_reason: string }) => {
+    if (!selectedItem) {
+      toast.error("No itemm selected");
+      return;
+    }
+    if (!userToken) {
+      toast.error("Unauthorize");
+      return;
+    }
+
+    const result = await cancelOrder(userToken, {
+      order_number: selectedItem.order_number,
+      ...data,
+    });
+
+    if (!result.success) {
+      toast.error(result.message);
+      return;
+    }
+
+    toast.success("Berhasil Membatalkan Pesanan");
+    setIsCancelModalOpen(false);
+    setSelectedItem(null);
+    refetch();
+  };
 
   return (
     <>
@@ -193,7 +300,10 @@ export default function OrlderListPage() {
             </span>
           </div>
           {Object.keys(ORDER_STATUS_MAP).map((key) => (
-            <div className="flex-grow flex-shrink-0 font-medium text-center">
+            <div
+              key={key}
+              className="flex-grow flex-shrink-0 font-medium text-center"
+            >
               <span
                 className={twMerge(
                   "pb-1 px-2 border-b-4 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-white",
@@ -353,15 +463,55 @@ export default function OrlderListPage() {
               cell: {
                 className: "align-top",
                 render: (item) => {
+                  const options = [
+                    {
+                      title: "Detail Pesanan",
+                      onClick: () =>
+                        router.push(`/seller/orders/${item.order_number}`),
+                    },
+                    {
+                      title: "Batalkan Pesanan",
+                      onClick: () => {
+                        setSelectedItem(item);
+                        setIsCancelModalOpen(true);
+                      },
+                    },
+                  ].filter((opt) => {
+                    if (
+                      opt.title === "Batalkan Pesanan" &&
+                      item.order_status !== "PAID" &&
+                      item.order_status !== "PROCESSED"
+                    ) {
+                      return false;
+                    }
+                    return true;
+                  });
+
                   return (
                     <div className="flex flex-col items-stretch gap-2">
                       {item.order_status === "PAID" && (
-                        <Button variant="primary" size="sm" className="w-full">
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setSelectedItem(item);
+                            setIsAcceptModalOpen(true);
+                          }}
+                        >
                           Terima Pesanan
                         </Button>
                       )}
                       {item.order_status === "PROCESSED" && (
-                        <Button variant="primary" size="sm" className="w-full">
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setSelectedItem(item);
+                            setIsShipModalOpen(true);
+                          }}
+                        >
                           Atur Pengiriman
                         </Button>
                       )}
@@ -371,16 +521,7 @@ export default function OrlderListPage() {
                         size="sm"
                         className="w-full"
                         outline
-                        options={[
-                          {
-                            title: "Detail Pesanan",
-                            onClick: () => undefined,
-                          },
-                          {
-                            title: "Batalkan Pesanan",
-                            onClick: () => undefined,
-                          },
-                        ]}
+                        options={options}
                       />
                     </div>
                   );
@@ -431,6 +572,241 @@ export default function OrlderListPage() {
           </div>
         </div>
       </div>
+
+      <AcceptOrderModal
+        isOpen={isAcceptModalOpen}
+        onClose={() => {
+          setIsAcceptModalOpen(false);
+          setSelectedItem(null);
+        }}
+        onSubmit={handleAcceptOrder}
+      />
+      <ShipOrderModal
+        isOpen={isShipModalOpen}
+        onClose={() => {
+          setIsShipModalOpen(false);
+          setSelectedItem(null);
+        }}
+        onSubmit={handleShipOrder}
+      />
+      <CancelOrderModal
+        isOpen={isCancelModalOpen}
+        onClose={() => {
+          setIsCancelModalOpen(false);
+          setSelectedItem(null);
+        }}
+        onSubmit={handleCancelOrder}
+      />
     </>
+  );
+}
+
+type AcceptOrderModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: () => Promise<void> | void;
+};
+
+function AcceptOrderModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: AcceptOrderModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    await onSubmit();
+
+    setIsLoading(false);
+    onClose();
+  };
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="w-full max-w-xl overflow-hidden transition-all"
+    >
+      <div className="pb-2">
+        <h3 className="text-2xl font-medium leading-6">Terima Pesanan</h3>
+      </div>
+      <div className="py-4 space-y-4">Anda akan menerima pesanan</div>
+      <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">
+        <Button onClick={onClose} variant="secondary">
+          <MdClose className="text-base" />
+          <span>Batal</span>
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="primary"
+          disabled={isLoading}
+          isLoading={isLoading}
+        >
+          <MdCheck className="text-base" />
+          <span>Terima Pesanan</span>
+        </Button>
+      </div>
+    </BaseModal>
+  );
+}
+
+type ShipOrderModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: {
+    shipping_tracking_number: string;
+    shipping_days_estimate: number;
+  }) => Promise<void> | void;
+};
+
+function ShipOrderModal({ isOpen, onClose, onSubmit }: ShipOrderModalProps) {
+  const [formData, setFormData] = useState({
+    shipping_tracking_number: "",
+    shipping_days_estimate: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    if (Object.values(formData).some((val) => !val)) {
+      return;
+    }
+    await onSubmit({
+      ...formData,
+      shipping_days_estimate: Number(formData.shipping_days_estimate),
+    });
+
+    setIsLoading(false);
+    onClose();
+  };
+
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="w-full max-w-xl overflow-hidden transition-all"
+    >
+      <div className="pb-2">
+        <h3 className="text-2xl font-medium leading-6">Atur Pengiriman</h3>
+      </div>
+      <div className="py-4 space-y-4">
+        <FormInput
+          required
+          label="Nomor Resi Pengiriman"
+          type="text"
+          id="shipping_tracking_number"
+          name="shipping_tracking_number"
+          value={formData.shipping_tracking_number}
+          onChange={(e) => {
+            return setFormData((prev) => ({
+              ...prev,
+              shipping_tracking_number: e.target.value,
+            }));
+          }}
+        />
+        <FormInput
+          required
+          label="Estimasi Waktu Pengiriman"
+          type="number"
+          id="shipping_days_estimate"
+          name="shipping_days_estimate"
+          value={formData.shipping_days_estimate}
+          onChange={(e) => {
+            return setFormData((prev) => ({
+              ...prev,
+              shipping_days_estimate: e.target.value,
+            }));
+          }}
+          elementRight="Hari"
+        />
+      </div>
+      <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">
+        <Button onClick={onClose} variant="secondary">
+          <MdClose className="text-base" />
+          <span>Batal</span>
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="primary"
+          disabled={isLoading}
+          isLoading={isLoading}
+        >
+          <MdOutlineLocalShipping className="text-base" />
+          <span>Atur Pengiriman</span>
+        </Button>
+      </div>
+    </BaseModal>
+  );
+}
+
+type CancelOrderModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: { cancel_reason: string }) => Promise<void> | void;
+};
+
+function CancelOrderModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: CancelOrderModalProps) {
+  const [formData, setFormData] = useState({
+    cancel_reason: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    if (Object.values(formData).some((val) => !val)) {
+      return;
+    }
+    await onSubmit(formData);
+
+    setIsLoading(false);
+    onClose();
+  };
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="w-full max-w-xl overflow-hidden transition-all"
+    >
+      <div className="pb-2">
+        <h3 className="text-2xl font-medium leading-6">Batalkan Pesanan</h3>
+      </div>
+      <div className="py-4 space-y-4">
+        <FormInput
+          required
+          label="Alasan Pembatalan"
+          type="text"
+          id="cancel_reason"
+          name="cancel_reason"
+          value={formData.cancel_reason}
+          onChange={(e) => {
+            return setFormData((prev) => ({
+              ...prev,
+              cancel_reason: e.target.value,
+            }));
+          }}
+        />
+      </div>
+      <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">
+        <Button onClick={onClose} variant="secondary">
+          <MdClose className="text-base" />
+          <span>Batal</span>
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="danger"
+          disabled={isLoading}
+          isLoading={isLoading}
+        >
+          <MdOutlineCancelScheduleSend className="text-base" />
+          <span>Batalkan</span>
+        </Button>
+      </div>
+    </BaseModal>
   );
 }

@@ -1,4 +1,4 @@
-import { Transaction } from "@/types/Order";
+import { Order, Transaction } from "@/types/Order";
 import { protectedRequest } from ".";
 
 type GetTokenData = {
@@ -47,6 +47,46 @@ export async function updateTransactionByToken(
   return await protectedRequest<Transaction>({
     method: "POST",
     path: `/orders/update_transaction_by_token?snap_token=${snapToken}`,
+    token: token,
+    data: data,
+  });
+}
+
+export async function acceptOrder(
+  token: string,
+  data: { order_number: string }
+) {
+  return await protectedRequest<Order>({
+    method: "POST",
+    path: `/orders/accept_order`,
+    token: token,
+    data: data,
+  });
+}
+
+export async function shipOrder(
+  token: string,
+  data: {
+    order_number: string;
+    shipping_tracking_number: string;
+    shipping_days_estimate: number;
+  }
+) {
+  return await protectedRequest<Order>({
+    method: "POST",
+    path: `/orders/ship_order`,
+    token: token,
+    data: data,
+  });
+}
+
+export async function cancelOrder(
+  token: string,
+  data: { order_number: string; cancel_reason: string }
+) {
+  return await protectedRequest<Order>({
+    method: "POST",
+    path: `/orders/cancel_order`,
     token: token,
     data: data,
   });
