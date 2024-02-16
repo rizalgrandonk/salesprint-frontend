@@ -10,7 +10,12 @@ import FormSelect from "@/components/utils/FormSelect";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import QueryKeys from "@/constants/queryKeys";
 import useDataTable from "@/hooks/useDataTable";
-import { acceptOrder, cancelOrder, shipOrder } from "@/lib/api/orders";
+import {
+  acceptOrder,
+  cancelOrder,
+  deliveredOrder,
+  shipOrder,
+} from "@/lib/api/orders";
 import { DEFAULT_STORE_CATEGORY_IMAGE } from "@/lib/constants";
 import { formatPrice } from "@/lib/formater";
 import toast from "@/lib/toast";
@@ -62,6 +67,7 @@ export default function OrlderListPage() {
   > | null>(null);
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
   const [isShipModalOpen, setIsShipModalOpen] = useState(false);
+  const [isDeliveredModalOpen, setIsDeliveredModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const {
@@ -89,13 +95,6 @@ export default function OrlderListPage() {
         field: "created_at",
         value: "desc",
       },
-      filters: [
-        {
-          field: "order_status",
-          operator: "=",
-          value: "PAID",
-        },
-      ],
       with: [
         "transaction",
         "order_items",
@@ -185,6 +184,30 @@ export default function OrlderListPage() {
 
     toast.success("Berhasil Atur Pengiriman");
     setIsShipModalOpen(false);
+    setSelectedItem(null);
+    refetch();
+  };
+  const handleDeliveredOrder = async () => {
+    if (!selectedItem) {
+      toast.error("No itemm selected");
+      return;
+    }
+    if (!userToken) {
+      toast.error("Unauthorize");
+      return;
+    }
+
+    const result = await deliveredOrder(userToken, {
+      order_number: selectedItem.order_number,
+    });
+
+    if (!result.success) {
+      toast.error(result.message);
+      return;
+    }
+
+    toast.success("Berhasil Menerima Pesanan");
+    setIsDeliveredModalOpen(false);
     setSelectedItem(null);
     refetch();
   };
@@ -317,7 +340,7 @@ export default function OrlderListPage() {
                   ])
                 }
               >
-                {ORDER_STATUS_MAP[key]}
+                {ORDER_STATUS_MAP[key as keyof typeof ORDER_STATUS_MAP]}
               </span>
             </div>
           ))}
@@ -411,7 +434,7 @@ export default function OrlderListPage() {
               },
             },
             {
-              id: "delivery_cost",
+              id: "Deliveredy_cost",
               header: {
                 render: "Alokasi Pengiriman",
               },
@@ -515,6 +538,19 @@ export default function OrlderListPage() {
                           Atur Pengiriman
                         </Button>
                       )}
+                      {item.order_status === "SHIPPED" && (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setSelectedItem(item);
+                            setIsDeliveredModalOpen(true);
+                          }}
+                        >
+                          Pesanan Terkirim
+                        </Button>
+                      )}
                       <ButtonMenu
                         title="Menu"
                         variant="info"
@@ -588,6 +624,14 @@ export default function OrlderListPage() {
           setSelectedItem(null);
         }}
         onSubmit={handleShipOrder}
+      />
+      <DeliveredOrderModal
+        isOpen={isDeliveredModalOpen}
+        onClose={() => {
+          setIsDeliveredModalOpen(false);
+          setSelectedItem(null);
+        }}
+        onSubmit={handleDeliveredOrder}
       />
       <CancelOrderModal
         isOpen={isCancelModalOpen}
@@ -735,6 +779,58 @@ function ShipOrderModal({ isOpen, onClose, onSubmit }: ShipOrderModalProps) {
         >
           <MdOutlineLocalShipping className="text-base" />
           <span>Atur Pengiriman</span>
+        </Button>
+      </div>
+    </BaseModal>
+  );
+}
+
+type DeliveredOrderModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: () => Promise<void> | void;
+};
+
+function DeliveredOrderModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: DeliveredOrderModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    await onSubmit();
+
+    setIsLoading(false);
+    onClose();
+  };
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="w-full max-w-xl overflow-hidden transition-all"
+    >
+      <div className="pb-2">
+        <h3 className="text-2xl font-medium leading-6">Pesanan Terkirim</h3>
+      </div>
+      <div className="py-4 space-y-4">
+        Anda yakin pesanan telah terkirim ke penerima
+      </div>
+      <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">
+        <Button onClick={onClose} variant="secondary">
+          <MdClose className="text-base" />
+          <span>Batal</span>
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="primary"
+          disabled={isLoading}
+          isLoading={isLoading}
+        >
+          <MdCheck className="text-base" />
+          <span>Pesanan Terkirim</span>
         </Button>
       </div>
     </BaseModal>

@@ -80,6 +80,18 @@ export async function shipOrder(
   });
 }
 
+export async function deliveredOrder(
+  token: string,
+  data: { order_number: string }
+) {
+  return await protectedRequest<Order>({
+    method: "POST",
+    path: `/orders/delivered_order`,
+    token: token,
+    data: data,
+  });
+}
+
 export async function cancelOrder(
   token: string,
   data: { order_number: string; cancel_reason: string }

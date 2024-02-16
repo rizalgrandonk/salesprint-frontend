@@ -3,11 +3,12 @@ import { Store } from "./Store";
 import { User } from "./User";
 import { ProductVariant } from "./Variant";
 
-export const ORDER_STATUS_MAP: { [key: string]: string } = {
+export const ORDER_STATUS_MAP = {
   UNPAID: "Belum Dibayar",
   PAID: "Menunggu Konfirmasi",
   PROCESSED: "Diproses",
   SHIPPED: "Dikirim",
+  DELIVERED: "Telah Dikirim",
   COMPLETED: "Selesai",
   CANCELED: "Dibatalkan",
 };
@@ -30,7 +31,7 @@ export type Order = {
   id: string;
   order_number: string;
   total: number;
-  order_status: string;
+  order_status: keyof typeof ORDER_STATUS_MAP;
   shipping_status: string;
   cancel_reason?: string;
   shipping_tracking_number?: string;

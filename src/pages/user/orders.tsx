@@ -28,6 +28,7 @@ const ORDER_STATUS_CLASS_MAP: { [key: string]: string } = {
   PAID: "text-emerald-500 bg-emerald-500/10",
   PROCESSED: "text-emerald-500 bg-emerald-500/10",
   SHIPPED: "text-emerald-500 bg-emerald-500/10",
+  DELIVERED: "text-emerald-500 bg-emerald-500/10",
   COMPLETED: "text-emerald-500 bg-emerald-500/10",
   CANCELED: "text-rose-500 bg-rose-500/10",
 };
