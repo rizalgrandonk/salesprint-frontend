@@ -360,7 +360,10 @@ export default function OrlderListPage() {
                 render: (item) => (
                   <div className="space-y-2">
                     {item.order_items.map((order_item) => (
-                      <div className="flex gap-2 items-start">
+                      <div
+                        key={order_item.id}
+                        className="flex gap-2 items-start"
+                      >
                         <div className="w-16 aspect-square relative rounded-sm overflow-hidden">
                           <Image
                             src={
@@ -385,7 +388,10 @@ export default function OrlderListPage() {
                           <div className="space-y-0.5">
                             {order_item.product_variant?.variant_options?.map(
                               (opt) => (
-                                <p className="leading-none text-xs text-gray-500 dark:text-gray-400">
+                                <p
+                                  key={opt.id}
+                                  className="leading-none text-xs text-gray-500 dark:text-gray-400"
+                                >
                                   {`${opt.variant_type?.name}: ${opt.value}`}
                                 </p>
                               )

@@ -92,6 +92,18 @@ export async function deliveredOrder(
   });
 }
 
+export async function userCompleteOrder(
+  token: string,
+  data: { order_number: string }
+) {
+  return await protectedRequest<Order>({
+    method: "POST",
+    path: `/orders/user_complete_order`,
+    token: token,
+    data: data,
+  });
+}
+
 export async function cancelOrder(
   token: string,
   data: { order_number: string; cancel_reason: string }
@@ -99,6 +111,18 @@ export async function cancelOrder(
   return await protectedRequest<Order>({
     method: "POST",
     path: `/orders/cancel_order`,
+    token: token,
+    data: data,
+  });
+}
+
+export async function userCancelOrder(
+  token: string,
+  data: { order_number: string; cancel_reason: string }
+) {
+  return await protectedRequest<Order>({
+    method: "POST",
+    path: `/orders/user_cancel_order`,
     token: token,
     data: data,
   });

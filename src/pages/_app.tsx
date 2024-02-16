@@ -15,7 +15,7 @@ import { Toaster } from "react-hot-toast";
 import "react-multi-carousel/lib/styles.css";
 
 const font = Poppins({
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
 });
 

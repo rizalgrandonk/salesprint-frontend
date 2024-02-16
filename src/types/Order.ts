@@ -57,6 +57,19 @@ export type Order = {
   created_at: string;
   updated_at: string;
 
+  shipping_days_estimate?: number;
+  accept_deadline?: string;
+  shipping_deadline?: string;
+  deliver_deadline?: string;
+  recieve_deadline?: string;
+
+  paid_at?: string;
+  accepted_at?: string;
+  shipped_at?: string;
+  delivered_at?: string;
+  completed_at?: string;
+  canceled_at?: string;
+
   user?: User;
   store?: Store;
   transaction?: Transaction;
