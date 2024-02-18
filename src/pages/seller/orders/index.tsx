@@ -657,7 +657,7 @@ type AcceptOrderModalProps = {
   onSubmit: () => Promise<void> | void;
 };
 
-function AcceptOrderModal({
+export function AcceptOrderModal({
   isOpen,
   onClose,
   onSubmit,
@@ -710,7 +710,11 @@ type ShipOrderModalProps = {
   }) => Promise<void> | void;
 };
 
-function ShipOrderModal({ isOpen, onClose, onSubmit }: ShipOrderModalProps) {
+export function ShipOrderModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: ShipOrderModalProps) {
   const [formData, setFormData] = useState({
     shipping_tracking_number: "",
     shipping_days_estimate: "",
@@ -797,7 +801,7 @@ type DeliveredOrderModalProps = {
   onSubmit: () => Promise<void> | void;
 };
 
-function DeliveredOrderModal({
+export function DeliveredOrderModal({
   isOpen,
   onClose,
   onSubmit,
@@ -849,7 +853,7 @@ type CancelOrderModalProps = {
   onSubmit: (data: { cancel_reason: string }) => Promise<void> | void;
 };
 
-function CancelOrderModal({
+export function CancelOrderModal({
   isOpen,
   onClose,
   onSubmit,

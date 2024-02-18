@@ -318,54 +318,62 @@ function TransactionSection() {
                   </div>
 
                   <div className="flex items-center justify-between pt-4">
-                    <div className="text-sm w-1/3">
+                    <div className="text-sm space-y-1">
                       {order.order_status === "PAID" &&
                         order.accept_deadline && (
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Pesanan akan dikonfirmasi paling lama{" "}
-                            <span className="text-gray-900 dark:text-white">
+                          <>
+                            <p className="text-gray-500 dark:text-gray-400 leading-none">
+                              Pesanan akan dikonfirmasi paling lama{" "}
+                            </p>
+                            <p className="text-gray-900 dark:text-white leading-none">
                               {format(
                                 new Date(order.accept_deadline),
                                 "dd-MM-yyyy"
                               )}
-                            </span>
-                          </p>
+                            </p>
+                          </>
                         )}
                       {order.order_status === "PROCESSED" &&
                         order.shipping_deadline && (
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Pesanan akan dikirim paling lama{" "}
-                            <span className="text-gray-900 dark:text-white">
+                          <>
+                            <p className="text-gray-500 dark:text-gray-400 leading-none">
+                              Pesanan akan dikirim paling lama{" "}
+                            </p>
+                            <span className="text-gray-900 dark:text-white leading-none">
                               {format(
                                 new Date(order.shipping_deadline),
                                 "dd-MM-yyyy"
                               )}
                             </span>
-                          </p>
+                          </>
                         )}
                       {order.order_status === "SHIPPED" &&
                         order.deliver_deadline && (
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Pesanan akan sampai paling lama{" "}
-                            <span className="text-gray-900 dark:text-white">
+                          <>
+                            <p className="text-gray-500 dark:text-gray-400 leading-none">
+                              Pesanan akan sampai paling lama{" "}
+                            </p>
+                            <p className="text-gray-900 dark:text-white leading-none">
                               {format(
                                 new Date(order.deliver_deadline),
                                 "dd-MM-yyyy"
                               )}
-                            </span>
-                          </p>
+                            </p>
+                          </>
                         )}
                       {order.order_status === "DELIVERED" &&
                         order.recieve_deadline && (
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Pesanan akan otomatis selesai pada{" "}
-                            <span className="text-gray-900 dark:text-white">
+                          <>
+                            <p className="text-gray-500 dark:text-gray-400 leading-none">
+                              Pesanan akan otomatis selesai pada{" "}
+                            </p>
+                            <span className="text-gray-900 dark:text-white leading-none">
                               {format(
                                 new Date(order.recieve_deadline),
                                 "dd-MM-yyyy"
                               )}
                             </span>
-                          </p>
+                          </>
                         )}
                     </div>
                     <div className="flex items-center gap-4">

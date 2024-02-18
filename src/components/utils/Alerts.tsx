@@ -3,13 +3,13 @@ import { RiInformationLine } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 
 const colorVariantClass = {
-  info: "text-blue-800 border border-blue-300 bg-blue-50 dark:bg-blue-50/10 dark:text-blue-400 dark:border-blue-800",
+  info: "text-blue-800 border border-blue-300 bg-blue-50 dark:bg-blue-50/10 dark:text-blue-400 dark:border-blue-500",
   warning:
-    "text-amber-800 border border-amber-300 bg-amber-50 dark:bg-amber-50/10 dark:text-amber-400 dark:border-amber-800",
+    "text-amber-800 border border-amber-300 bg-amber-50 dark:bg-amber-50/10 dark:text-amber-400 dark:border-amber-500",
   success:
-    "text-green-800 border border-green-300 bg-green-50 dark:bg-green-50/10 dark:text-green-400 dark:border-green-800",
+    "text-green-800 border border-green-300 bg-green-50 dark:bg-green-50/10 dark:text-green-400 dark:border-green-500",
   danger:
-    "text-red-800 border border-red-300 bg-red-50 dark:bg-red-50/10 dark:text-red-400 dark:border-red-800",
+    "text-red-800 border border-red-300 bg-red-50 dark:bg-red-50/10 dark:text-red-400 dark:border-red-500",
 };
 
 type AlertsProps = {
