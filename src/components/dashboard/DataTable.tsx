@@ -17,15 +17,30 @@ export type DataTableProps<T> = {
     cell: DataTableCell<T>;
   }[];
   isFetching?: boolean;
+  containerClassName?: string;
+  wrapperClassName?: string;
+  tableClassName?: string;
+  headClassName?: string;
+  bodyClassName?: string;
 };
 
 export default function DataTable<T>({
   columns,
   list,
   isFetching,
+  containerClassName,
+  wrapperClassName,
+  tableClassName,
+  headClassName,
+  bodyClassName,
 }: DataTableProps<T>) {
   return (
-    <div className="flex-grow relative overflow-hidden">
+    <div
+      className={twMerge(
+        "flex-grow relative overflow-hidden",
+        containerClassName
+      )}
+    >
       {!!isFetching && (
         <div className="absolute top-0 bottom-0 left-0 right-0 bg-gray-900/40 pointer-events-none flex items-center justify-center z-10">
           <div className="px-4 py-2 bg-white border border-gray-200 rounded shadow-sm dark:border-gray-700 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
@@ -33,14 +48,25 @@ export default function DataTable<T>({
           </div>
         </div>
       )}
-      <div className="overflow-auto w-full h-full relative">
+      <div
+        className={twMerge(
+          "overflow-auto w-full h-full relative",
+          wrapperClassName
+        )}
+      >
         <table
           className={twMerge(
             "min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600 relative dark:border-gray-600",
-            list.length > 0 ? "border-b border-gray-200" : ""
+            list.length > 0 ? "border-b border-gray-200" : "",
+            tableClassName
           )}
         >
-          <thead className="bg-white dark:bg-gray-800 sticky top-0 z-20 shadow-sm">
+          <thead
+            className={twMerge(
+              "bg-white dark:bg-gray-800 sticky top-0 z-20 shadow-sm",
+              headClassName
+            )}
+          >
             <tr>
               {columns.map((column) => {
                 const {
@@ -66,7 +92,12 @@ export default function DataTable<T>({
               })}
             </tr>
           </thead>
-          <tbody className="bg-gray-50 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody
+            className={twMerge(
+              "bg-gray-50 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700",
+              bodyClassName
+            )}
+          >
             {list.length <= 0 ? (
               <tr>
                 <td colSpan={columns.length}>

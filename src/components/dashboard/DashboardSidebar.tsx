@@ -290,7 +290,7 @@ function MenuDropdown({
                 <MdKeyboardArrowDown
                   className={twMerge(
                     "text-2xl transition duration-75",
-                    !open ? "rotate-90" : ""
+                    open ? "rotate-90" : ""
                   )}
                 />
               </>

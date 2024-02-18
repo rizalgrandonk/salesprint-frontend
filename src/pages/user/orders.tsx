@@ -29,6 +29,7 @@ import {
   MdClose,
   MdKeyboardArrowDown,
   MdLabelImportant,
+  MdLabelImportantOutline,
   MdOutlineCancelScheduleSend,
   MdOutlineShoppingBag,
   MdOutlineStore,
@@ -540,19 +541,28 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
               </div>
               <BaseCard
                 className={twMerge(
-                  "space-y-2 transition-all overflow-hidden duration-500",
+                  "space-y-1 transition-all overflow-hidden duration-500",
                   isTimelineExpand ? "p-4" : "p-0"
                 )}
                 style={{
-                  height: isTimelineExpand ? `${timelines.length * 2}rem` : 0,
+                  height: isTimelineExpand ? `${timelines.length * 2.7}rem` : 0,
                 }}
               >
                 {timelines.map((timeline, index) => (
-                  <div key={index} className="flex items-center gap-4">
+                  <div key={index} className="flex items-start gap-4">
                     <span className="text-gray-500 dark:text-gray-400">
                       {format(new Date(timeline.date), "dd MMM yyy, HH:mm")}
                     </span>
-                    <MdLabelImportant className="text-gray-500 dark:text-gray-400 transition-all" />
+                    <div className="flex flex-col items-center gap-1 mt-0.5">
+                      {index === 0 ? (
+                        <MdLabelImportant className="text-primary" />
+                      ) : (
+                        <MdLabelImportantOutline className="text-gray-500 dark:text-gray-400" />
+                      )}
+                      {index < timelines.length - 1 && (
+                        <div className="h-4 w-0.5 bg-gray-500 dark:bg-gray-400" />
+                      )}
+                    </div>
                     <span className="font-medium">{timeline.title}</span>
                   </div>
                 ))}
@@ -731,7 +741,9 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
                 <span className="text-gray-500 dark:text-gray-400">
                   Total Ongkos Kirim
                 </span>
-                <span className="font-light">{order.delivery_cost}</span>
+                <span className="font-light">
+                  {formatPrice(order.delivery_cost)}
+                </span>
               </div>
               <div className="flex items-start justify-between">
                 <span className="text-base font-semibold">Total Pesanan</span>

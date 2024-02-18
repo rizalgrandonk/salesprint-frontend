@@ -1,5 +1,26 @@
 import { Order, Transaction } from "@/types/Order";
+import { MakePropertiesRequired, QueryParams } from "@/types/data";
 import { protectedRequest } from ".";
+import { queryStateToQueryString } from "../formater";
+
+export async function getStoreOrder<K extends keyof Order>(
+  token: string,
+  orderNumber: string,
+  params?: QueryParams<Order>
+) {
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
+  const result = await protectedRequest<MakePropertiesRequired<Order, K>>({
+    token: token,
+    method: "GET",
+    path: `/orders/store_orders/${orderNumber}` + queryParams,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
 
 type GetTokenData = {
   orders: {
