@@ -1,11 +1,13 @@
 import BaseCard from "@/components/utils/BaseCard";
 import BaseModal from "@/components/utils/BaseModal";
 import { Button } from "@/components/utils/Button";
+import FormArea from "@/components/utils/FormArea";
 import Meta from "@/components/utils/Meta";
 import QueryKeys from "@/constants/queryKeys";
 import { useCart } from "@/contexts/CartContext";
 import useDataTable from "@/hooks/useDataTable";
 import { userCompleteOrder } from "@/lib/api/orders";
+import { createReviews } from "@/lib/api/reviews";
 import {
   DEFAULT_STORE_CATEGORY_IMAGE,
   DEFAULT_USER_IMAGE,
@@ -34,6 +36,7 @@ import {
   MdOutlineShoppingBag,
   MdOutlineStore,
 } from "react-icons/md";
+import { RiStarFill, RiStarLine } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 
 const ORDER_STATUS_CLASS_MAP: { [key: string]: string } = {
@@ -95,11 +98,20 @@ export default function OrderPage() {
                 Profil
               </Link>
             </li>
+            <li>
+              <Link
+                href={`/user/reviews`}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                role="menuitem"
+              >
+                Ulasan
+              </Link>
+            </li>
           </ul>
         </BaseCard>
 
         <div className="flex-grow space-y-4 overflow-x-hidden">
-          <h1 className="font-semibold text-2xl">Daftar Transaksi</h1>
+          <h1 className="font-semibold text-2xl">Daftar Pesanan</h1>
           <TransactionSection />
         </div>
       </div>
@@ -119,14 +131,11 @@ function TransactionSection() {
 
   const {
     data: orders,
-    summaryData,
-    isLoading,
     queryState,
     nextPage,
     previousPage,
     setFilter,
     refetch,
-    isFetching,
   } = useDataTable<
     MakePropertiesRequired<Order, "transaction" | "order_items" | "store">
   >(
@@ -142,6 +151,7 @@ function TransactionSection() {
         "order_items",
         "store",
         "order_items.product",
+        "order_items.review",
         "order_items.product.store",
         "order_items.product.product_images",
         "order_items.product_variant.variant_options",
@@ -150,7 +160,7 @@ function TransactionSection() {
     {
       enabled: !!userToken,
       token: userToken,
-      queryKey: [QueryKeys.PAGINATED_USER_TRANSACTIONS, userToken],
+      queryKey: [QueryKeys.PAGINATED_USER_ORDERS, userToken],
     }
   );
 
@@ -160,6 +170,7 @@ function TransactionSection() {
     "transaction" | "order_items" | "store"
   > | null>(null);
   const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
+  const [isModalReviewOpen, setIsModalReviewOpen] = useState(false);
 
   const statusFilter = queryState.filters?.find(
     (fil) => fil.field === "order_status"
@@ -199,6 +210,34 @@ function TransactionSection() {
 
     refetch();
     setIsLoadingRequest(false);
+  };
+
+  const handleCreateReviews = async (
+    data: {
+      rating: number;
+      coment?: string;
+      product_id: string;
+      product_variant_id: string;
+      order_item_id: string;
+    }[]
+  ) => {
+    if (!userToken) {
+      toast.error("Unauthorize");
+      return;
+    }
+
+    setIsLoadingRequest(true);
+
+    const result = await createReviews(userToken, { reviews: data });
+
+    if (!result.success) {
+      toast.error(result.message);
+    } else {
+      toast.success("Berhasil memberi ulasan");
+    }
+
+    setIsLoadingRequest(false);
+    refetch();
   };
 
   return (
@@ -241,183 +280,203 @@ function TransactionSection() {
           <p className="px-3 py-4 text-3xl text-center">Tidak ada data</p>
         ) : (
           <>
-            {orders?.map((order) => (
-              <BaseCard key={order.id} className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <MdOutlineShoppingBag className="text-lg text-gray-500 dark:text-gray-400" />
-                  <span className="text-xs">
-                    {format(new Date(order.created_at), "dd MMM yyyy")}
-                  </span>
-                  <span
-                    className={twMerge(
-                      "font-medium text-xs px-2 py-1",
-                      ORDER_STATUS_CLASS_MAP[order.order_status] ??
-                        "text-emerald-500 bg-emerald-500/10"
-                    )}
-                  >
-                    {ORDER_STATUS_MAP[order.order_status] ?? order.order_status}
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {order.order_number}
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1">
-                    <MdOutlineStore className="text-lg text-gray-500 dark:text-gray-400" />
-                    <span className="font-semibold text-sm">
-                      {order.store.name}
+            {orders?.map((order) => {
+              const isReviewed = !order.order_items.some(
+                (item) => !item.review
+              );
+              return (
+                <BaseCard key={order.id} className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <MdOutlineShoppingBag className="text-lg text-gray-500 dark:text-gray-400" />
+                    <span className="text-xs">
+                      {format(new Date(order.created_at), "dd MMM yyyy")}
+                    </span>
+                    <span
+                      className={twMerge(
+                        "font-medium text-xs px-2 py-1",
+                        ORDER_STATUS_CLASS_MAP[order.order_status] ??
+                          "text-emerald-500 bg-emerald-500/10"
+                      )}
+                    >
+                      {ORDER_STATUS_MAP[order.order_status] ??
+                        order.order_status}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {order.order_number}
                     </span>
                   </div>
-                  <div className="flex items-center divide-x divide-gray-200 dark:divide-gray-700">
-                    <div className="flex-grow flex items-start gap-3">
-                      <div className="relative h-16 aspect-square rounded overflow-hidden">
-                        <Image
-                          src={
-                            order.order_items[0].product?.product_images?.find(
-                              (image) => image.main_image
-                            )?.image_url ||
-                            order.order_items[0].product?.product_images?.[0]
-                              ?.image_url ||
-                            DEFAULT_STORE_CATEGORY_IMAGE
-                          }
-                          alt={order.order_items[0].product?.name ?? ""}
-                          fill
-                          loading="lazy"
-                          className="object-cover"
-                          sizes="25vw"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <p className="my-0 leading-none">
-                          {order.order_items[0].product?.name ?? ""}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
-                          {`${order.order_items[0].quantity} x ${
-                            order.order_items[0].product_variant?.price
-                              ? formatPrice(
-                                  order.order_items[0].product_variant?.price
-                                )
-                              : ""
-                          }`}
-                        </p>
-                        {order.order_items.length - 1 > 0 && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
-                            {`+ ${order.order_items.length - 1} produk lain`}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1">
+                      <MdOutlineStore className="text-lg text-gray-500 dark:text-gray-400" />
+                      <span className="font-semibold text-sm">
+                        {order.store.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center divide-x divide-gray-200 dark:divide-gray-700">
+                      <div className="flex-grow flex items-start gap-3">
+                        <div className="relative h-16 aspect-square rounded overflow-hidden">
+                          <Image
+                            src={
+                              order.order_items[0].product?.product_images?.find(
+                                (image) => image.main_image
+                              )?.image_url ||
+                              order.order_items[0].product?.product_images?.[0]
+                                ?.image_url ||
+                              DEFAULT_STORE_CATEGORY_IMAGE
+                            }
+                            alt={order.order_items[0].product?.name ?? ""}
+                            fill
+                            loading="lazy"
+                            className="object-cover"
+                            sizes="25vw"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="my-0 leading-none">
+                            {order.order_items[0].product?.name ?? ""}
                           </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
+                            {`${order.order_items[0].quantity} x ${
+                              order.order_items[0].product_variant?.price
+                                ? formatPrice(
+                                    order.order_items[0].product_variant?.price
+                                  )
+                                : ""
+                            }`}
+                          </p>
+                          {order.order_items.length - 1 > 0 && (
+                            <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
+                              {`+ ${order.order_items.length - 1} produk lain`}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="w-1/4 px-4 py-2">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Total Belanja
+                        </p>
+                        <p className="font-semibold">
+                          {formatPrice(order.total)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4">
+                      <div className="text-sm space-y-1">
+                        {order.order_status === "PAID" &&
+                          order.accept_deadline && (
+                            <>
+                              <p className="text-gray-500 dark:text-gray-400 leading-none">
+                                Pesanan akan dikonfirmasi paling lama{" "}
+                              </p>
+                              <p className="text-gray-900 dark:text-white leading-none">
+                                {format(
+                                  new Date(order.accept_deadline),
+                                  "dd-MM-yyyy"
+                                )}
+                              </p>
+                            </>
+                          )}
+                        {order.order_status === "PROCESSED" &&
+                          order.shipping_deadline && (
+                            <>
+                              <p className="text-gray-500 dark:text-gray-400 leading-none">
+                                Pesanan akan dikirim paling lama{" "}
+                              </p>
+                              <span className="text-gray-900 dark:text-white leading-none">
+                                {format(
+                                  new Date(order.shipping_deadline),
+                                  "dd-MM-yyyy"
+                                )}
+                              </span>
+                            </>
+                          )}
+                        {order.order_status === "SHIPPED" &&
+                          order.deliver_deadline && (
+                            <>
+                              <p className="text-gray-500 dark:text-gray-400 leading-none">
+                                Pesanan akan sampai paling lama{" "}
+                              </p>
+                              <p className="text-gray-900 dark:text-white leading-none">
+                                {format(
+                                  new Date(order.deliver_deadline),
+                                  "dd-MM-yyyy"
+                                )}
+                              </p>
+                            </>
+                          )}
+                        {order.order_status === "DELIVERED" &&
+                          order.recieve_deadline && (
+                            <>
+                              <p className="text-gray-500 dark:text-gray-400 leading-none">
+                                Pesanan akan otomatis selesai pada{" "}
+                              </p>
+                              <span className="text-gray-900 dark:text-white leading-none">
+                                {format(
+                                  new Date(order.recieve_deadline),
+                                  "dd-MM-yyyy"
+                                )}
+                              </span>
+                            </>
+                          )}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="base"
+                          className="text-primary dark:text-primary"
+                          onClick={() => {
+                            setSelectedItem(order);
+                            setIsModalDetailOpen(true);
+                          }}
+                        >
+                          Detail Pesanan
+                        </Button>
+                        {order.order_status === "COMPLETED" && !isReviewed && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="primary"
+                            outline
+                            onClick={() => {
+                              setSelectedItem(order);
+                              setIsModalReviewOpen(true);
+                            }}
+                          >
+                            Beri Ulasan
+                          </Button>
+                        )}
+                        {order.order_status === "DELIVERED" && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="primary"
+                            onClick={() =>
+                              handleCompleteOrder(order.order_number)
+                            }
+                            disabled={isLoadingRequest}
+                            isLoading={isLoadingRequest}
+                          >
+                            Pesanan Selesai
+                          </Button>
+                        )}
+                        {order.order_status === "COMPLETED" && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="primary"
+                            onClick={() => handleReorder(order)}
+                          >
+                            Beli Lagi
+                          </Button>
                         )}
                       </div>
                     </div>
-                    <div className="w-1/4 px-4 py-2">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Total Belanja
-                      </p>
-                      <p className="font-semibold">
-                        {formatPrice(order.total)}
-                      </p>
-                    </div>
                   </div>
-
-                  <div className="flex items-center justify-between pt-4">
-                    <div className="text-sm space-y-1">
-                      {order.order_status === "PAID" &&
-                        order.accept_deadline && (
-                          <>
-                            <p className="text-gray-500 dark:text-gray-400 leading-none">
-                              Pesanan akan dikonfirmasi paling lama{" "}
-                            </p>
-                            <p className="text-gray-900 dark:text-white leading-none">
-                              {format(
-                                new Date(order.accept_deadline),
-                                "dd-MM-yyyy"
-                              )}
-                            </p>
-                          </>
-                        )}
-                      {order.order_status === "PROCESSED" &&
-                        order.shipping_deadline && (
-                          <>
-                            <p className="text-gray-500 dark:text-gray-400 leading-none">
-                              Pesanan akan dikirim paling lama{" "}
-                            </p>
-                            <span className="text-gray-900 dark:text-white leading-none">
-                              {format(
-                                new Date(order.shipping_deadline),
-                                "dd-MM-yyyy"
-                              )}
-                            </span>
-                          </>
-                        )}
-                      {order.order_status === "SHIPPED" &&
-                        order.deliver_deadline && (
-                          <>
-                            <p className="text-gray-500 dark:text-gray-400 leading-none">
-                              Pesanan akan sampai paling lama{" "}
-                            </p>
-                            <p className="text-gray-900 dark:text-white leading-none">
-                              {format(
-                                new Date(order.deliver_deadline),
-                                "dd-MM-yyyy"
-                              )}
-                            </p>
-                          </>
-                        )}
-                      {order.order_status === "DELIVERED" &&
-                        order.recieve_deadline && (
-                          <>
-                            <p className="text-gray-500 dark:text-gray-400 leading-none">
-                              Pesanan akan otomatis selesai pada{" "}
-                            </p>
-                            <span className="text-gray-900 dark:text-white leading-none">
-                              {format(
-                                new Date(order.recieve_deadline),
-                                "dd-MM-yyyy"
-                              )}
-                            </span>
-                          </>
-                        )}
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="primary"
-                        outline
-                        onClick={() => {
-                          setSelectedItem(order);
-                          setIsModalDetailOpen(true);
-                        }}
-                      >
-                        Detail Pesanan
-                      </Button>
-                      {order.order_status === "DELIVERED" && (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="primary"
-                          onClick={() =>
-                            handleCompleteOrder(order.order_number)
-                          }
-                          disabled={isLoadingRequest}
-                          isLoading={isLoadingRequest}
-                        >
-                          Pesanan Selesai
-                        </Button>
-                      )}
-                      {order.order_status === "COMPLETED" && (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="primary"
-                          onClick={() => handleReorder(order)}
-                        >
-                          Beli Lagi
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </BaseCard>
-            ))}
+                </BaseCard>
+              );
+            })}
 
             <div className="flex items-center justify-center gap-4">
               <Button
@@ -453,11 +512,23 @@ function TransactionSection() {
       </BaseCard>
 
       <DetailOrderModal
+        key={selectedItem?.id}
         isOpen={isModalDetailOpen}
         onClose={() => {
           setIsModalDetailOpen(false);
           setSelectedItem(null);
         }}
+        order={selectedItem}
+      />
+
+      <ReviewOrderModal
+        key={selectedItem?.id}
+        isOpen={isModalReviewOpen}
+        onClose={() => {
+          setIsModalReviewOpen(false);
+          setSelectedItem(null);
+        }}
+        onSubmit={handleCreateReviews}
         order={selectedItem}
       />
     </>
@@ -771,5 +842,205 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
         <Button variant="primary">Beri Ulasan</Button>
       </div>
     </BaseModal>
+  );
+}
+
+type ReviewOrderModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (
+    data: {
+      rating: number;
+      coment?: string;
+      product_id: string;
+      product_variant_id: string;
+      order_item_id: string;
+    }[]
+  ) => Promise<void> | void;
+  order: MakePropertiesRequired<
+    Order,
+    "transaction" | "order_items" | "store"
+  > | null;
+};
+
+function ReviewOrderModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  order,
+}: ReviewOrderModalProps) {
+  const [items, setItems] = useState<
+    (OrderItem & { review_rating: number; review_comment?: string })[]
+  >(
+    order?.order_items
+      ? order.order_items.map((item) => ({
+          ...item,
+          review_rating: 0,
+          review_comment: undefined,
+        }))
+      : []
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isValidInput = !items.some(
+    (item) => !item.review_rating || item.review_rating <= 0
+  );
+
+  const handleSubmit = async () => {
+    if (!isValidInput) {
+      toast.error("Tolong lengkapi data review");
+      return;
+    }
+
+    setIsLoading(true);
+
+    await onSubmit(
+      items.map((item) => ({
+        order_item_id: item.id,
+        product_id: item.product_id,
+        product_variant_id: item.product_variant_id,
+        rating: item.review_rating,
+        coment: item.review_comment,
+      }))
+    );
+
+    onClose();
+    setIsLoading(false);
+  };
+
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="px-0 w-full max-w-xl max-h-[80vh] overflow-hidden transition-all flex flex-col"
+    >
+      <div className="px-4 pb-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <h3 className="text-2xl font-medium leading-6">Beri Ulasan</h3>
+        <MdClose className="text-xl cursor-pointer" onClick={onClose} />
+      </div>
+      {!!order ? (
+        <div className="p-3 overflow-y-auto h-full space-y-3">
+          {items.map((item) => (
+            <BaseCard key={item.id} className="p-3 space-y-4">
+              <div className="flex items-start gap-2">
+                <div className="flex-shrink-0 h-12 aspect-square bg-cover bg-center relative rounded overflow-hidden">
+                  <Image
+                    src={
+                      item.product?.product_images?.find(
+                        (image) => image.main_image
+                      )?.image_url ||
+                      item.product?.product_images?.[0]?.image_url ||
+                      DEFAULT_STORE_CATEGORY_IMAGE
+                    }
+                    alt={item.product?.name ?? ""}
+                    fill
+                    loading="lazy"
+                    className="object-cover"
+                    sizes="25vw"
+                  />
+                </div>
+
+                <div className="flex-grow space-y-1">
+                  <p className="leading-none">{item.product?.name}</p>
+                  <div className="flex items-center gap-2">
+                    {item.product_variant?.variant_options?.map((opt) => (
+                      <span
+                        key={opt.id}
+                        className="font-medium text-xs px-1.5 py-0.5 bg-gray-200 dark:bg-gray-600"
+                      >
+                        {opt.value}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <span className="text-sm leading-none">Rating Produk</span>
+                <RatingInput
+                  value={item.review_rating}
+                  onChange={(val) =>
+                    setItems((prev) =>
+                      prev.map((itm) =>
+                        itm.id === item.id
+                          ? { ...itm, review_rating: val }
+                          : itm
+                      )
+                    )
+                  }
+                />
+              </div>
+
+              <FormArea
+                id={`comment_${item.id}`}
+                className="text-sm px-2 py-1.5"
+                placeholder="Tulis ulasan anda..."
+                rows={3}
+                value={item.review_comment}
+                onChange={(e) =>
+                  setItems((prev) =>
+                    prev.map((itm) =>
+                      itm.id === item.id
+                        ? { ...itm, review_comment: e.target.value }
+                        : itm
+                    )
+                  )
+                }
+              />
+            </BaseCard>
+          ))}
+        </div>
+      ) : (
+        <div className="p-4 space-y-4">
+          <p className="text-xl">No Data</p>
+        </div>
+      )}
+      <div className="px-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">
+        <Button variant="base" outline onClick={onClose}>
+          Batal
+        </Button>
+        <Button
+          variant="primary"
+          disabled={isLoading}
+          isLoading={isLoading}
+          onClick={handleSubmit}
+        >
+          Kirim Ulasan
+        </Button>
+      </div>
+    </BaseModal>
+  );
+}
+
+type RatingInputProps = {
+  value?: number;
+  onChange?: (val: number) => void;
+  className?: string;
+};
+function RatingInput({ value, onChange, className }: RatingInputProps) {
+  const [selected, setSelected] = useState<number | undefined>(value);
+
+  return (
+    <div
+      className={twMerge("flex items-center", className)}
+      onMouseLeave={() => setSelected(value)}
+    >
+      {new Array(5).fill(0).map((_, index) => (
+        <span
+          key={index}
+          className="text-xl text-yellow-500 group leading-none cursor-pointer"
+          onMouseEnter={() => setSelected(index + 1)}
+          onMouseLeave={() => setSelected(value)}
+          onClick={() => onChange && onChange(index + 1)}
+        >
+          {!!selected && index + 1 <= selected ? (
+            <RiStarFill />
+          ) : (
+            <RiStarLine />
+          )}
+        </span>
+      ))}
+    </div>
   );
 }

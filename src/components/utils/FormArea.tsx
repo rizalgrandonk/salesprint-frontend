@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 
 type FormAreaType = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   id: string;
-  label: string;
+  label?: string;
   error?: string;
   classNameLabel?: string;
   classNameError?: string;
@@ -30,15 +30,17 @@ const FormArea = forwardRef<HTMLTextAreaElement, FormAreaType>(
   ) {
     return (
       <div className={twMerge("space-y-1", classNameContainer)}>
-        <label
-          htmlFor={id}
-          className={twMerge(
-            "text-gray-600 dark:text-gray-200",
-            classNameLabel
-          )}
-        >
-          {label}
-        </label>
+        {!!label && (
+          <label
+            htmlFor={id}
+            className={twMerge(
+              "text-gray-600 dark:text-gray-200",
+              classNameLabel
+            )}
+          >
+            {label}
+          </label>
+        )}
         <div className="relative">
           <textarea
             ref={ref}

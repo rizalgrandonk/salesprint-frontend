@@ -1,4 +1,4 @@
-import { Product } from "./Product";
+import { Product, Review } from "./Product";
 import { Store } from "./Store";
 import { User } from "./User";
 import { ProductVariant } from "./Variant";
@@ -25,6 +25,7 @@ export type OrderItem = {
   product?: Product;
   product_variant?: ProductVariant;
   order: Order;
+  review: Review;
 };
 
 export type Order = {

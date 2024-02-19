@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Category } from "./Category";
+import { OrderItem } from "./Order";
 import { Store } from "./Store";
 import { User } from "./User";
 import { ProductVariant } from "./Variant";
@@ -46,14 +47,18 @@ export type Product = {
 
 export type Review = {
   id: string;
-  coment: string;
+  coment?: string;
   rating: number;
   product_id: string;
   user_id: string;
   product_variant_id: string;
+  order_item_id: string;
   created_at: string;
   updated_at: string;
 
+  product?: Product;
+  product_variant?: ProductVariant;
+  order_item?: OrderItem;
   user?: User;
 };
 
