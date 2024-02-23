@@ -176,6 +176,16 @@ export default function useDataTable<T>(
     }));
   };
 
+  const setPage = (newPage: number) => {
+    if (newPage < 1 || newPage > (summaryData?.last_page ?? 1)) {
+      return;
+    }
+    return setQueryState((prev) => ({
+      ...prev,
+      page: newPage,
+    }));
+  };
+
   const availablePages = Array.from(
     { length: requestData?.last_page ?? 0 },
     (_, i) => i + 1
@@ -195,6 +205,7 @@ export default function useDataTable<T>(
     setOrderBy: setOrderBy,
     setLimit: setLimit,
     setFilter: setFilter,
+    setPage: setPage,
     availablePages: availablePages,
   };
 }

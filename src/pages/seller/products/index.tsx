@@ -398,7 +398,7 @@ export default function StoreProductListPage() {
                   <div className="flex items-end gap-2">
                     <RiStarFill className="text-yellow-500 text-base" />
                     <span className="font-medium leading-none">
-                      {item.average_rating}
+                      {item.average_rating?.toFixed(2)}
                     </span>
                   </div>
                 ),

@@ -17,9 +17,9 @@ export const ProductCard = forwardRef<HTMLAnchorElement, ProductCardProps>(
       <Link
         ref={ref}
         href={`/${product.store?.slug}/${product.slug}`}
-        className="w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700 p-2"
+        className="w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700 p-1.5"
       >
-        <div className="w-full h-36 lg:h-60 bg-cover bg-center relative rounded overflow-hidden">
+        <div className="w-full aspect-square bg-cover bg-center relative rounded overflow-hidden">
           <Image
             src={
               product.product_images?.find((image) => image.main_image)
@@ -36,23 +36,23 @@ export const ProductCard = forwardRef<HTMLAnchorElement, ProductCardProps>(
         </div>
 
         <div className="px-2 py-4 space-y-3">
-          <h3 className="text-lg lg:text-2xl line-clamp-2">{product.name}</h3>
+          <h3 className="line-clamp-2 m-0 leading-tight">{product.name}</h3>
 
           <div className="flex items-center gap-2">
             <ProductRating
-              className="text-sm"
+              className="text-xs"
               rating={product.average_rating}
             />
-            <span className="px-2 py-0.5 text-xs font-semibold bg-primary-light text-primary-dark rounded">
+            <span className="px-1 py-0.5 leading-none text-xs font-semibold bg-primary-light text-primary-dark rounded">
               {product.average_rating}
             </span>
           </div>
 
           {!!product.store && (
-            <div className="flex items-center gap-2">
-              <RiStoreLine className="lg:text-lg" />
-              <div className="h-3 lg:h-4 w-full overflow-y-hidden relative text-sm lg:text-base">
-                <div className="absolute left-0 top-0 group-hover:-top-[1.2rem] lg:group-hover:-top-[1.3rem] transition-all duration-300 space-y-1">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <RiStoreLine />
+              <div className="h-3 w-full overflow-y-hidden relative text-sm">
+                <div className="absolute left-0 top-0 group-hover:-top-[1.2rem] lg:group-hover:-top-[1.2rem] transition-all duration-300 space-y-1">
                   <span className="block font-medium leading-none">
                     {product.store.city}
                   </span>
@@ -64,7 +64,7 @@ export const ProductCard = forwardRef<HTMLAnchorElement, ProductCardProps>(
             </div>
           )}
 
-          <p className="font-bold lg:text-xl">
+          <p className="font-semibold text-lg leading-none">
             {`${formatPrice(product.price)}`}
           </p>
         </div>

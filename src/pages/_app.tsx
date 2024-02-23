@@ -1,10 +1,9 @@
+import AppLayout from "@/components/Layout";
 import AuthLayout from "@/components/auth/AuthLayout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import AppLayout from "@/components/Layout";
 import LoadingLogo from "@/components/utils/LoadingLogo";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import "@/styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 import type { AppProps } from "next/app";
@@ -13,6 +12,7 @@ import { Router } from "next/router";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import "react-multi-carousel/lib/styles.css";
+import "@/styles/globals.css";
 
 const font = Poppins({
   weight: ["300", "400", "500", "600", "700"],

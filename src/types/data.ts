@@ -12,6 +12,10 @@ export type QueryState<T> = {
   limit: number;
   with?: string[];
   withCount?: string[];
+  withAvgs?: {
+    relation: string;
+    field: string;
+  }[];
   orderBy?: {
     field: keyof T;
     value: "asc" | "desc";

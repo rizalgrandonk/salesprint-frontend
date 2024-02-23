@@ -85,6 +85,14 @@ export function queryStateToQueryString<T>(state: Partial<QueryState<T>>) {
   if (state.withCount) {
     queryObject["withCount"] = state.withCount;
   }
+  if (state.withAvgs) {
+    queryObject["withAvgs"] = state.withAvgs.reduce((acc, curr) => {
+      return {
+        ...acc,
+        [curr.relation]: curr.field,
+      };
+    }, {} as QueryStringifyParam);
+  }
   if (state.orderBy) {
     queryObject["orderBy"] = {
       [state.orderBy.field]: state.orderBy.value,
@@ -124,4 +132,53 @@ export function htmlToPlainText(htmlString: string) {
 
 export function capitalizeString(text: string) {
   return text.replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase());
+}
+
+export function generatePaginationArray(
+  currentPage: number,
+  lastPage: number,
+  maxVisibleButtons: number
+) {
+  const paginationArray = [];
+
+  if (lastPage <= maxVisibleButtons) {
+    for (let i = 1; i <= lastPage; i++) {
+      paginationArray.push(i);
+    }
+  } else {
+    if (currentPage <= Math.ceil(maxVisibleButtons / 2)) {
+      // Display buttons from the beginning
+      for (let i = 1; i <= maxVisibleButtons - 1; i++) {
+        paginationArray.push(i);
+      }
+      paginationArray.push("...");
+      paginationArray.push(lastPage);
+    } else if (currentPage >= lastPage - Math.floor(maxVisibleButtons / 2)) {
+      // Display buttons from the end
+      paginationArray.push(1);
+      paginationArray.push("...");
+      for (
+        let i = lastPage - Math.floor(maxVisibleButtons / 2);
+        i <= lastPage;
+        i++
+      ) {
+        paginationArray.push(i);
+      }
+    } else {
+      // Display buttons with ellipses in the middle
+      paginationArray.push(1);
+      paginationArray.push("...");
+      for (
+        let i = currentPage - Math.floor(maxVisibleButtons / 2) + 1;
+        i <= currentPage + Math.floor(maxVisibleButtons / 2) - 1;
+        i++
+      ) {
+        paginationArray.push(i);
+      }
+      paginationArray.push("...");
+      paginationArray.push(lastPage);
+    }
+  }
+
+  return paginationArray;
 }

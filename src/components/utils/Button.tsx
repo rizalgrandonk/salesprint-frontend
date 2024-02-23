@@ -34,18 +34,23 @@ const variantClass = {
 };
 
 const outlineClass = {
-  primary: "text-primary bg-transparent",
-  danger: "text-rose-500 bg-transparent",
-  warning: "text-amber-500 bg-transparent",
-  info: "text-sky-500 bg-transparent",
-  success: "text-green-500 bg-transparent",
-  secondary: "text-gray-500 bg-transparent",
+  primary:
+    "text-primary bg-transparent disabled:text-gray-500 disabled:bg-transparent",
+  danger:
+    "text-rose-500 bg-transparent disabled:text-gray-500 disabled:bg-transparent",
+  warning:
+    "text-amber-500 bg-transparent disabled:text-gray-500 disabled:bg-transparent",
+  info: "text-sky-500 bg-transparent disabled:text-gray-500 disabled:bg-transparent",
+  success:
+    "text-green-500 bg-transparent disabled:text-gray-500 disabled:bg-transparent",
+  secondary:
+    "text-gray-500 bg-transparent disabled:text-gray-500 disabled:bg-transparent",
 
-  base: "border-gray-400 dark:border-gray-600 bg-transparent dark:bg-transparent",
+  base: "border-gray-400 dark:border-gray-600 bg-transparent dark:bg-transparent disabled:text-gray-500 disabled:bg-transparent",
 };
 
 const buttonBaseClass =
-  "items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed rounded transition-all duration-100";
+  "items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:bg-gray-500 disabled:border-gray-500 disabled:pointer-events-none disabled:opacity-80 disabled:cursor-not-allowed rounded transition-all duration-100";
 
 type BtnProps = {
   href?: string;

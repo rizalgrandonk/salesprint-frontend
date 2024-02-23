@@ -222,7 +222,7 @@ function RecomendationSection() {
       getPaginatedData<Product>(
         QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
         queryStateToQueryString<Product>({
-          limit: 8,
+          limit: 12,
           page: pageParam,
           with: ["product_images", "category", "store"],
           withCount: ["reviews", "order_items"],
@@ -245,7 +245,7 @@ function RecomendationSection() {
   return (
     <div ref={sectionStartRef}>
       {!data ? null : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
+        <div className="grid grid-cols-6 gap-3">
           {data.pages.map((group, idx) =>
             group?.data.map((product, i) => (
               <ProductCard

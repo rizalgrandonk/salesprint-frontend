@@ -19,6 +19,7 @@ import {
 } from "@/lib/constants";
 import {
   formatPrice,
+  generatePaginationArray,
   htmlToPlainText,
   queryStateToQueryString,
 } from "@/lib/formater";
@@ -266,7 +267,7 @@ export default function ProductPage({
                 </div>
                 <div className="w-4/5">
                   <Link
-                    href="#"
+                    href={`/categories/${product.category.slug}`}
                     className="text-primary font-medium px-3 py-1 bg-primary/10 hover:bg-primary/20 transition-all"
                   >
                     {product.category.name}
@@ -403,10 +404,16 @@ export default function ProductPage({
                       <span>{store.city}</span>
                     </div>
                   </div>
-                  <Button type="button" variant="primary" size="sm" outline>
+                  <ButtonLink
+                    href={`/${store.slug}`}
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    outline
+                  >
                     <MdOutlineStorefront className="text-base" />
                     Kunjungi Toko
-                  </Button>
+                  </ButtonLink>
                 </div>
               </div>
 
@@ -474,18 +481,18 @@ export default function ProductPage({
             </section>
           </div>
 
-          <section className="w-1/4 flex-shrink-0 space-y-6">
+          <section className="w-1/5 flex-shrink-0 space-y-6">
             <div>
               <h3 className="font-semibold text-2xl">Produk Toko</h3>
               <Link
-                href="#"
+                href={`/${store.slug}`}
                 className="flex items-center gap-1 text-primary hover:text-primary/90"
               >
                 <span className="underline">Lihat semua</span>
                 <FaAngleDoubleRight />
               </Link>
             </div>
-            <div className="lg:max-h-[84rem] overflow-auto">
+            <div className="lg:max-h-[75rem] overflow-auto">
               <div className="flex flex-col gap-4">
                 {storeProducts?.map((product) => (
                   <ProductCard key={product.id} product={product} />
@@ -636,6 +643,7 @@ function ReviewsSection({
     nextPage,
     previousPage,
     setFilter,
+    setPage,
     refetch,
     isFetching,
   } = useDataTable<MakePropertiesRequired<Review, "user">>(
@@ -654,6 +662,12 @@ function ReviewsSection({
   const selectedFilterRating = queryState.filters?.find(
     (fil) => fil.field === "rating" && fil.operator === "="
   )?.value;
+
+  const paginationButtons = generatePaginationArray(
+    queryState.page,
+    summaryData?.last_page ?? 1,
+    3
+  );
 
   return (
     <div ref={ref}>
@@ -809,19 +823,43 @@ function ReviewsSection({
             ))}
           </div>
 
-          <div className="flex items-center justify-start gap-2 py-4">
-            {!!previousPage && (
-              <Button onClick={() => previousPage()} size="sm" outline>
-                <MdChevronLeft className="text-xl" />
-                <span>Sebelumnya</span>
+          <div className="flex items-center justify-center py-4 gap-2">
+            <Button
+              size="sm"
+              outline
+              className="border-none px-1"
+              disabled={!previousPage}
+              onClick={() => {
+                previousPage && previousPage();
+              }}
+            >
+              <MdChevronLeft className="text-2xl" />
+            </Button>
+            {paginationButtons.map((pageText) => (
+              <Button
+                key={pageText}
+                size="sm"
+                outline={pageText !== queryState.page}
+                className="border-none px-3"
+                disabled={typeof pageText === "string"}
+                onClick={() => {
+                  typeof pageText === "number" && setPage(pageText);
+                }}
+              >
+                <span>{pageText}</span>
               </Button>
-            )}
-            {!!nextPage && (
-              <Button onClick={() => nextPage()} size="sm" outline>
-                <span>Berikutnya</span>
-                <MdChevronRight className="text-xl" />
-              </Button>
-            )}
+            ))}
+            <Button
+              size="sm"
+              outline
+              className="border-none px-1"
+              disabled={!nextPage}
+              onClick={() => {
+                nextPage && nextPage();
+              }}
+            >
+              <MdChevronRight className="text-2xl" />
+            </Button>
           </div>
         </div>
       )}
@@ -853,7 +891,7 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
       getPaginatedData<Product>(
         QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
         queryStateToQueryString<Product>({
-          limit: 8,
+          limit: 12,
           page: pageParam,
           with: ["product_images", "category", "store"],
           withCount: ["reviews", "order_items"],
@@ -883,7 +921,7 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
   return (
     <div ref={sectionStartRef}>
       {!data ? null : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
+        <div className="grid grid-cols-6 gap-3">
           {data.pages.map((group, idx) =>
             group?.data.map((product, i) => (
               <ProductCard
