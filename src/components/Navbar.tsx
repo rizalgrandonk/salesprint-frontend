@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import {
   RiHome3Fill,
   RiHome3Line,
@@ -32,29 +32,16 @@ import { Button, ButtonLink } from "./utils/Button";
 import DarkModeToggle from "./utils/DarkModeToggle";
 
 export default function Navbar() {
-  // const [activeNavbar, setActiveNavbar] = useState(false);
-
-  // useEffect(() => {
-  //   const changeColor = () => {
-  //     if (window.scrollY >= 30) {
-  //       setActiveNavbar(true);
-  //     } else {
-  //       setActiveNavbar(false);
-  //     }
-  //   };
-
-  //   window.addEventListener("scroll", changeColor);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", changeColor);
-  //   };
-  // }, []);
-
   const { totalItems } = useCart();
 
   const { data: session } = useSession();
 
-  const { asPath, locale } = useRouter();
+  const router = useRouter();
+
+  const { asPath, locale } = router;
+
+  const keywordQuery = router.query.keyword?.toString();
+  const [searchKeyword, setSearchKeyword] = useState(keywordQuery ?? "");
 
   return (
     <>
@@ -72,32 +59,30 @@ export default function Navbar() {
               </span>
             </Link>
           </div>
-          {/* <div className="hidden h-full w-1/2 lg:w-2/5 lg:flex items-center justify-between">
-            <Link
-              href="/products"
-              className="hover:text-primary font-medium uppercase"
-            >
-              Products
-            </Link>
-            <Link
-              href="/categories"
-              className="hover:text-primary font-medium uppercase"
-            >
-              Categories
-            </Link>
-          </div> */}
           <div className="flex-grow px-8">
-            <div className="relative w-full">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!searchKeyword) {
+                  return;
+                }
+
+                router.push(`/search?keyword=${searchKeyword}`);
+              }}
+              className="relative w-full"
+            >
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-2xl text-gray-700 dark:text-gray-300">
                 <MdSearch />
               </div>
               <input
                 type="text"
                 name="nav_search"
-                className="bg-gray-50 border border-gray-300 dark:border-gray-600 text-gray-900 rounded focus:ring-primary focus:border-primary block w-full pl-10 p-2.5 dark:bg-gray-900 dark:placeholder-gray-400 dark:text-gray-100 outline-none"
-                placeholder="Search"
+                className="bg-gray-50 border border-gray-300 dark:border-gray-600 text-gray-900 rounded focus:ring-primary focus:border-primary block w-full pl-12 px-2.5 py-2 dark:bg-gray-900 dark:placeholder-gray-400 dark:text-gray-100 outline-none"
+                placeholder="Cari di Salesprint"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
               />
-            </div>
+            </form>
           </div>
 
           <div className="flex justify-between items-center gap-4">
