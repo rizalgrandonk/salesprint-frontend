@@ -2,12 +2,30 @@ import { Category } from "@/types/Category";
 import { QueryParams } from "@/types/data";
 import { protectedRequest, publicRequest } from ".";
 import { queryStateToQueryString } from "../formater";
+import { Sulphur_Point } from "next/font/google";
 
 export async function getAllCategories(params?: QueryParams<Category>) {
   const queryParams = params ? "?" + queryStateToQueryString(params) : "";
   const result = await publicRequest<Category[]>({
     method: "GET",
     path: "/categories" + queryParams,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getCategoryBySlug(
+  slug: string,
+  params?: QueryParams<Category>
+) {
+  const queryParams = params ? "?" + queryStateToQueryString(params) : "";
+  const result = await publicRequest<Category>({
+    method: "GET",
+    path: `/categories/${slug}` + queryParams,
   });
 
   if (!result.success) {
