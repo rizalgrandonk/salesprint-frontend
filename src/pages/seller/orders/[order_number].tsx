@@ -233,7 +233,7 @@ export default function OrderDetailPage() {
   return (
     <>
       <div className="space-y-2 lg:space-y-4 px-3 lg:px-5 pt-1 pb-6">
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Breadcrumb
             navList={[
               {

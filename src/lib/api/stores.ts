@@ -5,7 +5,7 @@ import {
   QueryParams,
 } from "@/types/data";
 import { protectedRequest, publicRequest } from ".";
-import { queryStateToQueryString } from "../formater";
+import { queryStateToQueryString, queryStringify } from "../formater";
 
 // type RequestResult =
 //   | { success: true; data: Store }
@@ -24,7 +24,7 @@ export async function getPaginatedStores(params?: string) {
   return result.data;
 }
 
-export async function getUserStore(
+export async function getUserStore<K extends keyof Store>(
   token?: string,
   params?: QueryParams<Store>
 ) {
@@ -32,7 +32,7 @@ export async function getUserStore(
     return null;
   }
   const queryParams = params ? "?" + queryStateToQueryString(params) : "";
-  const result = await protectedRequest<Store>({
+  const result = await protectedRequest<MakePropertiesRequired<Store, K>>({
     method: "GET",
     path: "/stores/mystore" + queryParams,
     token,

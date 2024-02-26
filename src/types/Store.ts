@@ -27,6 +27,7 @@ export type Store = {
   products_count?: number;
   reviews_count?: number;
   order_items_count?: number;
+  orders_count?: number;
 
   reviews_avg_rating?: number;
 };

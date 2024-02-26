@@ -240,7 +240,7 @@ export default function StoreCategories() {
   return (
     <>
       <div className="space-y-2 lg:space-y-4 px-3 lg:px-5 py-1">
-        <div className="col-span-full space-y-2 lg:space-y-4">
+        <div className="col-span-full space-y-2">
           <Breadcrumb
             navList={[
               {

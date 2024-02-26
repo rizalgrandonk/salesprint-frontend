@@ -169,7 +169,7 @@ export default function EditProductPage() {
 
   return (
     <div className="px-3 lg:px-5 pt-1 pb-6 space-y-2 lg:space-y-4">
-      <div className="space-y-3">
+      <div className="space-y-2">
         <Breadcrumb
           navList={[
             {

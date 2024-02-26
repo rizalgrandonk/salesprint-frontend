@@ -43,7 +43,7 @@ export function slugify(str: string) {
 }
 
 export type QueryStringifyParam = {
-  [key: string]: string | number | string[] | QueryStringifyParam;
+  [key: string]: string | number | string[] | number[] | QueryStringifyParam;
 };
 
 export function queryStringify(

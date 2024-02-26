@@ -155,7 +155,7 @@ export default function StoreListPage() {
 
   return (
     <div className="space-y-2 lg:space-y-4 flex flex-col h-[88vh]">
-      <div className="col-span-full space-y-2 lg:space-y-4 px-3 lg:px-5 py-1">
+      <div className="col-span-full space-y-2 px-3 lg:px-5 py-1">
         <Breadcrumb
           navList={[
             {
