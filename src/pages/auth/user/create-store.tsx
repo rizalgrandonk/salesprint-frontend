@@ -80,6 +80,10 @@ export default function CreateStore() {
   );
 
   useEffect(() => {
+    router.prefetch("/seller/store");
+  }, [router]);
+
+  useEffect(() => {
     checkSlug(debouncedSlug);
   }, [debouncedSlug, checkSlug]);
 

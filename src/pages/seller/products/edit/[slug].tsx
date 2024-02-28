@@ -16,7 +16,7 @@ import { ProductVariant } from "@/types/Variant";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiInformationLine } from "react-icons/ri";
 
 export default function EditProductPage() {
@@ -56,6 +56,10 @@ export default function EditProductPage() {
   const queryClient = useQueryClient();
 
   const [isLoadingRequest, setIsLoadingRequest] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/seller/products");
+  }, [router]);
 
   if (isLoadingStore || isLoadingProduct) {
     return (

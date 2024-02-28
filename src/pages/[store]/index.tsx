@@ -128,7 +128,7 @@ export default function StorePage({
             {store.store_banners?.map((banner) => (
               <div
                 key={banner.id}
-                className="w-full h-[70vh] relative rounded overflow-hidden"
+                className="w-full aspect-[9/4] relative rounded overflow-hidden"
               >
                 <Image
                   src={banner.image || DEFAULT_STORE_CATEGORY_IMAGE}

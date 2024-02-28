@@ -7,7 +7,7 @@ export const ORDER_STATUS_MAP = {
   UNPAID: "Belum Dibayar",
   PAID: "Menunggu Konfirmasi",
   PROCESSED: "Diproses",
-  SHIPPED: "Dikirim",
+  SHIPPED: "Dalam Pengiriman",
   DELIVERED: "Telah Dikirim",
   COMPLETED: "Selesai",
   CANCELED: "Dibatalkan",

@@ -1,7 +1,7 @@
 import { Disclosure, Transition } from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { JSXElementConstructor, useState } from "react";
+import { JSXElementConstructor, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import {
   MdChevronLeft,
@@ -219,6 +219,10 @@ function MenuItem({
 
     !!href && router.push(href);
   };
+
+  useEffect(() => {
+    !!href && router.prefetch(href);
+  }, [router, href]);
 
   const isCurrentPage = router.pathname === href;
 

@@ -22,7 +22,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdArrowDropDown,
   MdArrowRight,
@@ -171,6 +171,10 @@ function TransactionSection() {
   > | null>(null);
   const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
   const [isModalReviewOpen, setIsModalReviewOpen] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/cart");
+  }, [router]);
 
   const statusFilter = queryState.filters?.find(
     (fil) => fil.field === "order_status"

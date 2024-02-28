@@ -121,6 +121,10 @@ export default function CheckoutPage() {
   };
 
   useEffect(() => {
+    router.prefetch("/user/orders");
+  }, [router]);
+
+  useEffect(() => {
     setItemGroups((prev) =>
       prev.map((group) => ({ ...group, delivery: null }))
     );

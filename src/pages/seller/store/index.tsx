@@ -50,7 +50,7 @@ export default function SellerStore() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 px-3 lg:px-5 py-1">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 px-3 lg:px-5 pt-1 pb-6">
       <div className="col-span-full space-y-2">
         <Breadcrumb
           navList={[
@@ -214,7 +214,7 @@ function BannerCarousel({ store_banners }: BannerCarouselProps) {
         infinite
       >
         {store_banners.map((banner) => (
-          <div key={banner.id} className="w-full h-60 relative">
+          <div key={banner.id} className="w-full aspect-[9/4] relative">
             <Image
               src={banner.image}
               alt=""

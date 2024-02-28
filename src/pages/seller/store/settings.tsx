@@ -58,7 +58,10 @@ export default function StoreSettings() {
 
   const { data: store, isLoading } = useQuery({
     queryKey: [QueryKeys.USER_STORE, userId],
-    queryFn: () => getUserStore(userToken),
+    queryFn: () =>
+      getUserStore<"store_banners">(userToken, {
+        with: ["store_banners"],
+      }),
     enabled: !!userId && !!userToken,
   });
 
@@ -175,7 +178,7 @@ export default function StoreSettings() {
     : store?.image || "";
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4 px-3 lg:px-5 py-1">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4 px-3 lg:px-5 pt-1 pb-6">
       <div className="col-span-full space-y-2">
         <Breadcrumb
           navList={[

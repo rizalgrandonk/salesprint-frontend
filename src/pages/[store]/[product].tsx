@@ -232,7 +232,9 @@ export default function ProductPage({
             <h1 className="text-3xl font-medium">{product.name}</h1>
             <div className="flex items-center divide-x divide-gray-500">
               <div className="flex items-center gap-1 pr-4">
-                <span className="font-semibold">{product.average_rating}</span>
+                <span className="font-semibold">
+                  {product.average_rating.toFixed(2)}
+                </span>
                 <ProductRating
                   className="text-base"
                   rating={product.average_rating}

@@ -24,8 +24,10 @@ import { MakePropertiesRequired } from "@/types/data";
 import { format } from "date-fns/format";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdCheck,
   MdChevronLeft,
@@ -57,6 +59,13 @@ const sortOptions = [
 export default function OrlderListPage() {
   const { data: session } = useSession();
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const statusParam = searchParams.get("status")
+    ? Object.keys(ORDER_STATUS_MAP).find(
+        (key) => key === searchParams.get("status")
+      )
+    : undefined;
 
   const userId = session?.user?.id;
   const userToken = session?.user?.access_token;
@@ -113,6 +122,12 @@ export default function OrlderListPage() {
       queryKey: [QueryKeys.PAGINATED_STORE_ORDERS, userToken],
     }
   );
+
+  useEffect(() => {
+    setFilter([
+      { field: "order_status", operator: "=", value: statusParam ?? null },
+    ]);
+  }, [statusParam]);
 
   const statusFilter = queryState.filters?.find(
     (fil) => fil.field === "order_status"
@@ -264,7 +279,7 @@ export default function OrlderListPage() {
             <FormInput
               className="text-sm w-full lg:w-80"
               id="search"
-              placeholder="Cari Produk"
+              placeholder="Cari Nomor Pesanan"
               value={queryState.search?.value}
               onChange={(e) =>
                 setSearchKey({
@@ -306,42 +321,34 @@ export default function OrlderListPage() {
 
         <BaseCard className="flex items-center gap-4">
           <div className="flex-grow flex-shrink-0 font-medium text-center">
-            <span
+            <Link
+              href={`?status=ALL`}
               className={twMerge(
                 "pb-1 px-2 border-b-4 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-white",
                 !statusFilter
                   ? "text-primary dark:text-primary border-primary"
                   : "border-transparent"
               )}
-              onClick={() =>
-                setFilter([
-                  { field: "order_status", operator: "=", value: null },
-                ])
-              }
             >
               Semua
-            </span>
+            </Link>
           </div>
           {Object.keys(ORDER_STATUS_MAP).map((key) => (
             <div
               key={key}
               className="flex-grow flex-shrink-0 font-medium text-center"
             >
-              <span
+              <Link
+                href={`?status=${key}`}
                 className={twMerge(
                   "pb-1 px-2 border-b-4 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-white",
                   statusFilter?.value === key
                     ? "text-primary dark:text-primary border-primary"
                     : "border-transparent"
                 )}
-                onClick={() =>
-                  setFilter([
-                    { field: "order_status", operator: "=", value: key },
-                  ])
-                }
               >
                 {ORDER_STATUS_MAP[key as keyof typeof ORDER_STATUS_MAP]}
-              </span>
+              </Link>
             </div>
           ))}
         </BaseCard>

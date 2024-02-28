@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
             isSidebarExpand ? "lg:ml-64" : "lg:ml-16"
           )}
         >
-          <main className="min-h-[75%]">{children}</main>
+          <main className="min-h-full">{children}</main>
           {/* <DashboardFooter /> */}
         </div>
       </div>

@@ -27,6 +27,10 @@ export default function CartPage() {
 
   const router = useRouter();
 
+  useEffect(() => {
+    router.prefetch("/user/checkout");
+  }, [router]);
+
   return (
     <>
       <Meta title="Keranjang | Salesprint" />

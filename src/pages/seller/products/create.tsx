@@ -10,7 +10,7 @@ import toast from "@/lib/toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegCaretSquareDown } from "react-icons/fa";
 import { RiInformationLine } from "react-icons/ri";
 
@@ -30,6 +30,10 @@ export default function CreateProductPage() {
   const router = useRouter();
 
   const [isLoadingRequest, setIsLoadingRequest] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/seller/products");
+  }, [router]);
 
   if (isLoadingStore) {
     return (

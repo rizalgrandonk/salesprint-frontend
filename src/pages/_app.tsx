@@ -11,6 +11,8 @@ import { Poppins } from "next/font/google";
 import { Router } from "next/router";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import "react-multi-carousel/lib/styles.css";
 import "@/styles/globals.css";
 
@@ -20,6 +22,17 @@ const font = Poppins({
 });
 
 const queryClient = new QueryClient();
+
+NProgress.configure({
+  minimum: 0.3,
+  easing: "ease",
+  speed: 500,
+  showSpinner: false,
+});
+
+Router.events.on("routeChangeStart", () => NProgress.start());
+Router.events.on("routeChangeComplete", () => NProgress.done());
+Router.events.on("routeChangeError", () => NProgress.done());
 
 export default function MyApp({
   Component,
@@ -71,24 +84,24 @@ function WrapperLayout({
 }: { layout: "app" | "dashboard" | "auth" } & PropsWithChildren) {
   const { data: session, status } = useSession();
   const { isLoading: isLoadingCart } = useCart();
-  const [isLoadingRoute, setIsLoadingRoute] = useState(false);
+  // const [isLoadingRoute, setIsLoadingRoute] = useState(false);
 
-  useEffect(() => {
-    const start = () => {
-      setIsLoadingRoute(true);
-    };
-    const end = () => {
-      setIsLoadingRoute(false);
-    };
-    Router.events.on("routeChangeStart", start);
-    Router.events.on("routeChangeComplete", end);
-    Router.events.on("routeChangeError", end);
-    return () => {
-      Router.events.off("routeChangeStart", start);
-      Router.events.off("routeChangeComplete", end);
-      Router.events.off("routeChangeError", end);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const start = () => {
+  //     setIsLoadingRoute(true);
+  //   };
+  //   const end = () => {
+  //     setIsLoadingRoute(false);
+  //   };
+  //   Router.events.on("routeChangeStart", start);
+  //   Router.events.on("routeChangeComplete", end);
+  //   Router.events.on("routeChangeError", end);
+  //   return () => {
+  //     Router.events.off("routeChangeStart", start);
+  //     Router.events.off("routeChangeComplete", end);
+  //     Router.events.off("routeChangeError", end);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (session?.user && session?.user.error) {
@@ -96,7 +109,7 @@ function WrapperLayout({
     }
   }, [session]);
 
-  if (status === "loading" || isLoadingCart || isLoadingRoute) {
+  if (status === "loading" || isLoadingCart) {
     return (
       <div className="bg-gray-50 dark:bg-gray-900 h-screen w-screen text-primary flex items-center justify-center flex-col gap-4">
         <div className="h-[60vh] aspect-square">

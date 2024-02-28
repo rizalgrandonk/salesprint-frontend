@@ -41,3 +41,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+#nprogress .bar {
+  @apply bg-primary h-1;
+}

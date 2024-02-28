@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   RiHome3Fill,
   RiHome3Line,
@@ -42,6 +42,10 @@ export default function Navbar() {
 
   const keywordQuery = router.query.keyword?.toString();
   const [searchKeyword, setSearchKeyword] = useState(keywordQuery ?? "");
+
+  useEffect(() => {
+    router.prefetch("/search");
+  }, [router]);
 
   return (
     <>

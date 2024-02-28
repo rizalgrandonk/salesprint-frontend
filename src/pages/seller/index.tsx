@@ -4,44 +4,58 @@ import Breadcrumb from "@/components/utils/Breadcrumb";
 import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import QueryKeys from "@/constants/queryKeys";
 import {
+  getStoreOrderStatusount,
   getStoreOrderSummay,
   getStoreRatingSummay,
   getStoreSales,
   getStoreSalesSummay,
-  getStoreTopOrderMethods,
+  getStoreTopOrderCustomers,
+  getStoreTopOrderProducts,
+  getStoreTopOrderProvince,
 } from "@/lib/api/dashboard";
 import { formatPrice } from "@/lib/formater";
 import { useQuery } from "@tanstack/react-query";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Fragment, useState } from "react";
 import {
-  MdArrowDownward,
   MdCheck,
+  MdChevronRight,
   MdKeyboardArrowDown,
+  MdOutlineAllInbox,
+  MdOutlineArticle,
+  MdOutlineLocalShipping,
+  MdOutlineMoveToInbox,
+  MdOutlinePayments,
+  MdOutlineTimer,
   MdTrendingDown,
+  MdTrendingFlat,
   MdTrendingUp,
 } from "react-icons/md";
 import { RiInformationLine, RiStarFill } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 import { getYear } from "date-fns/getYear";
+import { getMonth } from "date-fns/getMonth";
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
-  Cell,
   Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
   ResponsiveContainer,
-  Sector,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { Listbox, Transition } from "@headlessui/react";
 import { getUserStore } from "@/lib/api/stores";
+import Image from "next/image";
+import {
+  DEFAULT_STORE_CATEGORY_IMAGE,
+  DEFAULT_USER_IMAGE,
+} from "@/lib/constants";
+import { IconType } from "react-icons";
+import Link from "next/link";
 
 const MONTHS = [
   "Januari",
@@ -57,6 +71,25 @@ const MONTHS = [
   "November",
   "Desember",
 ];
+
+export const STATUS_MAP: { [key: string]: string } = {
+  UNPAID: "Belum Dibayar",
+  PAID: "Menunggu Konfirmasi",
+  PROCESSED: "Diproses",
+  SHIPPED: "Dalam Pengiriman",
+  DELIVERED: "Telah Dikirim",
+  // COMPLETED: "Selesai",
+  // CANCELED: "Dibatalkan",
+};
+export const STATUS_ICON_MAP: { [key: string]: IconType } = {
+  UNPAID: MdOutlinePayments,
+  PAID: MdOutlineTimer,
+  PROCESSED: MdOutlineAllInbox,
+  SHIPPED: MdOutlineLocalShipping,
+  DELIVERED: MdOutlineMoveToInbox,
+  // COMPLETED: "Selesai",
+  // CANCELED: "Dibatalkan",
+};
 
 const METHOD_MAP: { [key: string]: string } = {
   qris: "QRIS",
@@ -76,8 +109,9 @@ const yearsOptions = [
 export default function Dashboard() {
   const { data: session } = useSession();
 
-  const userId = session?.user?.id;
-  const userToken = session?.user?.access_token;
+  const currentUser = session?.user;
+  const userId = currentUser?.id;
+  const userToken = currentUser?.access_token;
 
   const { data: store, isLoading } = useQuery({
     queryKey: [QueryKeys.USER_STORE, userId],
@@ -103,6 +137,11 @@ export default function Dashboard() {
     queryFn: () => (userToken ? getStoreRatingSummay(userToken) : null),
     enabled: !!userToken,
   });
+  const { data: statusOrders } = useQuery({
+    queryKey: ["/dashboard/store_order_status_count", userToken],
+    queryFn: () => (userToken ? getStoreOrderStatusount(userToken) : null),
+    enabled: !!userToken,
+  });
 
   if (isLoading) {
     return (
@@ -121,6 +160,13 @@ export default function Dashboard() {
     );
   }
 
+  const formattedStatusOrder = Object.keys(STATUS_MAP).map((key) => ({
+    statusText: STATUS_MAP[key] ?? key,
+    order_status: key,
+    count: statusOrders?.find((stat) => stat.order_status === key)?.count ?? 0,
+    Icon: STATUS_ICON_MAP[key] ?? MdOutlineArticle,
+  }));
+
   return (
     <div className="space-y-2 lg:space-y-4 px-3 lg:px-5 pt-1 pb-6">
       <div className="space-y-2">
@@ -133,10 +179,13 @@ export default function Dashboard() {
           ]}
         />
 
-        <div className="flex justify-between items-center">
+        <div className="space-y-2">
           <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-            Dashboard
+            {`Selamat datang, ${currentUser?.name}`}
           </h1>
+          <p className="leading-none text-gray-500 dark:text-gray-400">
+            {`Berikut rangkuman data dari ${store.name}`}
+          </p>
         </div>
       </div>
 
@@ -236,28 +285,41 @@ export default function Dashboard() {
               <div className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
                 <span
                   className={twMerge(
-                    "text-xl",
-                    summaryRating.difference < 0
+                    "text-xl text-sky-500 dark:text-sky-500",
+                    summaryRating.difference < -0.1
                       ? "text-rose-500 dark:text-rose-500"
-                      : "text-emerald-500 dark:text-emerald-500"
+                      : "",
+                    summaryRating.difference > 0.1
+                      ? "text-emerald-500 dark:text-emerald-500"
+                      : ""
                   )}
                 >
-                  {summaryRating.difference < 0 ? (
+                  {summaryRating.difference < -0.1 ? (
                     <MdTrendingDown />
-                  ) : (
+                  ) : summaryRating.difference > 0.1 ? (
                     <MdTrendingUp />
+                  ) : (
+                    <MdTrendingFlat />
                   )}
                 </span>
                 <span
                   className={twMerge(
-                    summaryRating.difference < 0
+                    "text-sky-500 dark:text-sky-500",
+                    summaryRating.difference < -0.1
                       ? "text-rose-500 dark:text-rose-500"
-                      : "text-emerald-500 dark:text-emerald-500"
+                      : "",
+                    summaryRating.difference > 0.1
+                      ? "text-emerald-500 dark:text-emerald-500"
+                      : ""
                   )}
                 >
                   {`${
-                    summaryRating.difference < 0 ? "-" : "+"
-                  } ${summaryRating.difference.toFixed(1)}`}
+                    summaryRating.difference < -0.1
+                      ? "-"
+                      : summaryRating.difference > 0.1
+                      ? "+"
+                      : ""
+                  } ${Math.abs(summaryRating.difference).toFixed(1)}`}
                 </span>
                 <span>dari bulan lalu</span>
               </div>
@@ -266,9 +328,48 @@ export default function Dashboard() {
         </BaseCard>
       </div>
 
+      <BaseCard className="space-y-8">
+        <div className="flex items-center justify-between">
+          <p className="leading-none text-xl font-medium">Ringkasan Pesanan</p>
+          <Link
+            href="/seller/orders"
+            className="flex items-center text-sm text-primary hover:text-primary/80"
+          >
+            <span>Lihat Semua Pesanan</span>
+            <MdChevronRight className="text-lg" />
+          </Link>
+        </div>
+        <div className="flex items-center justify-between px-4 pb-6">
+          {formattedStatusOrder.map((item, index) => (
+            <Link
+              href={`/seller/orders?status=${item.order_status}`}
+              key={index}
+              className="flex flex-col items-center gap-1.5 group"
+            >
+              <div className="relative w-10 h-10 flex items-center justify-center">
+                {!!item.count && (
+                  <span className="leading-none m-0 p-0 text-base font-medium text-white h-6 w-6 rounded-full flex items-center justify-center bg-primary absolute -right-2 -top-2">
+                    {item.count}
+                  </span>
+                )}
+                <item.Icon className="text-4xl text-gray-600 dark:text-gray-300 group-hover:text-white dark:group-hover:text-white" />
+              </div>
+              <span className="leading-none text-sm text-gray-500 dark:text-gray-400 group-hover:text-white dark:group-hover:text-white">
+                {item.statusText}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </BaseCard>
+
       <div className="grid grid-cols-3 gap-4">
         <SalesChart className="col-span-2" />
-        <MethodChart />
+        <TopProductsSection />
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <ProvinceChart className="col-span-2" />
+        <TopCustomersSection />
       </div>
     </div>
   );
@@ -289,8 +390,10 @@ function SalesChart({ className }: { className?: string }) {
 
   const formatedData = sales ? formatSalesChartData(sales) : undefined;
 
+  console.log({ formatedData });
+
   return (
-    <BaseCard className={twMerge("space-y-10", className)}>
+    <BaseCard className={twMerge("space-y-8", className)}>
       <div className="flex items-start justify-between">
         <div className="space-y-1.5">
           <p className="leading-none text-xl font-medium">
@@ -302,7 +405,7 @@ function SalesChart({ className }: { className?: string }) {
         </div>
 
         <Listbox value={selectedYears} onChange={setSelectedYears} multiple>
-          <div className="relative w-80">
+          <div className="relative w-60">
             <Listbox.Button className="bg-inherit text-left text-sm text-gray-700 dark:text-gray-300 block w-full px-3 py-2 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800 cursor-pointer disabled:cursor-not-allowed">
               <span className="block truncate">{selectedYears.join(", ")}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -356,11 +459,15 @@ function SalesChart({ className }: { className?: string }) {
       </div>
 
       <div>
-        <ResponsiveContainer className="w-full min-h-[20rem]">
-          <AreaChart data={formatedData}>
+        <ResponsiveContainer className="w-full" height={350}>
+          <AreaChart
+            data={formatedData}
+            className="text-gray-200 dark:text-gray-700"
+          >
             <defs>
               {selectedYears.map((year, index) => (
                 <linearGradient
+                  key={`color-area-${year}`}
                   id={`color-area-${year}`}
                   x1="0"
                   y1="0"
@@ -393,21 +500,14 @@ function SalesChart({ className }: { className?: string }) {
             <YAxis
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => {
-                if (value > 999999) {
-                  return `Rp ${(Math.abs(value) / 1000000).toFixed(0)}jt`;
-                }
-                if (value > 999) {
-                  return `Rp ${(Math.abs(value) / 1000).toFixed(0)}rb`;
-                }
-                return `Rp ${Math.abs(value)}`;
-              }}
+              tickFormatter={(value) => formatPriceAcro(value)}
               className="fill-gray-500 dark:fill-gray-400 text-sm"
               tick={{ fill: "current" }}
-              width={80}
+              width={60}
               type="number"
               tickCount={6}
-              tickMargin={12}
+              tickMargin={8}
+              domain={["dataMin", "auto"]}
             />
             <CartesianGrid
               vertical={false}
@@ -424,9 +524,9 @@ function SalesChart({ className }: { className?: string }) {
                   <BaseCard className="space-y-2">
                     <p className="text-xl font-semibold">{label}</p>
                     <div>
-                      {payload?.map((p) => {
+                      {payload?.map((p, index) => {
                         return (
-                          <p className="flex items-center gap-3">
+                          <p key={index} className="flex items-center gap-3">
                             <span
                               className="block w-3 aspect-square rounded-full border-2"
                               style={{ borderColor: p.stroke }}
@@ -442,6 +542,7 @@ function SalesChart({ className }: { className?: string }) {
                   </BaseCard>
                 );
               }}
+              cursor={{ fill: "currentColor" }}
             />
             <Legend
               iconType="square"
@@ -449,14 +550,8 @@ function SalesChart({ className }: { className?: string }) {
               wrapperStyle={{ paddingTop: 16 }}
             />
             {selectedYears.map((year, index) => (
-              // <Line
-              //   dot={false}
-              //   type="monotone"
-              //   dataKey={`${year}`}
-              //   stroke={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-              //   strokeWidth={3}
-              // />
               <Area
+                key={year}
                 type="monotone"
                 dataKey={`${year}`}
                 stroke={`hsl(${(index + 4) * 45}, 70%, 55%)`}
@@ -472,116 +567,209 @@ function SalesChart({ className }: { className?: string }) {
   );
 }
 
-function MethodChart({ className }: { className?: string }) {
+function ProvinceChart({ className }: { className?: string }) {
   const { data: session } = useSession();
 
   const userToken = session?.user?.access_token;
 
-  const { data: methods } = useQuery({
-    queryKey: ["/dashboard/store_order_top_methods", userToken],
-    queryFn: () => (userToken ? getStoreTopOrderMethods(userToken) : null),
+  const { data: provinces } = useQuery({
+    queryKey: ["/dashboard/store_order_top_province", userToken],
+    queryFn: () => (userToken ? getStoreTopOrderProvince(userToken) : null),
     enabled: !!userToken,
   });
 
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const formattedChartData = methods?.map((item) => ({
-    payment_type: METHOD_MAP[item.payment_type] ?? item.payment_type,
-    count: item.count,
-  }));
-
   return (
-    <BaseCard className={twMerge("space-y-10 h-full", className)}>
+    <BaseCard className={twMerge("space-y-8 h-full", className)}>
       <div className="space-y-1.5">
-        <p className="leading-none text-xl font-medium">Metode Pembayaran</p>
+        <p className="leading-none text-xl font-medium">Daerah Pesanan</p>
         <p className="leading-none text-sm text-gray-500 dark:text-gray-400 font-light">
-          Metode pembayaran yang sering dipakai
+          Data jumlah pesanan setiap daerah
         </p>
       </div>
 
-      <ResponsiveContainer className="aspect-square" height={300}>
-        <PieChart className="w-full aspect-square">
-          <Pie
-            data={formattedChartData ?? undefined}
-            dataKey="count"
-            cx="50%"
-            cy="50%"
-            innerRadius={80}
-            outerRadius={100}
-            fill="#82ca9d"
-            onMouseEnter={(data, index) => setActiveIndex(index)}
-            activeIndex={activeIndex}
-            activeShape={(props: any) => {
-              const {
-                cx,
-                cy,
-                midAngle,
-                innerRadius,
-                outerRadius,
-                startAngle,
-                endAngle,
-                fill,
-                payload,
-                percent,
-                value,
-              } = props;
+      <ResponsiveContainer className="w-full" height={350}>
+        <BarChart
+          data={provinces ?? undefined}
+          margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
+          className="text-gray-200 dark:text-gray-700"
+        >
+          <XAxis
+            axisLine={false}
+            tickLine={false}
+            dataKey="delivery_province"
+            className="fill-gray-500 dark:fill-gray-400 text-xs"
+            tick={(props) => {
+              const { x, y, stroke, payload } = props;
+              const match = payload?.value?.match(/\(([^)]+)\)/);
 
               return (
-                <g>
+                <g transform={`translate(${x},${y})`}>
                   <text
-                    x={cx}
-                    y={cy}
-                    dy={10}
-                    textAnchor="middle"
-                    fill="currentColor"
-                    fontSize={24}
-                    fontWeight={600}
+                    x={0}
+                    y={0}
+                    dy={12}
+                    textAnchor="end"
+                    fill="current"
+                    transform="rotate(-45)"
                   >
-                    {value}
+                    {match ? match[1] : payload.value}
                   </text>
-                  <Sector
-                    cx={cx}
-                    cy={cy}
-                    innerRadius={innerRadius}
-                    outerRadius={outerRadius}
-                    startAngle={startAngle}
-                    endAngle={endAngle}
-                    fill={fill}
-                  />
-                  <Sector
-                    cx={cx}
-                    cy={cy}
-                    startAngle={startAngle}
-                    endAngle={endAngle}
-                    innerRadius={outerRadius + 6}
-                    outerRadius={outerRadius + 10}
-                    fill={fill}
-                  />
                 </g>
               );
             }}
-          >
-            {formattedChartData?.map((method, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-                strokeWidth={4}
-                className="stroke-white dark:stroke-gray-800"
-              />
-            ))}
-          </Pie>
-
-          <Legend
-            iconType="square"
-            verticalAlign="bottom"
-            wrapperStyle={{ paddingTop: 16 }}
-            formatter={(value, entry, index) => {
-              console.log(value, entry, index);
-              return formattedChartData?.[value]?.payment_type ?? value;
-            }}
+            height={105}
+            tickMargin={4}
+            interval={0}
           />
-        </PieChart>
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            className="fill-gray-500 dark:fill-gray-400 text-xs"
+            tick={{ fill: "current" }}
+            width={35}
+            type="number"
+            tickCount={6}
+            tickMargin={8}
+          />
+          <Tooltip
+            content={({ active, payload, label }) => {
+              if (!active) {
+                return <div></div>;
+              }
+
+              return (
+                <BaseCard className="space-y-2">
+                  <p className="text-xl font-semibold">{label}</p>
+                  <div>
+                    {payload?.map((p, index) => {
+                      return (
+                        <p key={index} className="flex items-center gap-3">
+                          <span
+                            className="block w-3 aspect-square rounded-full border-2"
+                            style={{ borderColor: p.color }}
+                          ></span>
+                          <span>{p.value ?? 0}</span>
+                        </p>
+                      );
+                    })}
+                  </div>
+                </BaseCard>
+              );
+            }}
+            cursor={{ fill: "currentColor" }}
+          />
+          <Bar dataKey="count" fill="#14b8a6" radius={3} />
+        </BarChart>
       </ResponsiveContainer>
+    </BaseCard>
+  );
+}
+
+function TopProductsSection({ className }: { className?: string }) {
+  const { data: session } = useSession();
+
+  const userToken = session?.user?.access_token;
+
+  const { data: products } = useQuery({
+    queryKey: ["/dashboard/store_order_top_products", userToken],
+    queryFn: () => (userToken ? getStoreTopOrderProducts(userToken) : null),
+    enabled: !!userToken,
+  });
+  return (
+    <BaseCard className={twMerge("space-y-8 h-full", className)}>
+      <div className="space-y-1.5">
+        <p className="leading-none text-xl font-medium">Produk Teratas</p>
+        <p className="leading-none text-sm text-gray-500 dark:text-gray-400 font-light">
+          Produk dengan penjualan terbanyak
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {products?.map((product) => (
+          <div key={product.id} className="flex items-center gap-2">
+            <div className="flex-shrink-0 h-12 aspect-square bg-cover bg-center relative rounded overflow-hidden">
+              <Image
+                src={
+                  product?.product_images?.find((image) => image.main_image)
+                    ?.image_url ||
+                  product?.product_images?.[0]?.image_url ||
+                  DEFAULT_STORE_CATEGORY_IMAGE
+                }
+                alt={product?.name ?? ""}
+                fill
+                loading="lazy"
+                className="object-cover"
+                sizes="25vw"
+              />
+            </div>
+            <div className="flex-grow space-y-2">
+              <p className="leading-tight truncate">
+                {product.name.length > 20
+                  ? `${product.name.slice(0, 20)}...`
+                  : product.name}
+              </p>
+              <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
+                {`${product.order_count} pesanan`}
+              </p>
+            </div>
+            <div className="font-semibold">
+              {formatPriceAcro(product.total_orders)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </BaseCard>
+  );
+}
+
+function TopCustomersSection({ className }: { className?: string }) {
+  const { data: session } = useSession();
+
+  const userToken = session?.user?.access_token;
+
+  const { data: customers } = useQuery({
+    queryKey: ["/dashboard/store_order_top_customers", userToken],
+    queryFn: () => (userToken ? getStoreTopOrderCustomers(userToken) : null),
+    enabled: !!userToken,
+  });
+  return (
+    <BaseCard className={twMerge("space-y-8 h-full", className)}>
+      <div className="space-y-1.5">
+        <p className="leading-none text-xl font-medium">Pelanggan Teratas</p>
+        <p className="leading-none text-sm text-gray-500 dark:text-gray-400 font-light">
+          Pelanggan dengan pembelian terbanyak
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {customers?.map((customer, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <div className="flex-shrink-0 h-12 aspect-square bg-cover bg-center relative rounded overflow-hidden">
+              <Image
+                src={customer.user_image ?? DEFAULT_USER_IMAGE}
+                alt={customer.user_name ?? ""}
+                fill
+                loading="lazy"
+                className="object-cover"
+                sizes="25vw"
+              />
+            </div>
+            <div className="flex-grow space-y-2">
+              <p className="leading-tight truncate">
+                {customer.user_name.length > 20
+                  ? `${customer.user_name.slice(0, 20)}...`
+                  : customer.user_name}
+              </p>
+              <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
+                {`${customer.order_count} pesanan`}
+              </p>
+            </div>
+            <div className="font-semibold">
+              {formatPriceAcro(customer.total_orders)}
+            </div>
+          </div>
+        ))}
+      </div>
     </BaseCard>
   );
 }
@@ -596,13 +784,25 @@ function formatSalesChartData(
   }[]
 ) {
   return MONTHS.reduce((acc, curr, index) => {
-    const newData: { month: string; [key: string]: number | string } = {
+    const newData: { month: string; [key: string]: number | string | null } = {
       month: curr,
     };
     data.forEach((item) => {
-      newData[`${item.year}`] =
-        item.data.find((val) => val.period === index + 1)?.total ?? 0;
+      const selectedMonthData = item.data.find(
+        (val) => val.period === index + 1
+      );
+      newData[`${item.year}`] = selectedMonthData?.total ?? 0;
     });
     return [...acc, newData];
-  }, [] as { month: string; [key: string]: number | string }[]);
+  }, [] as { month: string; [key: string]: number | string | null }[]);
+}
+
+function formatPriceAcro(value: number) {
+  if (value > 999999) {
+    return `${(Math.abs(value) / 1000000).toFixed(0)}jt`;
+  }
+  if (value > 999) {
+    return `${(Math.abs(value) / 1000).toFixed(0)}rb`;
+  }
+  return `${Math.abs(value)}`;
 }
