@@ -460,107 +460,114 @@ function SalesChart({ className }: { className?: string }) {
 
       <div>
         <ResponsiveContainer className="w-full" height={350}>
-          <AreaChart
-            data={formatedData}
-            className="text-gray-200 dark:text-gray-700"
-          >
-            <defs>
-              {selectedYears.map((year, index) => (
-                <linearGradient
-                  key={`color-area-${year}`}
-                  id={`color-area-${year}`}
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="0%"
-                    stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-                    stopOpacity={(0.4 / selectedYears.length) * (index + 1)}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              ))}
-            </defs>
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              className="fill-gray-500 dark:fill-gray-400 text-sm"
-              tick={{ fill: "current" }}
-              tickFormatter={(value) => {
-                return value.slice(0, 3);
-              }}
-              tickMargin={12}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={(value) => formatPriceAcro(value)}
-              className="fill-gray-500 dark:fill-gray-400 text-sm"
-              tick={{ fill: "current" }}
-              width={60}
-              type="number"
-              tickCount={6}
-              tickMargin={8}
-              domain={["dataMin", "auto"]}
-            />
-            <CartesianGrid
-              vertical={false}
-              className="text-gray-300 dark:text-gray-600"
-              stroke="currentColor"
-            />
-            <Tooltip
-              content={({ active, payload, label }) => {
-                if (!active) {
-                  return <div></div>;
-                }
-
-                return (
-                  <BaseCard className="space-y-2">
-                    <p className="text-xl font-semibold">{label}</p>
-                    <div>
-                      {payload?.map((p, index) => {
-                        return (
-                          <p key={index} className="flex items-center gap-3">
-                            <span
-                              className="block w-3 aspect-square rounded-full border-2"
-                              style={{ borderColor: p.stroke }}
-                            ></span>
-                            <span className="flex-grow w-24">{p.dataKey}</span>
-                            <span>
-                              {formatPrice(p.value ? Number(p.value) : 0)}
-                            </span>
-                          </p>
-                        );
-                      })}
-                    </div>
-                  </BaseCard>
-                );
-              }}
-              cursor={{ fill: "currentColor" }}
-            />
-            <Legend
-              iconType="square"
-              verticalAlign="bottom"
-              wrapperStyle={{ paddingTop: 16 }}
-            />
-            {selectedYears.map((year, index) => (
-              <Area
-                key={year}
-                type="monotone"
-                dataKey={`${year}`}
-                stroke={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-                strokeWidth={3}
-                fillOpacity={1}
-                fill={`url(#color-area-${year})`}
+          {!!formatedData ? (
+            <AreaChart
+              data={formatedData}
+              className="text-gray-200 dark:text-gray-700"
+            >
+              <defs>
+                {selectedYears.map((year, index) => (
+                  <linearGradient
+                    key={`color-area-${year}`}
+                    id={`color-area-${year}`}
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
+                      stopOpacity={(0.4 / selectedYears.length) * (index + 1)}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
+                      stopOpacity={0}
+                    />
+                  </linearGradient>
+                ))}
+              </defs>
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                className="fill-gray-500 dark:fill-gray-400 text-sm"
+                tick={{ fill: "current" }}
+                tickFormatter={(value) => {
+                  return value.slice(0, 3);
+                }}
+                tickMargin={12}
               />
-            ))}
-          </AreaChart>
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => formatPriceAcro(value)}
+                className="fill-gray-500 dark:fill-gray-400 text-sm"
+                tick={{ fill: "current" }}
+                width={60}
+                type="number"
+                tickCount={6}
+                tickMargin={8}
+                domain={["dataMin", "auto"]}
+              />
+              <CartesianGrid
+                vertical={false}
+                className="text-gray-300 dark:text-gray-600"
+                stroke="currentColor"
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (!active) {
+                    return <div></div>;
+                  }
+
+                  return (
+                    <BaseCard className="space-y-2">
+                      <p className="text-xl font-semibold">{label}</p>
+                      <div>
+                        {payload?.map((p, index) => {
+                          return (
+                            <p key={index} className="flex items-center gap-3">
+                              <span
+                                className="block w-3 aspect-square rounded-full border-2"
+                                style={{ borderColor: p.stroke }}
+                              ></span>
+                              <span className="flex-grow w-24">
+                                {p.dataKey}
+                              </span>
+                              <span>
+                                {formatPrice(p.value ? Number(p.value) : 0)}
+                              </span>
+                            </p>
+                          );
+                        })}
+                      </div>
+                    </BaseCard>
+                  );
+                }}
+                cursor={{ fill: "currentColor" }}
+              />
+              <Legend
+                iconType="square"
+                verticalAlign="bottom"
+                wrapperStyle={{ paddingTop: 16 }}
+              />
+              {selectedYears.map((year, index) => (
+                <Area
+                  id={`chart_area_${year}`}
+                  key={year}
+                  type="monotone"
+                  dataKey={`${year}`}
+                  stroke={`hsl(${(index + 4) * 45}, 70%, 55%)`}
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill={`url(#color-area-${year})`}
+                />
+              ))}
+            </AreaChart>
+          ) : (
+            <div></div>
+          )}
         </ResponsiveContainer>
       </div>
     </BaseCard>
@@ -588,78 +595,82 @@ function ProvinceChart({ className }: { className?: string }) {
       </div>
 
       <ResponsiveContainer className="w-full" height={350}>
-        <BarChart
-          data={provinces ?? undefined}
-          margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
-          className="text-gray-200 dark:text-gray-700"
-        >
-          <XAxis
-            axisLine={false}
-            tickLine={false}
-            dataKey="delivery_province"
-            className="fill-gray-500 dark:fill-gray-400 text-xs"
-            tick={(props) => {
-              const { x, y, stroke, payload } = props;
-              const match = payload?.value?.match(/\(([^)]+)\)/);
+        {provinces ? (
+          <BarChart
+            data={provinces}
+            margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            className="text-gray-200 dark:text-gray-700"
+          >
+            <XAxis
+              axisLine={false}
+              tickLine={false}
+              dataKey="delivery_province"
+              className="fill-gray-500 dark:fill-gray-400 text-xs"
+              tick={(props) => {
+                const { x, y, stroke, payload } = props;
+                const match = payload?.value?.match(/\(([^)]+)\)/);
 
-              return (
-                <g transform={`translate(${x},${y})`}>
-                  <text
-                    x={0}
-                    y={0}
-                    dy={12}
-                    textAnchor="end"
-                    fill="current"
-                    transform="rotate(-45)"
-                  >
-                    {match ? match[1] : payload.value}
-                  </text>
-                </g>
-              );
-            }}
-            height={105}
-            tickMargin={4}
-            interval={0}
-          />
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            className="fill-gray-500 dark:fill-gray-400 text-xs"
-            tick={{ fill: "current" }}
-            width={35}
-            type="number"
-            tickCount={6}
-            tickMargin={8}
-          />
-          <Tooltip
-            content={({ active, payload, label }) => {
-              if (!active) {
-                return <div></div>;
-              }
+                return (
+                  <g transform={`translate(${x},${y})`}>
+                    <text
+                      x={0}
+                      y={0}
+                      dy={12}
+                      textAnchor="end"
+                      fill="current"
+                      transform="rotate(-45)"
+                    >
+                      {match ? match[1] : payload.value}
+                    </text>
+                  </g>
+                );
+              }}
+              height={105}
+              tickMargin={4}
+              interval={0}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              className="fill-gray-500 dark:fill-gray-400 text-xs"
+              tick={{ fill: "current" }}
+              width={35}
+              type="number"
+              tickCount={6}
+              tickMargin={8}
+            />
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (!active) {
+                  return <div></div>;
+                }
 
-              return (
-                <BaseCard className="space-y-2">
-                  <p className="text-xl font-semibold">{label}</p>
-                  <div>
-                    {payload?.map((p, index) => {
-                      return (
-                        <p key={index} className="flex items-center gap-3">
-                          <span
-                            className="block w-3 aspect-square rounded-full border-2"
-                            style={{ borderColor: p.color }}
-                          ></span>
-                          <span>{p.value ?? 0}</span>
-                        </p>
-                      );
-                    })}
-                  </div>
-                </BaseCard>
-              );
-            }}
-            cursor={{ fill: "currentColor" }}
-          />
-          <Bar dataKey="count" fill="#14b8a6" radius={3} />
-        </BarChart>
+                return (
+                  <BaseCard className="space-y-2">
+                    <p className="text-xl font-semibold">{label}</p>
+                    <div>
+                      {payload?.map((p, index) => {
+                        return (
+                          <p key={index} className="flex items-center gap-3">
+                            <span
+                              className="block w-3 aspect-square rounded-full border-2"
+                              style={{ borderColor: p.color }}
+                            ></span>
+                            <span>{p.value ?? 0}</span>
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </BaseCard>
+                );
+              }}
+              cursor={{ fill: "currentColor" }}
+            />
+            <Bar dataKey="count" fill="#14b8a6" radius={3} />
+          </BarChart>
+        ) : (
+          <div></div>
+        )}
       </ResponsiveContainer>
     </BaseCard>
   );
