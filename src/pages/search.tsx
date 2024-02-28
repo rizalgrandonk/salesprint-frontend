@@ -57,7 +57,7 @@ export default function SearchPage() {
             </Tab.List>
             <Tab.Panels>
               {TABS.map(({ Component }, index) => (
-                <Tab.Panel className="py-6">
+                <Tab.Panel key={index} className="py-6">
                   <Component />
                 </Tab.Panel>
               ))}
@@ -234,6 +234,7 @@ function StoreSection() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {stores.map((store, i) => (
             <Link
+              key={store.id}
               href={`/${store.slug}`}
               className="w-full h-full shadow-md rounded overflow-hidden group border border-gray-200 dark:border-gray-700 px-2 py-2 space-y-3 cursor-pointer"
             >
