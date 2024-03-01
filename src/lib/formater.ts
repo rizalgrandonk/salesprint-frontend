@@ -9,6 +9,19 @@ export function formatPrice(price: number) {
   return priceFormatter.format(price);
 }
 
+export function formatPriceAcro(value: number) {
+  if (value > 999999999) {
+    return `${(Math.abs(value) / 1000000000).toFixed(0)} M`;
+  }
+  if (value > 999999) {
+    return `${(Math.abs(value) / 1000000).toFixed(0)} jt`;
+  }
+  if (value > 999) {
+    return `${(Math.abs(value) / 1000).toFixed(0)} rb`;
+  }
+  return `${Math.abs(value)}`;
+}
+
 export function ratingToArray(rating: number, maxRating: number = 5) {
   // Calculate the integer and decimal parts of the rating
   const integerPart = Math.floor(rating);

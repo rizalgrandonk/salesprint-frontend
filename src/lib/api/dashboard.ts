@@ -1,6 +1,7 @@
 import { Product } from "@/types/Product";
 import { protectedRequest } from ".";
 import { queryStringify } from "../formater";
+import { Store } from "@/types/Store";
 
 export async function getStoreSales(token: string, years: number[]) {
   const queryParams = queryStringify({ years: years });
@@ -170,6 +171,145 @@ export async function getStoreTopOrderCustomers(token: string) {
   >({
     method: "GET",
     path: "/dashboard/store_order_top_customers",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getAdminProductsCount(token: string) {
+  const result = await protectedRequest<{
+    count: number;
+  }>({
+    method: "GET",
+    path: "/dashboard/admin_products_count",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getAdminStoresCount(token: string) {
+  const result = await protectedRequest<{
+    count: number;
+  }>({
+    method: "GET",
+    path: "/dashboard/admin_stores_count",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getAdminUsersCount(token: string) {
+  const result = await protectedRequest<{
+    count: number;
+  }>({
+    method: "GET",
+    path: "/dashboard/admin_users_count",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getAdmincategoriesCount(token: string) {
+  const result = await protectedRequest<{
+    count: number;
+  }>({
+    method: "GET",
+    path: "/dashboard/admin_categories_count",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getAdminTopOrderProducts(token: string) {
+  const result = await protectedRequest<
+    (Product & {
+      product_images: Product["product_images"];
+      total_orders: number;
+      order_count: number;
+    })[]
+  >({
+    method: "GET",
+    path: "/dashboard/admin_order_top_products",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+export async function getAdminTopOrderStores(token: string) {
+  const result = await protectedRequest<
+    (Store & {
+      total_orders: number;
+      order_count: number;
+    })[]
+  >({
+    method: "GET",
+    path: "/dashboard/admin_order_top_stores",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getAdminTopReviewProducts(token: string) {
+  const result = await protectedRequest<
+    (Product & {
+      reviews_count: number;
+    })[]
+  >({
+    method: "GET",
+    path: "/dashboard/admin_review_top_products",
+    token: token,
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getAdminTopReviewStores(token: string) {
+  const result = await protectedRequest<
+    (Store & {
+      reviews_avg_rating: number;
+      reviews_count: number;
+    })[]
+  >({
+    method: "GET",
+    path: "/dashboard/admin_review_top_stores",
     token: token,
   });
 

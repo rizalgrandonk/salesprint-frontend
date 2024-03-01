@@ -13,7 +13,7 @@ import {
   getStoreTopOrderProducts,
   getStoreTopOrderProvince,
 } from "@/lib/api/dashboard";
-import { formatPrice } from "@/lib/formater";
+import { formatPrice, formatPriceAcro } from "@/lib/formater";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { Fragment, useState } from "react";
@@ -106,7 +106,7 @@ const yearsOptions = [
   getYear(new Date()) - 3,
 ];
 
-export default function Dashboard() {
+export default function SellerDashboard() {
   const { data: session } = useSession();
 
   const currentUser = session?.user;
@@ -806,14 +806,4 @@ function formatSalesChartData(
     });
     return [...acc, newData];
   }, [] as { month: string; [key: string]: number | string | null }[]);
-}
-
-function formatPriceAcro(value: number) {
-  if (value > 999999) {
-    return `${(Math.abs(value) / 1000000).toFixed(0)}jt`;
-  }
-  if (value > 999) {
-    return `${(Math.abs(value) / 1000).toFixed(0)}rb`;
-  }
-  return `${Math.abs(value)}`;
 }
