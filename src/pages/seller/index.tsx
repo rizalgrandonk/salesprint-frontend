@@ -160,6 +160,8 @@ export default function SellerDashboard() {
     );
   }
 
+  console.log({ summarySales });
+
   const formattedStatusOrder = Object.keys(STATUS_MAP).map((key) => ({
     statusText: STATUS_MAP[key] ?? key,
     order_status: key,

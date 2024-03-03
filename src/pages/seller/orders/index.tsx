@@ -551,7 +551,7 @@ export default function OrlderListPage() {
                           Atur Pengiriman
                         </Button>
                       )}
-                      {item.order_status === "SHIPPED" && (
+                      {/* {item.order_status === "SHIPPED" && (
                         <Button
                           variant="primary"
                           size="sm"
@@ -563,7 +563,7 @@ export default function OrlderListPage() {
                         >
                           Pesanan Terkirim
                         </Button>
-                      )}
+                      )} */}
                       <ButtonMenu
                         title="Menu"
                         variant="info"
