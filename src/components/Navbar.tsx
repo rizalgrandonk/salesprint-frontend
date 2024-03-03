@@ -11,6 +11,8 @@ import {
   RiLayoutMasonryLine,
   RiMoonLine,
   RiShoppingCartLine,
+  RiStickyNoteFill,
+  RiStickyNoteLine,
   RiStoreLine,
   RiSunLine,
   RiTShirt2Fill,
@@ -30,6 +32,7 @@ import { MdSearch } from "react-icons/md";
 import AppLogo from "./utils/AppLogo";
 import { Button, ButtonLink } from "./utils/Button";
 import DarkModeToggle from "./utils/DarkModeToggle";
+import { twMerge } from "tailwind-merge";
 
 export default function Navbar() {
   const { totalItems } = useCart();
@@ -53,7 +56,7 @@ export default function Navbar() {
         className={`fixed z-20 w-full h-16 lg:h-20 transition-all bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-sm border-b border-gray-300 dark:border-gray-600`}
       >
         <div className="container h-full mx-auto flex justify-between items-center">
-          <div className="h-full py-5">
+          <div className="h-full py-3 lg:py-5">
             <Link href="/" className="flex items-center gap-2 h-full">
               <span className="text-primary h-full">
                 <AppLogo />
@@ -63,7 +66,7 @@ export default function Navbar() {
               </span>
             </Link>
           </div>
-          <div className="flex-grow px-8">
+          <div className="flex-grow px-4 lg:px-8">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -104,7 +107,7 @@ export default function Navbar() {
               )}
             </Link>
 
-            <DarkModeToggle className="text-2xl hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded">
+            <DarkModeToggle className="text-2xl hover:bg-gray-200 dark:hover:bg-gray-800 lg:p-2 rounded">
               {(dark) => (dark ? <RiMoonLine /> : <RiSunLine />)}
             </DarkModeToggle>
 
@@ -125,7 +128,7 @@ export default function Navbar() {
             )}
 
             {!!session?.user && (
-              <div className="pl-4 border-l border-gray-400 dark:border-gray-500 flex items-center gap-3">
+              <div className="pl-4 border-l border-gray-400 dark:border-gray-500 hidden lg:flex items-center gap-3">
                 <StorePanel />
                 <UserPanel />
               </div>
@@ -136,13 +139,16 @@ export default function Navbar() {
 
       {/* Mobile Nav */}
       <nav
-        className="lg:hidden block fixed inset-x-0 -bottom-0.5 z-10 bg-white text-primary"
+        className="lg:hidden block fixed inset-x-0 -bottom-0.5 z-10 transition-all bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-sm border-t border-gray-300 dark:border-gray-600"
         style={{ boxShadow: "0 -2px 20px rgba(0, 0, 0, 0.1)" }}
       >
         <div className="flex justify-between">
           <Link
             href="/"
-            className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
+            className={twMerge(
+              "w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2",
+              asPath === "/" ? "text-primary" : ""
+            )}
           >
             <span className="text-2xl">
               {asPath == "/" ? <RiHome3Fill /> : <RiHome3Line />}
@@ -150,38 +156,11 @@ export default function Navbar() {
             <span className="block text-xs">Beranda</span>
           </Link>
           <Link
-            href="/products"
-            className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
-          >
-            <span className="text-2xl">
-              {asPath.startsWith("/products") ? (
-                <RiTShirt2Fill />
-              ) : (
-                <RiTShirt2Line />
-              )}
-            </span>
-            <span className="block text-xs">Produk</span>
-          </Link>
-
-          <div className="w-full flex flex-col justify-center items-center">
-            <Link
-              href="/cart"
-              className="w-16 h-16 bg-primary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95"
-            >
-              <span className="text-4xl text-gray-200 relative focus:text-primary hover:text-primary">
-                <RiShoppingCartLine />
-                {totalItems > 0 && (
-                  <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center text-white bg-primary rounded-full">
-                    {totalItems}
-                  </span>
-                )}
-              </span>
-            </Link>
-          </div>
-
-          <Link
-            href="/categories"
-            className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
+            href="#"
+            className={twMerge(
+              "w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2",
+              asPath.startsWith("/categories") ? "text-primary" : ""
+            )}
           >
             <span className="text-2xl">
               {asPath.startsWith("/categories") ? (
@@ -192,12 +171,46 @@ export default function Navbar() {
             </span>
             <span className="block text-xs">Kategori</span>
           </Link>
+
+          <div className="w-full flex flex-col justify-center items-center">
+            <Link
+              href="/cart"
+              className="w-16 h-16 bg-primary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95"
+            >
+              <span className="text-4xl text-gray-200 relative focus:text-primary hover:text-primary">
+                <RiShoppingCartLine />
+                {totalItems > 0 && (
+                  <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center text-white bg-rose-500 rounded-full">
+                    {totalItems}
+                  </span>
+                )}
+              </span>
+            </Link>
+          </div>
+
           <Link
-            href="/profile"
+            href="#"
             className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
           >
             <span className="text-2xl">
-              {asPath.startsWith("/profile") ? <RiUserFill /> : <RiUserLine />}
+              {asPath.startsWith("/user/orders") ? (
+                <RiStickyNoteFill />
+              ) : (
+                <RiStickyNoteLine />
+              )}
+            </span>
+            <span className="block text-xs">Pesanan</span>
+          </Link>
+          <Link
+            href="/user/profile"
+            className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
+          >
+            <span className="text-2xl">
+              {asPath.startsWith("/user/profile") ? (
+                <RiUserFill />
+              ) : (
+                <RiUserLine />
+              )}
             </span>
             <span className="block text-xs">Profil</span>
           </Link>

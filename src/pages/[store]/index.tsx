@@ -64,10 +64,10 @@ export default function StorePage({
         keywords={`${store.name}`}
         shareImage={store.image || DEFAULT_STORE_CATEGORY_IMAGE}
       />
-      <div className="container py-8 space-y-8">
-        <section className="py-4 px-8 flex flex-col lg:flex-row lg:gap-2 lg:items-center lg:justify-between border-b border-t border-gray-700">
+      <div className="container py-4 lg:py-8 space-y-6 lg:space-y-8">
+        <section className="py-4 px-4 lg:px-8 flex flex-col lg:flex-row gap-4 lg:gap-2 lg:items-center lg:justify-between border-b border-t border-gray-700">
           <div className="flex items-center gap-4">
-            <div className="relative h-24 aspect-square rounded-full overflow-hidden">
+            <div className="relative h-16 aspect-square rounded-full overflow-hidden">
               <Image
                 src={store.image || DEFAULT_STORE_CATEGORY_IMAGE}
                 alt={store.name}
@@ -88,35 +88,35 @@ export default function StorePage({
             </div>
           </div>
 
-          <div className="flex lg:items-center flex-col lg:flex-row lg:gap-8">
-            <div className="flex flex-col items-end justify-start">
+          <div className="grid grid-cols-4 lg:flex items-start lg:items-center flex-col lg:flex-row lg:gap-8">
+            <div className="flex flex-col-reverse lg:flex-col items-center lg:items-end justify-start">
               <span className="text-gray-500 dark:text-gray-400">
                 Penilaian
               </span>
               <div className="flex items-center gap-2">
                 <RiStarFill className="text-yellow-500" />
-                <span className="text-primary font-semibold text-2xl">
-                  {store.reviews_avg_rating.toFixed(2)}
+                <span className="text-primary font-semibold text-xl">
+                  {store.reviews_avg_rating.toFixed(1)}
                 </span>
               </div>
             </div>
-            <div className="flex flex-col items-end justify-start">
+            <div className="flex flex-col-reverse lg:flex-col items-center lg:items-end justify-start">
               <span className="text-gray-500 dark:text-gray-400">Ulasan</span>
-              <span className="text-primary font-semibold text-2xl">
+              <span className="text-primary font-semibold text-xl">
                 {store.reviews_count}
               </span>
             </div>
-            <div className="flex flex-col items-end justify-start">
+            <div className="flex flex-col-reverse lg:flex-col items-center lg:items-end justify-start">
               <span className="text-gray-500 dark:text-gray-400">
                 Penjualan
               </span>
-              <span className="text-primary font-semibold text-2xl">
+              <span className="text-primary font-semibold text-xl">
                 {store.order_items_count}
               </span>
             </div>
-            <div className="flex flex-col items-end justify-start">
+            <div className="flex flex-col-reverse lg:flex-col items-center lg:items-end justify-start">
               <span className="text-gray-500 dark:text-gray-400">Produk</span>
-              <span className="text-primary font-semibold text-2xl">
+              <span className="text-primary font-semibold text-xl">
                 {store.products_count}
               </span>
             </div>
@@ -143,7 +143,7 @@ export default function StorePage({
           </StoreBannersCarousel>
         )}
 
-        <section className="p-8 min-h-[10rem] border-b border-t border-gray-700">
+        <section className="p-4 lg:p-8 min-h-[10rem] border-b border-t border-gray-700">
           {store.store_description}
         </section>
 

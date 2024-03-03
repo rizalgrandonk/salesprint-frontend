@@ -41,14 +41,17 @@ export default function Home({
   return (
     <>
       <Meta />
-      <section id="category" className="container pt-6 pb-12">
+      <section id="category" className="container pt-2 lg:pt-6 pb-6 lg:pb-12">
         <FeaturedProductsCarousel products={featuredProducts} />
       </section>
 
-      <section id="category" className="container py-12 space-y-6">
+      <section
+        id="category"
+        className="container py-6 lg:py-12 space-y-3 lg:space-y-6"
+      >
         <div className="flex gap-4 items-end">
           <h2 className="text-2xl lg:text-4xl font-semibold">Kategori</h2>
-          <Link
+          {/* <Link
             href="/categories"
             className="flex items-center justify-center text-2xl gap-2 text-primary hover:text-primary-dark"
           >
@@ -56,14 +59,14 @@ export default function Home({
               Lihat semua kategori
             </span>
             <FaAngleDoubleRight />
-          </Link>
+          </Link> */}
         </div>
         <CategoryList categories={categories} />
       </section>
 
-      <section className="w-full flex flex-col lg:items-center lg:flex-row space-y-10 pt-12 pb-24">
-        <div className="relative w-5/6 lg:w-1/2 h-100 bg-primary">
-          <div className="absolute w-[95%] h-[95%] -right-12 -bottom-12">
+      <section className="w-full flex flex-col lg:items-center lg:flex-row space-y-8 lg:space-y-10 pt-6 lg:pt-12 pb-12 lg:pb-24">
+        <div className="relative w-5/6 lg:w-1/2 aspect-[4/3] bg-primary">
+          <div className="absolute w-[95%] h-[95%] -right-[5%] -bottom-[5%]">
             <Image
               src="https://source.unsplash.com/random/?mall"
               alt=""
@@ -75,30 +78,27 @@ export default function Home({
           </div>
         </div>
         <div className="w-full lg:w-1/2 h-full flex justify-center items-center">
-          <div className="lg:px-20">
-            <p className="text-lg text-center my-6 text-primary">Salesprint</p>
-            <h3 className="text-center text-4xl font-bold my-4 leading-tight">
+          <div className="lg:px-20 space-y-3">
+            <p className="text-lg text-center text-primary">Salesprint</p>
+            <h3 className="text-center text-2xl lg:text-4xl font-bold leading-tight">
               Inovasi Terbaru dalam Pengalaman Belanja Online Anda!
             </h3>
-            {/* <Link
-              href="/products"
-              className="flex items-center justify-center my-10 text-2xl space-x-2 text-primary hover:text-primary-dark"
-            >
-              <span className="text-lg underline hover:text-primary-dark">
-                Lihat semua produk
-              </span>
-              <FaAngleDoubleRight />
-            </Link> */}
           </div>
         </div>
       </section>
 
-      <section id="latest-product" className="container py-12 space-y-6">
+      <section
+        id="latest-product"
+        className="container py-6 lg:py-12 space-y-3 lg:space-y-6"
+      >
         <h2 className="text-2xl lg:text-4xl font-semibold">Produk Terbaru</h2>
         <LatestProductsCarousel products={latestProducts} />
       </section>
 
-      <section id="for-you" className="container py-12 space-y-6">
+      <section
+        id="for-you"
+        className="container py-6 lg:py-12 space-y-3 lg:space-y-6"
+      >
         <h2 className="text-2xl lg:text-4xl font-semibold">
           Produk Rekomendasi
         </h2>
@@ -158,7 +158,7 @@ function RecomendationSection() {
   return (
     <div ref={sectionStartRef}>
       {!data ? null : (
-        <div className="grid grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
           {data.pages.map((group, idx) =>
             group?.data.map((product, i) => (
               <ProductCard

@@ -264,7 +264,7 @@ function TopReviewProductsSection({ className }: { className?: string }) {
             </div>
             <div className="font-semibold flex items-center gap-1.5">
               <RiStarFill className="text-yellow-500 text-xl" />
-              {product.average_rating.toFixed(2)}
+              {product.average_rating.toFixed(1)}
             </div>
           </div>
         ))}
@@ -368,7 +368,7 @@ function TopReviewStoresSection({ className }: { className?: string }) {
             </div>
             <div className="font-semibold flex items-center gap-1.5">
               <RiStarFill className="text-yellow-500 text-xl" />
-              {store.reviews_avg_rating.toFixed(2)}
+              {store.reviews_avg_rating.toFixed(1)}
             </div>
           </div>
         ))}

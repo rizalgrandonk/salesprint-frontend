@@ -17,7 +17,7 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
   return (
     <Link
       href={`/${product.store?.slug}/${product.slug}`}
-      className="w-full h-[50vh] relative block m-auto rounded overflow-hidden group"
+      className="w-full h-[30vh] lg:h-[50vh] relative block m-auto rounded overflow-hidden group"
     >
       <Image
         src={
@@ -33,15 +33,17 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
         className="object-cover object-center"
       />
       <div className="relative w-full h-full flex items-center bg-black/60">
-        <div className="text-white z-10 p-6 lg:p-0 lg:pl-20 w-full lg:w-7/12 space-y-4">
-          <h3 className="text-5xl font-bold line-clamp-2">{product.name}</h3>
-          <p className="text-3xl font-bold text-primary">
+        <div className="text-white z-10 p-4 lg:p-0 lg:pl-20 w-full lg:w-7/12 space-y-2 lg:space-y-4">
+          <h3 className="leading-tight text-xl lg:text-5xl font-bold line-clamp-2">
+            {product.name}
+          </h3>
+          <p className="leading-tight text-lg lg:text-3xl font-bold text-primary">
             {formatPrice(product.price)}
           </p>
-          <div className="flex flex-col lg:flex-row gap-3 lg:gap-0 lg:items-center lg:divide-x">
-            <div className="flex items-end gap-2 lg:pr-3">
-              <RiStarFill className="text-xl text-yellow-500" />
-              <p className="text-lg font-medium leading-none">
+          <div className="flex flex-col lg:flex-row gap-1 lg:gap-0 lg:items-center lg:divide-x">
+            <div className="flex items-end gap-0.5 lg:gap-2 lg:pr-3">
+              <RiStarFill className="text-base lg:text-xl text-yellow-500" />
+              <p className="text-sm lg:text-lg font-medium leading-none">
                 {product.average_rating}
                 <span className="text-gray-200 font-light">{` (${
                   product.reviews_count || 0
@@ -50,14 +52,14 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
             </div>
 
             {!!product.store && (
-              <div className="flex flex-grow items-center gap-2 lg:pl-3">
-                <RiStoreLine className="text-xl" />
-                <div className="h-5 w-full overflow-y-hidden relative">
-                  <div className="absolute left-0 top-0 group-hover:-top-[1.45rem] transition-all duration-300 space-y-1">
-                    <span className="block text-lg font-medium leading-none">
+              <div className="flex flex-grow items-center gap-0.5 lg:gap-2 lg:pl-3">
+                <RiStoreLine className="text-base lg:text-xl" />
+                <div className="h-5 lg:h-7 w-full overflow-y-hidden relative">
+                  <div className="absolute left-0 top-0 group-hover:-top-5 lg:group-hover:-top-7 transition-all duration-300 space-y-0">
+                    <span className="block text-sm lg:text-lg font-medium">
                       {product.store.city}
                     </span>
-                    <span className="block text-lg font-medium leading-none">
+                    <span className="block text-sm lg:text-lg font-medium">
                       {product.store.name}
                     </span>
                   </div>
@@ -68,7 +70,7 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
           <p className="hidden lg:line-clamp-2">
             {htmlToPlainText(product.description)}
           </p>
-          <button className="inline-block px-5 py-3 bg-primary hover:bg-opacity-80 font-semibold tracking-wider uppercase">
+          <button className="inline-block text-sm lg:text-base px-4 lg:px-5 py-2 lg:py-3 bg-primary hover:bg-opacity-80 font-semibold tracking-wider uppercase">
             Telusuri
           </button>
         </div>
