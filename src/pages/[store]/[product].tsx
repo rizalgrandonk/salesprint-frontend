@@ -229,7 +229,7 @@ export default function ProductPage({
         <section className="container flex flex-col lg:flex-row lg:gap-2 rounded-sm">
           <ImageSection product={product} key={product.id} />
           <div className="w-full lg:w-1/2 space-y-3 py-6 lg:py-2 lg:pl-12">
-            <h1 className="text-3xl font-medium">{product.name}</h1>
+            <h1 className="text-2xl lg:text-3xl font-medium">{product.name}</h1>
             <div className="flex items-center divide-x divide-gray-500">
               <div className="flex items-center gap-1 pr-4">
                 <span className="font-semibold">
@@ -256,7 +256,7 @@ export default function ProductPage({
               </div>
             </div>
             <div className="w-full h-1 bg-gray-200 dark:bg-gray-700" />
-            <h2 className="text-5xl text-primary font-semibold">
+            <h2 className="text-4xl lg:text-5xl text-primary font-semibold">
               {formatPrice(product.price)}
             </h2>
 
@@ -524,9 +524,9 @@ export default function ProductPage({
             className="text-xl cursor-pointer opacity-80 hover:opacity-100"
           />
         </div>
-        <BaseCard className="flex items-center justify-between">
+        <BaseCard className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-2">
-            <div className="h-20 aspect-square bg-cover bg-center relative rounded overflow-hidden">
+            <div className="flex-shrink-0 h-24 aspect-square bg-cover bg-center relative rounded overflow-hidden">
               <Image
                 src={
                   product.product_images?.find((image) => image.main_image)
@@ -542,19 +542,21 @@ export default function ProductPage({
               />
             </div>
             <div className="space-y-1">
-              <p>{product.name}</p>
+              <p className="leading-tight text-sm lg:text-base line-clamp-2">
+                {product.name}
+              </p>
               <div className="flex items-center gap-2">
                 {selectedProductVariant?.variant_options?.map((opt) => (
                   <span
                     key={opt.id}
-                    className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
+                    className="font-medium text-xxs lg:text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
                   >
                     {opt.value}
                   </span>
                 ))}
               </div>
               {selectedProductVariant?.price && (
-                <p className="font-semibold text-lg">
+                <p className="font-semibold text-base lg:text-lg">
                   {formatPrice(selectedProductVariant.price)}
                 </p>
               )}

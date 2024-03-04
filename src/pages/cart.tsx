@@ -17,7 +17,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { MdOutlineDelete } from "react-icons/md";
+import { MdOutlineDelete, MdStore } from "react-icons/md";
 import { useInView } from "react-intersection-observer";
 
 export default function CartPage() {
@@ -34,13 +34,13 @@ export default function CartPage() {
   return (
     <>
       <Meta title="Keranjang | Salesprint" />
-      <div className="py-8 container space-y-16 relative h-full">
+      <div className="py-4 lg:py-8 container space-y-10 lg:space-y-16 relative h-full">
         <section className="space-y-6">
           <h3 className="font-semibold text-2xl">Keranjang</h3>
-          <div className="flex gap-6 items-start">
-            <div className="flex-grow space-y-4">
+          <div className="flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-6">
+            <div className="flex-grow space-y-2 lg:space-y-4">
               <BaseCard className="flex items-center justify-between">
-                <p className="font-semibold">
+                <p className="font-semibold text-sm lg:text-base">
                   {`Jumlah barang (${totalItems})`}
                 </p>
                 <Button
@@ -49,13 +49,19 @@ export default function CartPage() {
                   outline
                   onClick={() => emptyCart()}
                 >
-                  Hapus Semua Barang
+                  Hapus Semua
                 </Button>
               </BaseCard>
               {itemGroups.map((group) => (
-                <BaseCard key={group.store.id} className="space-y-4">
-                  <p className="font-semibold">{group.store.name}</p>
-                  <div className="space-y-4">
+                <BaseCard
+                  key={group.store.id}
+                  className="space-y-2 lg:space-y-4"
+                >
+                  <div className="flex items-center gap-2">
+                    <MdStore className="text-xl" />
+                    <p className="font-semibold">{group.store.name}</p>
+                  </div>
+                  <div className="space-y-6">
                     {group.items.map((item) => (
                       <CartItemCard key={item.productVariant.id} item={item} />
                     ))}
@@ -63,7 +69,7 @@ export default function CartPage() {
                 </BaseCard>
               ))}
             </div>
-            <BaseCard className="flex-shrink-0 w-96 sticky top-28 space-y-4">
+            <BaseCard className="flex-shrink-0 lg:w-96 lg:sticky lg:top-28 space-y-4">
               <p className="font-semibold text-xl">Ringkasan Belanja</p>
               <div className="flex items-center justify-between">
                 <span>Total</span>
@@ -96,7 +102,7 @@ export default function CartPage() {
 function CartItemCard({ item }: { item: CartItem }) {
   const { updateItemQuantity, removeItem } = useCart();
   return (
-    <div className="flex items-start justify-between">
+    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-2">
       <Link
         href={
           item.product.store?.slug
@@ -105,7 +111,7 @@ function CartItemCard({ item }: { item: CartItem }) {
         }
         className="flex items-start gap-2"
       >
-        <div className="h-20 aspect-square bg-cover bg-center relative rounded overflow-hidden">
+        <div className="flex-shrink-0 h-20 aspect-square bg-cover bg-center relative rounded overflow-hidden">
           <Image
             src={
               item.product.product_images?.find((image) => image.main_image)
@@ -121,22 +127,27 @@ function CartItemCard({ item }: { item: CartItem }) {
           />
         </div>
         <div className="space-y-1">
-          <p>{item.product.name}</p>
+          <p className="leading-tight text-sm lg:text-base line-clamp-1 text-gray-600 dark:text-gray-300">
+            {item.product.name}
+          </p>
           <div className="flex items-center gap-2">
             {item.productVariant.variant_options?.map((opt) => (
               <span
                 key={opt.id}
-                className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
+                className="font-medium text-xxs lg:text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
               >
                 {opt.value}
               </span>
             ))}
           </div>
+          <p className="lg:hidden leading-tight font-semibold">
+            {formatPrice(item.productVariant.price)}
+          </p>
         </div>
       </Link>
 
-      <div className="flex self-stretch flex-col justify-between items-end">
-        <span className="font-semibold text-lg">
+      <div className="flex lg:self-stretch flex-col justify-between lg:items-end">
+        <span className="hidden lg:inline font-semibold text-lg">
           {formatPrice(item.productVariant.price)}
         </span>
         <div className="flex items-center gap-2">
@@ -249,7 +260,7 @@ function RecomendationSection() {
   return (
     <div ref={sectionStartRef}>
       {!data ? null : (
-        <div className="grid grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
           {data.pages.map((group, idx) =>
             group?.data.map((product, i) => (
               <ProductCard

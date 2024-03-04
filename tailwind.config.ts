@@ -22,6 +22,9 @@ const config: Config = {
         dark: "#222831",
         light: "#F5F5F5",
       },
+      fontSize: {
+        xxs: ["10px", "12px"],
+      },
       height: {
         100: "30rem",
       },

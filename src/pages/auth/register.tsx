@@ -89,7 +89,7 @@ export default function RegisterPage() {
       <Meta title="Daftar | Salesprint" />
 
       <div className="flex items-center w-full h-full max-w-2xl py-16 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-100 relative">
-        <div className="w-full max-h-full overflow-y-auto px-16">
+        <div className="w-full max-h-full overflow-y-auto px-8 lg:px-16">
           <div className="flex flex-col gap-4 items-center">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-12 text-primary">

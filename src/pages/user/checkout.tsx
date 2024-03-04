@@ -24,7 +24,7 @@ import { useRouter } from "next/router";
 import Script from "next/script";
 import { useEffect, useState } from "react";
 import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
-import { MdOutlineDelete } from "react-icons/md";
+import { MdOutlineDelete, MdStore } from "react-icons/md";
 import { object, z } from "zod";
 
 export const addressSchema = z.object({
@@ -285,15 +285,15 @@ export default function CheckoutPage() {
         src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
       />
-      <div className="py-8 container space-y-16 relative h-full">
+      <div className="py-4 lg:py-8 container space-y-10 lg:space-y-16 relative h-full">
         <section className="space-y-6">
           <h3 className="font-semibold text-2xl">Pengiriman</h3>
           <form
-            className="flex gap-6 items-start"
+            className="flex flex-col lg:flex-row lg:items-start gap-2 lg:gap-6"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="flex-grow space-y-4">
-              <BaseCard className="space-y-3">
+            <div className="flex-grow space-y-2 lg:space-y-4">
+              <BaseCard className="space-y-2 lg:space-y-4">
                 <p className="font-semibold text-gray-500 dark:text-gray-400 uppercase">
                   Alamat Pengiriman
                 </p>
@@ -310,7 +310,7 @@ export default function CheckoutPage() {
                 />
               ))}
             </div>
-            <BaseCard className="flex-shrink-0 w-96 sticky top-28 space-y-4">
+            <BaseCard className="flex-shrink-0 lg:w-96 lg:sticky lg:top-28 space-y-4">
               <p className="font-semibold text-xl">Ringkasan Belanja</p>
               <div className="text-sm">
                 <div className="flex items-center justify-between">
@@ -387,8 +387,11 @@ function StoreCard({
   });
 
   return (
-    <BaseCard className="space-y-4">
-      <p className="font-semibold">{group.store.name}</p>
+    <BaseCard className="space-y-2 lg:space-y-4">
+      <div className="flex items-center gap-2">
+        <MdStore className="text-xl" />
+        <p className="font-semibold">{group.store.name}</p>
+      </div>
       <div className="space-y-4">
         {group.items.map((item) => (
           <CartItemCard key={item.productVariant.id} item={item} />
@@ -496,7 +499,7 @@ function AddressForm({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
         <FormInput
           {...register("reciever_name")}
           type="text"
@@ -519,7 +522,7 @@ function AddressForm({
           elementLeft={<span className="text-sm">+62</span>}
         />
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
         <FormSelect
           {...register("delivery_province_id")}
           id="delivery_province_id"
@@ -588,21 +591,23 @@ function CartItemCard({ item }: { item: CartItem }) {
       </div>
 
       <div className="flex-grow space-y-3">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-2">
           <div className="space-y-1">
-            <p>{item.product.name}</p>
+            <p className="leading-tight text-sm lg:text-base line-clamp-1 text-gray-600 dark:text-gray-300">
+              {item.product.name}
+            </p>
             <div className="flex items-center gap-2">
               {item.productVariant.variant_options?.map((opt) => (
                 <span
                   key={opt.id}
-                  className="font-medium text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
+                  className="font-medium text-xxs lg:text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600"
                 >
                   {opt.value}
                 </span>
               ))}
             </div>
           </div>
-          <div className="flex self-stretch flex-col justify-between items-end">
+          <div className="flex self-stretch flex-col justify-between lg:items-end">
             <span className="font-semibold">
               {`${item.quantity} x ${formatPrice(item.productVariant.price)}`}
             </span>
