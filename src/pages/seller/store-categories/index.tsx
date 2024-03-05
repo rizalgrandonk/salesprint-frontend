@@ -262,7 +262,7 @@ export default function StoreCategories() {
             Kategori Toko (Etalase)
           </h1>
 
-          <div className="flex flex-col lg:flex-row gap-2 justify-between items-center">
+          <div className="flex flex-col lg:flex-row gap-2 justify-between items-start lg:items-center">
             <FormInput
               className="text-sm w-80"
               id="category-search"

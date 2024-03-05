@@ -44,7 +44,7 @@ export default function DashboardSidebar({
       <aside
         id="sidebar"
         className={twMerge(
-          "fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 h-full pt-16 font-normal duration-75 lg:flex transition-all group/sidebar",
+          "fixed top-0 left-0 z-30 flex flex-col flex-shrink-0 h-full pt-16 font-normal duration-75 lg:flex transition-all group/sidebar",
           !mobileOpen ? "hidden" : "",
           isExpand ? "w-64" : "w-16"
         )}

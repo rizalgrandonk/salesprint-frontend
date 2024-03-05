@@ -573,112 +573,116 @@ export default function ProductForm({
         <div className="space-y-1">
           <label htmlFor="parice_stock">Harga & Stok</label>
 
-          <table className="min-w-full border border-gray-200 dark:border-gray-600 border-collapse table-fixed relative">
-            <thead className="bg-gray-50 dark:bg-gray-900">
-              <tr>
-                {variants
-                  .filter(
-                    (variant) =>
-                      variant.variant_type &&
-                      variant.variant_type !== "" &&
-                      variant.variant_options.length > 0 &&
-                      !variant.variant_options.some((opt) => opt && opt === "")
-                  )
-                  .map((variant) => (
-                    <th
-                      key={variant.variant_type}
-                      className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600"
-                    >
-                      {variant.variant_type}
-                    </th>
-                  ))}
-                <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
-                  Harga
-                </th>
-                <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
-                  Stok
-                </th>
-                <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
-                  SKU
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {variantCombinations.map((comb, idx) => (
-                <tr key={idx}>
-                  {variants.map((variant) => (
-                    <td
-                      key={variant.variant_type + idx}
-                      className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
-                    >
-                      {comb[variant.variant_type] ?? ""}
-                    </td>
-                  ))}
-                  <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
-                    <FormInput
-                      type="number"
-                      id="price"
-                      name="price"
-                      placeholder="Masukan tinggi produk anda"
-                      className="text-sm px-2 py-1.5"
-                      elementLeft="Rp"
-                      value={comb.price}
-                      onChange={(e) =>
-                        onChangeVariantComb("price", e.target.value, idx)
-                      }
-                      error={
-                        !!formErrors.combination &&
-                        (!comb.price || comb.price === "")
-                          ? "Tipe varian harus diisi"
-                          : undefined
-                      }
-                      classNameError="text-xs hidden"
-                    />
-                  </td>
-                  <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
-                    <FormInput
-                      type="number"
-                      id="stok"
-                      name="stok"
-                      placeholder="Masukan tinggi produk anda"
-                      className="text-sm px-2 py-1.5"
-                      value={comb.stok}
-                      onChange={(e) =>
-                        onChangeVariantComb("stok", e.target.value, idx)
-                      }
-                      error={
-                        !!formErrors.combination &&
-                        (!comb.price || comb.price === "")
-                          ? "Tipe varian harus diisi"
-                          : undefined
-                      }
-                      classNameError="text-xs hidden"
-                    />
-                  </td>
-                  <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
-                    <FormInput
-                      type="text"
-                      id="variant_sku"
-                      name="variant_sku"
-                      placeholder="Masukan tinggi produk anda"
-                      className="text-sm px-2 py-1.5"
-                      value={comb.sku}
-                      onChange={(e) =>
-                        onChangeVariantComb("sku", e.target.value, idx)
-                      }
-                      error={
-                        !!formErrors.combination &&
-                        (!comb.price || comb.price === "")
-                          ? "Tipe varian harus diisi"
-                          : undefined
-                      }
-                      classNameError="text-xs hidden"
-                    />
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200 dark:border-gray-600 border-collapse table-fixed relative">
+              <thead className="bg-gray-50 dark:bg-gray-900">
+                <tr>
+                  {variants
+                    .filter(
+                      (variant) =>
+                        variant.variant_type &&
+                        variant.variant_type !== "" &&
+                        variant.variant_options.length > 0 &&
+                        !variant.variant_options.some(
+                          (opt) => opt && opt === ""
+                        )
+                    )
+                    .map((variant) => (
+                      <th
+                        key={variant.variant_type}
+                        className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600"
+                      >
+                        {variant.variant_type}
+                      </th>
+                    ))}
+                  <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
+                    Harga
+                  </th>
+                  <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
+                    Stok
+                  </th>
+                  <th className="p-3 text-sm font-medium text-center text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap border border-gray-200 dark:border-gray-600">
+                    SKU
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {variantCombinations.map((comb, idx) => (
+                  <tr key={idx}>
+                    {variants.map((variant) => (
+                      <td
+                        key={variant.variant_type + idx}
+                        className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600 text-center"
+                      >
+                        {comb[variant.variant_type] ?? ""}
+                      </td>
+                    ))}
+                    <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
+                      <FormInput
+                        type="number"
+                        id="price"
+                        name="price"
+                        placeholder="Masukan tinggi produk anda"
+                        className="w-48 text-sm px-2 py-1.5"
+                        elementLeft="Rp"
+                        value={comb.price}
+                        onChange={(e) =>
+                          onChangeVariantComb("price", e.target.value, idx)
+                        }
+                        error={
+                          !!formErrors.combination &&
+                          (!comb.price || comb.price === "")
+                            ? "Tipe varian harus diisi"
+                            : undefined
+                        }
+                        classNameError="text-xs hidden"
+                      />
+                    </td>
+                    <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
+                      <FormInput
+                        type="number"
+                        id="stok"
+                        name="stok"
+                        placeholder="Masukan tinggi produk anda"
+                        className="w-48 text-sm px-2 py-1.5"
+                        value={comb.stok}
+                        onChange={(e) =>
+                          onChangeVariantComb("stok", e.target.value, idx)
+                        }
+                        error={
+                          !!formErrors.combination &&
+                          (!comb.price || comb.price === "")
+                            ? "Tipe varian harus diisi"
+                            : undefined
+                        }
+                        classNameError="text-xs hidden"
+                      />
+                    </td>
+                    <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white border border-gray-200 dark:border-gray-600">
+                      <FormInput
+                        type="text"
+                        id="variant_sku"
+                        name="variant_sku"
+                        placeholder="Masukan tinggi produk anda"
+                        className="w-48 text-sm px-2 py-1.5"
+                        value={comb.sku}
+                        onChange={(e) =>
+                          onChangeVariantComb("sku", e.target.value, idx)
+                        }
+                        error={
+                          !!formErrors.combination &&
+                          (!comb.price || comb.price === "")
+                            ? "Tipe varian harus diisi"
+                            : undefined
+                        }
+                        classNameError="text-xs hidden"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {!!formErrors.variant && (
             <div>
@@ -744,42 +748,44 @@ export default function ProductForm({
             <label htmlFor="dimension">
               Panjang (cm) * Lebar (cm) * Tinggi (cm)
             </label>
-            <div className="flex items-center gap-3">
-              <FormInput
-                {...register("length")}
-                type="number"
-                id="length"
-                name="length"
-                placeholder="Masukan panjang produk anda"
-                className="text-sm px-2 py-1.5"
-                elementRight="cm"
-                error={baseErrors.length?.message}
-                classNameError="hidden"
-              />
-              <span>x</span>
-              <FormInput
-                {...register("width")}
-                type="number"
-                id="width"
-                name="width"
-                placeholder="Masukan lebar produk anda"
-                className="text-sm px-2 py-1.5"
-                elementRight="cm"
-                error={baseErrors.width?.message}
-                classNameError="hidden"
-              />
-              <span>x</span>
-              <FormInput
-                {...register("height")}
-                type="number"
-                id="height"
-                name="height"
-                placeholder="Masukan tinggi produk anda"
-                className="text-sm px-2 py-1.5"
-                elementRight="cm"
-                error={baseErrors.height?.message}
-                classNameError="hidden"
-              />
+            <div className="overflow-x-auto pb-3">
+              <div className="flex items-center gap-3">
+                <FormInput
+                  {...register("length")}
+                  type="number"
+                  id="length"
+                  name="length"
+                  placeholder="Masukan panjang produk anda"
+                  className="w-32 text-sm px-2 py-1.5"
+                  elementRight="cm"
+                  error={baseErrors.length?.message}
+                  classNameError="hidden"
+                />
+                <span>x</span>
+                <FormInput
+                  {...register("width")}
+                  type="number"
+                  id="width"
+                  name="width"
+                  placeholder="Masukan lebar produk anda"
+                  className="w-32 text-sm px-2 py-1.5"
+                  elementRight="cm"
+                  error={baseErrors.width?.message}
+                  classNameError="hidden"
+                />
+                <span>x</span>
+                <FormInput
+                  {...register("height")}
+                  type="number"
+                  id="height"
+                  name="height"
+                  placeholder="Masukan tinggi produk anda"
+                  className="w-32 text-sm px-2 py-1.5"
+                  elementRight="cm"
+                  error={baseErrors.height?.message}
+                  classNameError="hidden"
+                />
+              </div>
             </div>
           </div>
         </div>

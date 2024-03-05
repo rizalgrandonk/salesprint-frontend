@@ -251,7 +251,7 @@ export default function OrderDetailPage() {
             ]}
           />
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
               Detail Pesanan
             </h1>
@@ -307,7 +307,7 @@ export default function OrderDetailPage() {
         </div>
 
         <div className="space-y-2 lg:space-y-4">
-          <div className="flex gap-2 lg:gap-4">
+          <div className="flex flex-col lg:flex-row gap-2 lg:gap-4">
             <BaseCard className="space-y-4 flex-grow">
               <h2 className="text-xl font-semibold">Informasi Pembeli</h2>
 
@@ -465,7 +465,7 @@ export default function OrderDetailPage() {
                             key={item.id}
                             className="flex gap-2 items-center"
                           >
-                            <div className="w-12 aspect-square relative rounded-sm overflow-hidden">
+                            <div className="flex-shrink-0 w-12 aspect-square relative rounded-sm overflow-hidden">
                               <Image
                                 src={
                                   item.product?.product_images?.find(
@@ -539,13 +539,13 @@ export default function OrderDetailPage() {
             </div>
           </BaseCard>
 
-          <div className="flex gap-2 lg:gap-4">
+          <div className="flex flex-col lg:flex-row gap-2 lg:gap-4">
             <BaseCard className="space-y-4 flex-grow">
               <h2 className="text-xl font-semibold">Riwayat Pesanan</h2>
               <div className="text-sm space-y-1">
                 {timelines.map((timeline, index) => (
                   <div key={index} className="flex items-start gap-4">
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="w-1/4 text-gray-500 dark:text-gray-400">
                       {format(new Date(timeline.date), "dd MMM yyy, HH:mm")}
                     </span>
                     <div className="flex flex-col items-center gap-1 mt-0.5">
@@ -558,7 +558,7 @@ export default function OrderDetailPage() {
                         <div className="h-4 w-0.5 bg-gray-500 dark:bg-gray-400" />
                       )}
                     </div>
-                    <span className="font-medium">{timeline.title}</span>
+                    <span className="w-1/2 font-medium">{timeline.title}</span>
                   </div>
                 ))}
               </div>

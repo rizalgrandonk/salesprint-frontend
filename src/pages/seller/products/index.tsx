@@ -224,7 +224,7 @@ export default function StoreProductListPage() {
             ]}
           />
 
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+          <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center justify-between">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
               Daftar Produk
             </h1>
@@ -235,7 +235,7 @@ export default function StoreProductListPage() {
             </ButtonLink>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between lg:flex-wrap">
+          <div className="flex flex-col lg:flex-row gap-2 lg:items-center justify-between lg:flex-wrap">
             <FormInput
               className="text-sm w-full lg:w-80"
               id="search"
@@ -249,7 +249,7 @@ export default function StoreProductListPage() {
               }
             />
 
-            <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+            <div className="flex gap-2 items-center lg:justify-between">
               <Button onClick={() => refetch()} variant="base" outline>
                 <MdRefresh className="text-base" />
               </Button>
@@ -258,7 +258,7 @@ export default function StoreProductListPage() {
                 <FormSelect
                   className="text-sm w-full lg:w-48"
                   id="filter-category"
-                  placeholder="Filter Kategori"
+                  placeholder="Kategori"
                   options={categories.map((category) => ({
                     title: category.name,
                     value: category.id,
@@ -280,7 +280,7 @@ export default function StoreProductListPage() {
                 <FormSelect
                   className="text-sm w-full lg:w-48"
                   id="filter-category"
-                  placeholder="Filter Etalase"
+                  placeholder="Etalase"
                   options={storeCategories.map((category) => ({
                     title: category.name,
                     value: category.id,
@@ -336,7 +336,7 @@ export default function StoreProductListPage() {
                 className: "whitespace-normal",
                 render: (item) => (
                   <div className="flex gap-4">
-                    <div className="w-20 h-28 relative rounded-sm overflow-hidden">
+                    <div className="w-12 lg:w-20 h-16 lg:h-28 relative rounded-sm overflow-hidden">
                       <Image
                         src={
                           item.product_images?.find((image) => image.main_image)
@@ -351,9 +351,11 @@ export default function StoreProductListPage() {
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex flex-col gap-2 w-52">
-                      <span>{item.name}</span>
-                      <p className="text-xs font-light text-gray-500 dark:text-gray-400 line-clamp-4">
+                    <div className="flex flex-col gap-1 lg:gap-2 w-52">
+                      <span className="text-sm line-clamp-1 lg:line-clamp-2">
+                        {item.name}
+                      </span>
+                      <p className="text-xs font-light text-gray-500 dark:text-gray-400 line-clamp-2 lg:line-clamp-4">
                         {htmlToPlainText(item.description)}
                       </p>
                     </div>
@@ -475,7 +477,7 @@ export default function StoreProductListPage() {
           ]}
         />
 
-        <div className="flex justify-between items-center px-3 lg:px-5 py-1">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center px-3 lg:px-5 py-1 gap-2">
           <div className="flex items-center gap-2">
             <FormSelect
               className="text-xs w-20"

@@ -269,13 +269,13 @@ export default function OrlderListPage() {
             ]}
           />
 
-          <div className="flex flex-col lg:flex-row gap-2 items-center">
+          <div className="flex flex-col lg:flex-row gap-2 lg:items-center">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
               Daftar Pesanan
             </h1>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between lg:flex-wrap">
+          <div className="flex flex-col lg:flex-row gap-2 lg:items-center justify-between lg:flex-wrap">
             <FormInput
               className="text-sm w-full lg:w-80"
               id="search"
@@ -289,7 +289,7 @@ export default function OrlderListPage() {
               }
             />
 
-            <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+            <div className="flex gap-2 items-center lg:justify-between">
               <Button onClick={() => refetch()} variant="base" outline>
                 <MdRefresh className="text-base" />
               </Button>
@@ -319,13 +319,16 @@ export default function OrlderListPage() {
           </div>
         </div>
 
-        <BaseCard className="flex items-center gap-4">
-          <div className="flex-grow flex-shrink-0 font-medium text-center">
+        <BaseCard className="flex-shrink-0 flex items-center gap-4 pb-4 overflow-x-auto">
+          <div
+            key={"ALL"}
+            className="flex-grow flex-shrink-0 font-medium text-center"
+          >
             <Link
               href={`?status=ALL`}
               className={twMerge(
                 "pb-1 px-2 border-b-4 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-white",
-                !statusFilter
+                !statusFilter?.value
                   ? "text-primary dark:text-primary border-primary"
                   : "border-transparent"
               )}
@@ -580,7 +583,7 @@ export default function OrlderListPage() {
           ]}
         />
 
-        <div className="flex justify-between items-center px-3 lg:px-5 py-1">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center px-3 lg:px-5 py-1 gap-2">
           <div className="flex items-center gap-2">
             <FormSelect
               className="text-xs w-20"
@@ -677,7 +680,6 @@ export function AcceptOrderModal({
     await onSubmit();
 
     setIsLoading(false);
-    onClose();
   };
   return (
     <BaseModal
@@ -740,7 +742,6 @@ export function ShipOrderModal({
     });
 
     setIsLoading(false);
-    onClose();
   };
 
   return (
@@ -821,7 +822,6 @@ export function DeliveredOrderModal({
     await onSubmit();
 
     setIsLoading(false);
-    onClose();
   };
   return (
     <BaseModal
@@ -878,7 +878,6 @@ export function CancelOrderModal({
     await onSubmit(formData);
 
     setIsLoading(false);
-    onClose();
   };
   return (
     <BaseModal
@@ -917,7 +916,7 @@ export function CancelOrderModal({
           isLoading={isLoading}
         >
           <MdOutlineCancelScheduleSend className="text-base" />
-          <span>Batalkan</span>
+          <span>Batalkan Pesanan</span>
         </Button>
       </div>
     </BaseModal>

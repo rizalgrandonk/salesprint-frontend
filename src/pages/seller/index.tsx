@@ -160,8 +160,6 @@ export default function SellerDashboard() {
     );
   }
 
-  console.log({ summarySales });
-
   const formattedStatusOrder = Object.keys(STATUS_MAP).map((key) => ({
     statusText: STATUS_MAP[key] ?? key,
     order_status: key,
@@ -191,7 +189,7 @@ export default function SellerDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4">
         <BaseCard className="space-y-6">
           <p className="leading-none uppercase text-sm font-semibold text-gray-500 dark:text-gray-400">
             Pendapatan Bulan Ini
@@ -330,8 +328,8 @@ export default function SellerDashboard() {
         </BaseCard>
       </div>
 
-      <BaseCard className="space-y-8">
-        <div className="flex items-center justify-between">
+      <BaseCard className="space-y-4 lg:space-y-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
           <p className="leading-none text-xl font-medium">Ringkasan Pesanan</p>
           <Link
             href="/seller/orders"
@@ -341,22 +339,22 @@ export default function SellerDashboard() {
             <MdChevronRight className="text-lg" />
           </Link>
         </div>
-        <div className="flex items-center justify-between px-4 pb-6">
+        <div className="flex items-start justify-between lg:px-4 pb-4 lg:pb-6 gap-2">
           {formattedStatusOrder.map((item, index) => (
             <Link
               href={`/seller/orders?status=${item.order_status}`}
               key={index}
-              className="flex flex-col items-center gap-1.5 group"
+              className="w-full flex flex-col items-center gap-1.5 group"
             >
-              <div className="relative w-10 h-10 flex items-center justify-center">
+              <div className="relative h-8 lg:h-10 aspect-square flex items-center justify-center">
                 {!!item.count && (
-                  <span className="leading-none m-0 p-0 text-base font-medium text-white h-6 w-6 rounded-full flex items-center justify-center bg-primary absolute -right-2 -top-2">
+                  <span className="leading-none m-0 p-0 text-base font-medium text-white h-4 lg:h-6 aspect-square rounded-full flex items-center justify-center bg-primary absolute -right-2 -top-2">
                     {item.count}
                   </span>
                 )}
-                <item.Icon className="text-4xl text-gray-600 dark:text-gray-300 group-hover:text-white dark:group-hover:text-white" />
+                <item.Icon className="text-2xl lg:text-4xl text-gray-600 dark:text-gray-300 group-hover:text-white dark:group-hover:text-white" />
               </div>
-              <span className="leading-none text-sm text-gray-500 dark:text-gray-400 group-hover:text-white dark:group-hover:text-white">
+              <span className="leading-none text-xxs lg:text-sm text-gray-500 dark:text-gray-400 group-hover:text-white dark:group-hover:text-white text-center">
                 {item.statusText}
               </span>
             </Link>
@@ -364,13 +362,13 @@ export default function SellerDashboard() {
         </div>
       </BaseCard>
 
-      <div className="grid grid-cols-3 gap-4">
-        <SalesChart className="col-span-2" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <SalesChart className="lg:col-span-2" />
         <TopProductsSection />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <ProvinceChart className="col-span-2" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <ProvinceChart className="lg:col-span-2" />
         <TopCustomersSection />
       </div>
     </div>
@@ -460,117 +458,117 @@ function SalesChart({ className }: { className?: string }) {
         </Listbox>
       </div>
 
-      <div>
-        <ResponsiveContainer className="w-full" height={350}>
-          {!!formatedData ? (
-            <AreaChart
-              data={formatedData}
-              className="text-gray-200 dark:text-gray-700"
-            >
-              <defs>
-                {selectedYears.map((year, index) => (
-                  <linearGradient
-                    key={`color-area-${year}`}
-                    id={`color-area-${year}`}
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-                      stopOpacity={(0.4 / selectedYears.length) * (index + 1)}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                ))}
-              </defs>
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                className="fill-gray-500 dark:fill-gray-400 text-sm"
-                tick={{ fill: "current" }}
-                tickFormatter={(value) => {
-                  return value.slice(0, 3);
-                }}
-                tickMargin={12}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => formatPriceAcro(value)}
-                className="fill-gray-500 dark:fill-gray-400 text-sm"
-                tick={{ fill: "current" }}
-                width={60}
-                type="number"
-                tickCount={6}
-                tickMargin={8}
-                domain={["dataMin", "auto"]}
-              />
-              <CartesianGrid
-                vertical={false}
-                className="text-gray-300 dark:text-gray-600"
-                stroke="currentColor"
-              />
-              <Tooltip
-                content={({ active, payload, label }) => {
-                  if (!active) {
-                    return <div></div>;
-                  }
-
-                  return (
-                    <BaseCard className="space-y-2">
-                      <p className="text-xl font-semibold">{label}</p>
-                      <div>
-                        {payload?.map((p, index) => {
-                          return (
-                            <p key={index} className="flex items-center gap-3">
-                              <span
-                                className="block w-3 aspect-square rounded-full border-2"
-                                style={{ borderColor: p.stroke }}
-                              ></span>
-                              <span className="flex-grow w-24">
-                                {p.dataKey}
-                              </span>
-                              <span>
-                                {formatPrice(p.value ? Number(p.value) : 0)}
-                              </span>
-                            </p>
-                          );
-                        })}
-                      </div>
-                    </BaseCard>
-                  );
-                }}
-                cursor={{ fill: "currentColor" }}
-              />
-              <Legend
-                iconType="square"
-                verticalAlign="bottom"
-                wrapperStyle={{ paddingTop: 16 }}
-              />
+      <div className="overflow-x-auto">
+        {/* <ResponsiveContainer className="w-full" height={350}> */}
+        {!!formatedData ? (
+          <AreaChart
+            data={formatedData}
+            className="text-gray-200 dark:text-gray-700"
+            height={350}
+            width={700}
+          >
+            <defs>
               {selectedYears.map((year, index) => (
-                <Area
-                  id={`chart_area_${year}`}
-                  key={year}
-                  type="monotone"
-                  dataKey={`${year}`}
-                  stroke={`hsl(${(index + 4) * 45}, 70%, 55%)`}
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill={`url(#color-area-${year})`}
-                />
+                <linearGradient
+                  key={`color-area-${year}`}
+                  id={`color-area-${year}`}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
+                    stopOpacity={(0.4 / selectedYears.length) * (index + 1)}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={`hsl(${(index + 4) * 45}, 70%, 55%)`}
+                    stopOpacity={0}
+                  />
+                </linearGradient>
               ))}
-            </AreaChart>
-          ) : (
-            <div></div>
-          )}
-        </ResponsiveContainer>
+            </defs>
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              className="fill-gray-500 dark:fill-gray-400 text-sm"
+              tick={{ fill: "current" }}
+              tickFormatter={(value) => {
+                return value.slice(0, 3);
+              }}
+              tickMargin={12}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(value) => formatPriceAcro(value)}
+              className="fill-gray-500 dark:fill-gray-400 text-sm"
+              tick={{ fill: "current" }}
+              width={60}
+              type="number"
+              tickCount={6}
+              tickMargin={8}
+              domain={["dataMin", "auto"]}
+            />
+            <CartesianGrid
+              vertical={false}
+              className="text-gray-300 dark:text-gray-600"
+              stroke="currentColor"
+            />
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (!active) {
+                  return <div></div>;
+                }
+
+                return (
+                  <BaseCard className="space-y-2">
+                    <p className="text-xl font-semibold">{label}</p>
+                    <div>
+                      {payload?.map((p, index) => {
+                        return (
+                          <p key={index} className="flex items-center gap-3">
+                            <span
+                              className="block w-3 aspect-square rounded-full border-2"
+                              style={{ borderColor: p.stroke }}
+                            ></span>
+                            <span className="flex-grow w-24">{p.dataKey}</span>
+                            <span>
+                              {formatPrice(p.value ? Number(p.value) : 0)}
+                            </span>
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </BaseCard>
+                );
+              }}
+              cursor={{ fill: "currentColor" }}
+            />
+            <Legend
+              iconType="square"
+              verticalAlign="bottom"
+              wrapperStyle={{ paddingTop: 16 }}
+            />
+            {selectedYears.map((year, index) => (
+              <Area
+                id={`chart_area_${year}`}
+                key={year}
+                type="monotone"
+                dataKey={`${year}`}
+                stroke={`hsl(${(index + 4) * 45}, 70%, 55%)`}
+                strokeWidth={3}
+                fillOpacity={1}
+                fill={`url(#color-area-${year})`}
+              />
+            ))}
+          </AreaChart>
+        ) : (
+          <div></div>
+        )}
+        {/* </ResponsiveContainer> */}
       </div>
     </BaseCard>
   );
@@ -596,12 +594,15 @@ function ProvinceChart({ className }: { className?: string }) {
         </p>
       </div>
 
-      <ResponsiveContainer className="w-full" height={350}>
+      <div className="overflow-x-auto">
+        {/* <ResponsiveContainer className="w-full" height={350}> */}
         {provinces ? (
           <BarChart
             data={provinces}
             margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
             className="text-gray-200 dark:text-gray-700"
+            height={350}
+            width={700}
           >
             <XAxis
               axisLine={false}
@@ -673,7 +674,8 @@ function ProvinceChart({ className }: { className?: string }) {
         ) : (
           <div></div>
         )}
-      </ResponsiveContainer>
+        {/* </ResponsiveContainer> */}
+      </div>
     </BaseCard>
   );
 }
