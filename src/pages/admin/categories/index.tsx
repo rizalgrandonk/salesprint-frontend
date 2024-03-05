@@ -251,7 +251,7 @@ export default function CategoryListPage() {
             Daftar Katagori
           </h1>
 
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+          <div className="flex flex-col lg:flex-row gap-2 lg:items-center lg:justify-between">
             <FormInput
               className="text-sm w-full lg:w-80"
               id="category-search"
@@ -265,7 +265,7 @@ export default function CategoryListPage() {
               }
             />
 
-            <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+            <div className="flex gap-2 items-center lg:justify-between">
               <Button onClick={() => refetch()} variant="base" outline>
                 <MdRefresh className="text-base" />
               </Button>

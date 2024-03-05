@@ -63,7 +63,7 @@ export default function DataTable<T>({
         >
           <thead
             className={twMerge(
-              "bg-white dark:bg-gray-800 sticky top-0 z-20 shadow-sm",
+              "bg-white dark:bg-gray-800 sticky top-0 z-10 shadow-sm",
               headClassName
             )}
           >

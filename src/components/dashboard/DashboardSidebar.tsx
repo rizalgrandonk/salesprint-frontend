@@ -184,7 +184,7 @@ export default function DashboardSidebar({
       <div
         onClick={() => toggleOpen()}
         className={twMerge(
-          "fixed inset-0 z-10 bg-gray-900/50 dark:bg-gray-900/90",
+          "fixed inset-0 z-20 bg-gray-900/50 dark:bg-gray-900/90",
           !mobileOpen ? "hidden" : ""
         )}
         id="sidebarBackdrop"

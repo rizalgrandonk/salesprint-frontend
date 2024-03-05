@@ -78,62 +78,62 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        <BaseCard className="flex items-center gap-4 px-4 py-5">
-          <div className="h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
-            <MdDns className="text-5xl" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <BaseCard className="flex items-center gap-2 lg:gap-4 px-2 lg:px-4 py-3 lg:py-5">
+          <div className="h-14 lg:h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
+            <MdDns className="text-4xl lg:text-5xl" />
           </div>
-          <div className="space-y-2">
-            <p className="leading-none uppercase text-sm font-semibold text-gray-500 dark:text-gray-400">
+          <div className="space-y-1 lg:space-y-2">
+            <p className="leading-none uppercase text-xs lg:text-sm font-semibold text-gray-500 dark:text-gray-400">
               Jumlah Produk
             </p>
             {productsCount && (
-              <p className="leading-none text-3xl font-semibold">
+              <p className="leading-none text-xl lg:text-3xl font-semibold">
                 {productsCount.count}
               </p>
             )}
           </div>
         </BaseCard>
-        <BaseCard className="flex items-center gap-4 px-4 py-5">
-          <div className="h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
-            <MdStore className="text-5xl" />
+        <BaseCard className="flex items-center gap-2 lg:gap-4 px-2 lg:px-4 py-3 lg:py-5">
+          <div className="h-14 lg:h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
+            <MdStore className="text-4xl lg:text-5xl" />
           </div>
-          <div className="space-y-2">
-            <p className="leading-none uppercase text-sm font-semibold text-gray-500 dark:text-gray-400">
+          <div className="space-y-1 lg:space-y-2">
+            <p className="leading-none uppercase text-xs lg:text-sm font-semibold text-gray-500 dark:text-gray-400">
               Jumlah Toko
             </p>
             {storesCount && (
-              <p className="leading-none text-3xl font-semibold">
+              <p className="leading-none text-xl lg:text-3xl font-semibold">
                 {storesCount.count}
               </p>
             )}
           </div>
         </BaseCard>
-        <BaseCard className="flex items-center gap-4 px-4 py-5">
-          <div className="h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
-            <MdPerson className="text-5xl" />
+        <BaseCard className="flex items-center gap-2 lg:gap-4 px-2 lg:px-4 py-3 lg:py-5">
+          <div className="h-14 lg:h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
+            <MdPerson className="text-4xl lg:text-5xl" />
           </div>
-          <div className="space-y-2">
-            <p className="leading-none uppercase text-sm font-semibold text-gray-500 dark:text-gray-400">
+          <div className="space-y-1 lg:space-y-2">
+            <p className="leading-none uppercase text-xs lg:text-sm font-semibold text-gray-500 dark:text-gray-400">
               Jumlah Pengguna
             </p>
             {usersCount && (
-              <p className="leading-none text-3xl font-semibold">
+              <p className="leading-none text-xl lg:text-3xl font-semibold">
                 {usersCount.count}
               </p>
             )}
           </div>
         </BaseCard>
-        <BaseCard className="flex items-center gap-4 px-4 py-5">
-          <div className="h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
-            <MdCategory className="text-5xl" />
+        <BaseCard className="flex items-center gap-2 lg:gap-4 px-2 lg:px-4 py-3 lg:py-5">
+          <div className="h-14 lg:h-16 aspect-square flex items-center justify-center rounded bg-primary/20 text-primary">
+            <MdCategory className="text-4xl lg:text-5xl" />
           </div>
-          <div className="space-y-2">
-            <p className="leading-none uppercase text-sm font-semibold text-gray-500 dark:text-gray-400">
+          <div className="space-y-1 lg:space-y-2">
+            <p className="leading-none uppercase text-xs lg:text-sm font-semibold text-gray-500 dark:text-gray-400">
               Jumlah Kategori
             </p>
             {categoriesCount && (
-              <p className="leading-none text-3xl font-semibold">
+              <p className="leading-none text-xl lg:text-3xl font-semibold">
                 {categoriesCount.count}
               </p>
             )}
@@ -141,12 +141,12 @@ export default function AdminDashboard() {
         </BaseCard>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TopOrderProductsSection />
         <TopReviewProductsSection />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TopOrderStoresSection />
         <TopReviewStoresSection />
       </div>
@@ -180,7 +180,7 @@ function TopOrderProductsSection({ className }: { className?: string }) {
 
       <div className="space-y-6">
         {products?.map((product) => (
-          <div key={product.id} className="flex items-center gap-2">
+          <div key={product.id} className="flex items-center gap-2 w-full">
             <div className="flex-shrink-0 h-12 aspect-square bg-cover bg-center relative rounded overflow-hidden">
               <Image
                 src={
@@ -197,16 +197,14 @@ function TopOrderProductsSection({ className }: { className?: string }) {
               />
             </div>
             <div className="flex-grow space-y-2">
-              <p className="leading-tight truncate line-clamp-1">
-                {product.name.length > 30
-                  ? `${product.name.slice(0, 30)}...`
-                  : product.name}
+              <p className="w-full max-w-[12rem] lg:max-w-xs leading-tight truncate">
+                {product.name}
               </p>
               <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
                 {`${product.order_count} pesanan`}
               </p>
             </div>
-            <div className="font-semibold">
+            <div className="flex-shrink-0 font-semibold">
               {formatPriceAcro(product.total_orders)}
             </div>
           </div>
@@ -253,16 +251,14 @@ function TopReviewProductsSection({ className }: { className?: string }) {
               />
             </div>
             <div className="flex-grow space-y-2">
-              <p className="leading-tight truncate line-clamp-1">
-                {product.name.length > 30
-                  ? `${product.name.slice(0, 30)}...`
-                  : product.name}
+              <p className="w-full max-w-[12rem] lg:max-w-xs leading-tight truncate">
+                {product.name}
               </p>
               <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
                 {`${product.reviews_count} ulasan`}
               </p>
             </div>
-            <div className="font-semibold flex items-center gap-1.5">
+            <div className="flex-shrink-0font-semibold flex items-center gap-1.5">
               <RiStarFill className="text-yellow-500 text-xl" />
               {product.average_rating.toFixed(1)}
             </div>
@@ -306,16 +302,14 @@ function TopOrderStoresSection({ className }: { className?: string }) {
               />
             </div>
             <div className="flex-grow space-y-2">
-              <p className="leading-tight truncate line-clamp-1">
-                {store.name.length > 30
-                  ? `${store.name.slice(0, 30)}...`
-                  : store.name}
+              <p className="w-full max-w-[12rem] lg:max-w-xs leading-tight truncate">
+                {store.name}
               </p>
               <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
                 {`${store.order_count} pesanan`}
               </p>
             </div>
-            <div className="font-semibold">
+            <div className="flex-shrink-0font-semibold">
               {formatPriceAcro(store.total_orders)}
             </div>
           </div>
@@ -357,16 +351,14 @@ function TopReviewStoresSection({ className }: { className?: string }) {
               />
             </div>
             <div className="flex-grow space-y-2">
-              <p className="leading-tight truncate line-clamp-1">
-                {store.name.length > 30
-                  ? `${store.name.slice(0, 30)}...`
-                  : store.name}
+              <p className="w-full max-w-[12rem] lg:max-w-xs leading-tight truncate">
+                {store.name}
               </p>
               <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
                 {`${store.reviews_count} ulasan`}
               </p>
             </div>
-            <div className="font-semibold flex items-center gap-1.5">
+            <div className="flex-shrink-0font-semibold flex items-center gap-1.5">
               <RiStarFill className="text-yellow-500 text-xl" />
               {store.reviews_avg_rating.toFixed(1)}
             </div>
