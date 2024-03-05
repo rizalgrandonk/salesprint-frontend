@@ -13,7 +13,7 @@ import { Tab } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { MdChevronLeft, MdChevronRight, MdLocationPin } from "react-icons/md";
 import { RiStarFill } from "react-icons/ri";
 import { useInView } from "react-intersection-observer";
@@ -35,7 +35,7 @@ export default function SearchPage() {
         keywords={`${keywordQuery}`}
       />
 
-      <div className="container py-8 space-y-8">
+      <div className="container py-4 lg:py-8 space-y-8">
         <div>
           <Tab.Group>
             <Tab.List className="flex items-end border-b border-gray-400 dark:border-gray-500">
@@ -84,6 +84,7 @@ function ProductSection() {
     nextPage,
     previousPage,
     setPage,
+    setSearchKey,
     setFilter,
     refetch,
     isFetching,
@@ -106,6 +107,12 @@ function ProductSection() {
       enabled: inView && !!keywordQuery,
     }
   );
+
+  useEffect(() => {
+    if (keywordQuery) {
+      setSearchKey({ field: "name", value: keywordQuery });
+    }
+  }, [keywordQuery]);
 
   const paginationButtons = generatePaginationArray(
     queryState.page,
@@ -188,6 +195,7 @@ function StoreSection() {
     previousPage,
     setPage,
     setFilter,
+    setSearchKey,
     refetch,
     isFetching,
   } = useDataTable<
@@ -215,6 +223,12 @@ function StoreSection() {
     }
   );
 
+  useEffect(() => {
+    if (keywordQuery) {
+      setSearchKey({ field: "name", value: keywordQuery });
+    }
+  }, [keywordQuery]);
+
   const paginationButtons = generatePaginationArray(
     queryState.page,
     summaryData?.last_page ?? 1,
@@ -231,7 +245,7 @@ function StoreSection() {
       ) : !stores || stores.length <= 0 ? (
         <div>Belum ada toko</div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {stores.map((store, i) => (
             <Link
               key={store.id}

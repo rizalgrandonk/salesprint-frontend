@@ -46,6 +46,9 @@ export default function useDataTable<T>(
     enabled: enabled,
   });
 
+  console.log({ debouncedQueryState });
+  console.log({ queryKey });
+
   const requestData = queryResult.data;
 
   const summaryData = !!requestData
