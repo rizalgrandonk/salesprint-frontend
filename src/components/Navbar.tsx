@@ -189,7 +189,7 @@ export default function Navbar() {
           </div>
 
           <Link
-            href="#"
+            href="/user/orders"
             className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
           >
             <span className="text-2xl">

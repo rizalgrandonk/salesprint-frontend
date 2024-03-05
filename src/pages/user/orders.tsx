@@ -57,8 +57,8 @@ export default function OrderPage() {
   return (
     <>
       <Meta title="Pesanan | Salesprint" />
-      <div className="py-8 container flex gap-6 items-start">
-        <BaseCard className="p-0 flex-shrink-0 w-80 sticky top-28 divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="py-4 lg:py-8 container flex gap-6 items-start">
+        <BaseCard className="hidden lg:block p-0 flex-shrink-0 w-80 sticky top-28 divide-y divide-gray-200 dark:divide-gray-700">
           <div className="px-4 py-3 flex items-center gap-4">
             <div className="relative h-14 aspect-square rounded-full overflow-hidden">
               <Image
@@ -246,7 +246,7 @@ function TransactionSection() {
 
   return (
     <>
-      <BaseCard className="w-full p-4 space-y-3">
+      <BaseCard className="w-full p-2 lg:p-4 space-y-3">
         <div className="w-full flex items-center gap-4">
           <p className="font-semibold text-sm">Status</p>
           <div className="flex-grow flex items-center gap-2 overflow-x-auto no-scrollbar">
@@ -281,7 +281,9 @@ function TransactionSection() {
         </div>
 
         {!orders || orders.length <= 0 ? (
-          <p className="px-3 py-4 text-3xl text-center">Tidak ada data</p>
+          <p className="px-3 py-4 text-2xl lg:text-3xl text-center">
+            Tidak ada data
+          </p>
         ) : (
           <>
             {orders?.map((order) => {
@@ -290,11 +292,13 @@ function TransactionSection() {
               );
               return (
                 <BaseCard key={order.id} className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <MdOutlineShoppingBag className="text-lg text-gray-500 dark:text-gray-400" />
-                    <span className="text-xs">
-                      {format(new Date(order.created_at), "dd MMM yyyy")}
-                    </span>
+                  <div className="flex justify-between lg:justify-start items-center gap-1 lg:gap-2">
+                    <div className="flex items-center gap-2">
+                      <MdOutlineShoppingBag className="text-lg text-gray-500 dark:text-gray-400" />
+                      <span className="text-xs">
+                        {format(new Date(order.created_at), "dd MMM yyyy")}
+                      </span>
+                    </div>
                     <span
                       className={twMerge(
                         "font-medium text-xs px-2 py-1",
@@ -305,7 +309,7 @@ function TransactionSection() {
                       {ORDER_STATUS_MAP[order.order_status] ??
                         order.order_status}
                     </span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="hidden lg:inline text-xs text-gray-500 dark:text-gray-400">
                       {order.order_number}
                     </span>
                   </div>
@@ -316,9 +320,9 @@ function TransactionSection() {
                         {order.store.name}
                       </span>
                     </div>
-                    <div className="flex items-center divide-x divide-gray-200 dark:divide-gray-700">
+                    <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:divide-x divide-gray-200 dark:divide-gray-700">
                       <div className="flex-grow flex items-start gap-3">
-                        <div className="relative h-16 aspect-square rounded overflow-hidden">
+                        <div className="flex-shrink-0 relative h-16 aspect-square rounded overflow-hidden">
                           <Image
                             src={
                               order.order_items[0].product?.product_images?.find(
@@ -336,7 +340,7 @@ function TransactionSection() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <p className="my-0 leading-none">
+                          <p className="my-0 leading-none line-clamp-1">
                             {order.order_items[0].product?.name ?? ""}
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
@@ -355,7 +359,7 @@ function TransactionSection() {
                           )}
                         </div>
                       </div>
-                      <div className="w-1/4 px-4 py-2">
+                      <div className="lg:w-1/4 lg:px-4 lg:py-2">
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           Total Belanja
                         </p>
@@ -365,8 +369,8 @@ function TransactionSection() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4">
-                      <div className="text-sm space-y-1">
+                    <div className="flex items-center justify-end lg:justify-between lg:pt-4">
+                      <div className="hidden lg:block text-sm space-y-1">
                         {order.order_status === "PAID" &&
                           order.accept_deadline && (
                             <>
@@ -465,7 +469,7 @@ function TransactionSection() {
                             Pesanan Selesai
                           </Button>
                         )}
-                        {order.order_status === "COMPLETED" && (
+                        {order.order_status === "COMPLETED" && isReviewed && (
                           <Button
                             type="button"
                             size="sm"
@@ -516,7 +520,7 @@ function TransactionSection() {
       </BaseCard>
 
       <DetailOrderModal
-        key={selectedItem?.id}
+        key={`modal_detail_${selectedItem?.id}`}
         isOpen={isModalDetailOpen}
         onClose={() => {
           setIsModalDetailOpen(false);
@@ -526,7 +530,7 @@ function TransactionSection() {
       />
 
       <ReviewOrderModal
-        key={selectedItem?.id}
+        key={`modal_review_${selectedItem?.id}`}
         isOpen={isModalReviewOpen}
         onClose={() => {
           setIsModalReviewOpen(false);
@@ -624,31 +628,35 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
               </div>
               <BaseCard
                 className={twMerge(
-                  "space-y-1 transition-all overflow-hidden duration-500",
-                  isTimelineExpand ? "p-4" : "p-0"
+                  "grid grid-rows-[0fr] transition-all duration-500 overflow-hidden",
+                  isTimelineExpand ? "p-3 lg:p-4 grid-rows-[1fr]" : "p-0"
                 )}
-                style={{
-                  height: isTimelineExpand ? `${timelines.length * 2.7}rem` : 0,
-                }}
               >
-                {timelines.map((timeline, index) => (
-                  <div key={index} className="flex items-start gap-4">
-                    <span className="text-gray-500 dark:text-gray-400">
-                      {format(new Date(timeline.date), "dd MMM yyy, HH:mm")}
-                    </span>
-                    <div className="flex flex-col items-center gap-1 mt-0.5">
-                      {index === 0 ? (
-                        <MdLabelImportant className="text-primary" />
-                      ) : (
-                        <MdLabelImportantOutline className="text-gray-500 dark:text-gray-400" />
-                      )}
-                      {index < timelines.length - 1 && (
-                        <div className="h-4 w-0.5 bg-gray-500 dark:bg-gray-400" />
-                      )}
+                <div className="overflow-hidden">
+                  {timelines.map((timeline, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-3 lg:gap-4 text-xs"
+                    >
+                      <span className="w-1/4 text-gray-500 dark:text-gray-400">
+                        {format(new Date(timeline.date), "dd MMM yyy, HH:mm")}
+                      </span>
+                      <div className="flex flex-col items-center gap-1 mt-0.5">
+                        {index === 0 ? (
+                          <MdLabelImportant className="text-primary" />
+                        ) : (
+                          <MdLabelImportantOutline className="text-gray-500 dark:text-gray-400" />
+                        )}
+                        {index < timelines.length - 1 && (
+                          <div className="h-5 w-0.5 bg-gray-500 dark:bg-gray-400" />
+                        )}
+                      </div>
+                      <span className="w-1/2 font-medium">
+                        {timeline.title}
+                      </span>
                     </div>
-                    <span className="font-medium">{timeline.title}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </BaseCard>
             </div>
             <div className="flex justify-between">
@@ -668,7 +676,7 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
           </div>
 
           <div className="p-4 text-sm space-y-3">
-            <div className="flex justify-between">
+            <div className="flex flex-col lg:flex-row justify-between">
               <p className="font-medium text-base">Detail Produk</p>
               <Link
                 href={`/${order.store.slug}`}
@@ -681,69 +689,75 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
             </div>
             <div>
               {order.order_items.map((item) => (
-                <BaseCard key={item.id} className="flex items-start gap-2">
-                  <div className="flex-shrink-0 h-12 aspect-square bg-cover bg-center relative rounded overflow-hidden">
-                    <Image
-                      src={
-                        item.product?.product_images?.find(
-                          (image) => image.main_image
-                        )?.image_url ||
-                        item.product?.product_images?.[0]?.image_url ||
-                        DEFAULT_STORE_CATEGORY_IMAGE
-                      }
-                      alt={item.product?.name ?? ""}
-                      fill
-                      loading="lazy"
-                      className="object-cover"
-                      sizes="25vw"
-                    />
+                <BaseCard
+                  key={item.id}
+                  className="flex flex-col lg:flex-row lg:items-start gap-2"
+                >
+                  <div className="lg:flex-grow flex items-start gap-2">
+                    <div className="flex-shrink-0 h-20 aspect-square bg-cover bg-center relative rounded overflow-hidden">
+                      <Image
+                        src={
+                          item.product?.product_images?.find(
+                            (image) => image.main_image
+                          )?.image_url ||
+                          item.product?.product_images?.[0]?.image_url ||
+                          DEFAULT_STORE_CATEGORY_IMAGE
+                        }
+                        alt={item.product?.name ?? ""}
+                        fill
+                        loading="lazy"
+                        className="object-cover"
+                        sizes="25vw"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="leading-tight line-clamp-1 text-gray-600 dark:text-gray-300">
+                        {item.product?.name}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        {item.product_variant?.variant_options?.map((opt) => (
+                          <span
+                            key={opt.id}
+                            className="font-medium text-xxs lg:text-xs px-1.5 py-0.5 bg-gray-200 dark:bg-gray-600"
+                          >
+                            {opt.value}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {`${item.quantity} x ${formatPrice(
+                          item.product_variant?.price ?? 0
+                        )}`}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex-grow space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <p>{item.product?.name}</p>
-                        <div className="flex items-center gap-2">
-                          {item.product_variant?.variant_options?.map((opt) => (
-                            <span
-                              key={opt.id}
-                              className="font-medium text-xs px-1.5 py-0.5 bg-gray-200 dark:bg-gray-600"
-                            >
-                              {opt.value}
-                            </span>
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {`${item.quantity} x ${formatPrice(
-                            item.product_variant?.price ?? 0
-                          )}`}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-end gap-1.5 text-base">
-                        <span>Total Harga</span>
-                        <span className="font-semibold">
-                          {formatPrice(
-                            (item.product_variant?.price ?? 0) * item.quantity
-                          )}
-                        </span>
-                        <Button
-                          type="button"
-                          variant="primary"
-                          size="sm"
-                          outline
-                          onClick={() => {
-                            const product = item.product;
-                            const productVariant = item.product_variant;
-                            if (!!product && !!productVariant) {
-                              addItem({ product, productVariant, quantity: 1 });
-                              router.push("/cart");
-                            }
-                          }}
-                        >
-                          Beli Lagi
-                        </Button>
-                      </div>
+                  <div className="flex justify-between lg:justify-start lg:flex-col items-center lg:items-end gap-1.5 text-sm lg:text-base">
+                    <div className="flex flex-col items-start lg:items-end">
+                      <span>Total Harga</span>
+                      <span className="font-semibold">
+                        {formatPrice(
+                          (item.product_variant?.price ?? 0) * item.quantity
+                        )}
+                      </span>
                     </div>
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="sm"
+                      outline
+                      onClick={() => {
+                        const product = item.product;
+                        const productVariant = item.product_variant;
+                        if (!!product && !!productVariant) {
+                          addItem({ product, productVariant, quantity: 1 });
+                          router.push("/cart");
+                        }
+                      }}
+                    >
+                      Beli Lagi
+                    </Button>
                   </div>
                 </BaseCard>
               ))}
@@ -842,9 +856,13 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
           <p className="text-xl">No Data</p>
         </div>
       )}
-      <div className="px-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">
-        <Button variant="primary">Beri Ulasan</Button>
-      </div>
+      {/* {order?.order_status === "COMPLETED" && (
+        <div className="px-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-4">
+          <Button type="button" variant="primary">
+            Beri Ulasan
+          </Button>
+        </div>
+      )} */}
     </BaseModal>
   );
 }
