@@ -26,21 +26,10 @@ export default function Home({
   latestProducts,
   categories,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  if (!featuredProducts || !latestProducts || !categories) {
-    return (
-      <div className="w-full px-28 py-44">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  // const featuredProducts = recomendedProducts.slice(0, 6);
-
-  // const recomendations = recomendedProducts.slice(6);
-
   return (
     <>
       <Meta />
+
       <section id="category" className="container pt-2 lg:pt-6 pb-6 lg:pb-12">
         <FeaturedProductsCarousel products={featuredProducts} />
       </section>
@@ -51,15 +40,6 @@ export default function Home({
       >
         <div className="flex gap-4 items-end">
           <h2 className="text-2xl lg:text-4xl font-semibold">Kategori</h2>
-          {/* <Link
-            href="/categories"
-            className="flex items-center justify-center text-2xl gap-2 text-primary hover:text-primary-dark"
-          >
-            <span className="text-xl font-semibold underline hover:text-primary-dark">
-              Lihat semua kategori
-            </span>
-            <FaAngleDoubleRight />
-          </Link> */}
         </div>
         <CategoryList categories={categories} />
       </section>
@@ -102,12 +82,6 @@ export default function Home({
         <h2 className="text-2xl lg:text-4xl font-semibold">
           Produk Rekomendasi
         </h2>
-
-        {/* <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[28rem] lg:auto-rows-[28rem] gap-6">
-          {recomendations.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div> */}
         <RecomendationSection />
       </section>
     </>

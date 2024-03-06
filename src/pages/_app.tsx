@@ -41,13 +41,12 @@ export default function MyApp({
 }: AppProps) {
   const path = router.pathname;
 
-  let layout: "app" | "dashboard" | "auth" = "app";
-  if (path.startsWith("/admin") || path.startsWith("/seller")) {
-    layout = "dashboard";
-  }
-  if (path.startsWith("/auth")) {
-    layout = "auth";
-  }
+  let layout: "app" | "dashboard" | "auth" =
+    path.startsWith("/admin") || path.startsWith("/seller")
+      ? "dashboard"
+      : path.startsWith("/auth")
+      ? "auth"
+      : "app";
 
   return (
     <>
@@ -83,25 +82,7 @@ function WrapperLayout({
   layout,
 }: { layout: "app" | "dashboard" | "auth" } & PropsWithChildren) {
   const { data: session, status } = useSession();
-  const { isLoading: isLoadingCart } = useCart();
   // const [isLoadingRoute, setIsLoadingRoute] = useState(false);
-
-  // useEffect(() => {
-  //   const start = () => {
-  //     setIsLoadingRoute(true);
-  //   };
-  //   const end = () => {
-  //     setIsLoadingRoute(false);
-  //   };
-  //   Router.events.on("routeChangeStart", start);
-  //   Router.events.on("routeChangeComplete", end);
-  //   Router.events.on("routeChangeError", end);
-  //   return () => {
-  //     Router.events.off("routeChangeStart", start);
-  //     Router.events.off("routeChangeComplete", end);
-  //     Router.events.off("routeChangeError", end);
-  //   };
-  // }, []);
 
   useEffect(() => {
     if (session?.user && session?.user.error) {
@@ -109,15 +90,15 @@ function WrapperLayout({
     }
   }, [session]);
 
-  if (status === "loading" || isLoadingCart) {
-    return (
-      <div className="bg-gray-50 dark:bg-gray-900 h-screen w-screen text-primary flex items-center justify-center flex-col gap-4">
-        <div className="h-[60vh] aspect-square">
-          <LoadingLogo />
-        </div>
-      </div>
-    );
-  }
+  // if (status === "loading") {
+  //   return (
+  //     <div className="bg-gray-50 dark:bg-gray-900 h-screen w-screen text-primary flex items-center justify-center flex-col gap-4">
+  //       <div className="h-[60vh] aspect-square">
+  //         <LoadingLogo />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (layout === "dashboard") {
     return <DashboardLayout>{children}</DashboardLayout>;
@@ -128,16 +109,3 @@ function WrapperLayout({
 
   return <AppLayout>{children}</AppLayout>;
 }
-
-// App.getInitialProps = async (
-//   context: AppContext
-// ): Promise<AppOwnProps & AppInitialProps> => {
-//   const ctx = await App.getInitialProps(context);
-//   const path = context.router.pathname;
-
-//   if (path.startsWith("/admin") || path.startsWith("/seller")) {
-//     return { ...ctx, dashboard: true };
-//   }
-
-//   return { ...ctx, dashboard: false };
-// };

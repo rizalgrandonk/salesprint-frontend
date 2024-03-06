@@ -89,7 +89,7 @@ export default function Meta(seo: MetaProps) {
       <meta name="twitter:creator" content="@handle" />
 
       <meta property="og:url" content={fullSeo.url} />
-      <meta property="og:site_name" content="Grandonk Merch" />
+      <meta property="og:site_name" content="Salesprint" />
 
       {fullSeo.article && <meta property="og:type" content="article" />}
     </Head>

@@ -3,6 +3,7 @@ import Script from "next/script";
 import { PropsWithChildren } from "react";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import Meta from "./utils/Meta";
 
 export default function Layout({ children }: PropsWithChildren) {
   return (
