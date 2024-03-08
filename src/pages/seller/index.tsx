@@ -390,8 +390,6 @@ function SalesChart({ className }: { className?: string }) {
 
   const formatedData = sales ? formatSalesChartData(sales) : undefined;
 
-  console.log({ formatedData });
-
   return (
     <BaseCard className={twMerge("space-y-8", className)}>
       <div className="flex items-start justify-between">

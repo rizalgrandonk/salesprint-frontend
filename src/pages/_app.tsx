@@ -4,22 +4,29 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import LoadingLogo from "@/components/utils/LoadingLogo";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 import type { AppProps } from "next/app";
-import { Poppins } from "next/font/google";
 import { Router } from "next/router";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import NProgress from "nprogress";
+import * as PusherPushNotifications from "@pusher/push-notifications-web";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 import "nprogress/nprogress.css";
 import "react-multi-carousel/lib/styles.css";
 import "@/styles/globals.css";
+import toast from "@/lib/toast";
+import { id } from "date-fns/locale";
+import { setDefaultOptions } from "date-fns/setDefaultOptions";
+import QueryKeys from "@/constants/queryKeys";
 
-const font = Poppins({
-  weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
-});
+setDefaultOptions({ locale: id });
 
 const queryClient = new QueryClient();
 
@@ -50,13 +57,6 @@ export default function MyApp({
 
   return (
     <>
-      <style jsx global>
-        {`
-          html {
-            font-family: ${font.style.fontFamily};
-          }
-        `}
-      </style>
       <SessionProvider
         session={session}
         refetchOnWindowFocus={true}
@@ -82,7 +82,10 @@ function WrapperLayout({
   layout,
 }: { layout: "app" | "dashboard" | "auth" } & PropsWithChildren) {
   const { data: session, status } = useSession();
-  // const [isLoadingRoute, setIsLoadingRoute] = useState(false);
+  const userId = session?.user?.id;
+  const userToken = session?.user?.access_token;
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (session?.user && session?.user.error) {
@@ -90,15 +93,62 @@ function WrapperLayout({
     }
   }, [session]);
 
-  // if (status === "loading") {
-  //   return (
-  //     <div className="bg-gray-50 dark:bg-gray-900 h-screen w-screen text-primary flex items-center justify-center flex-col gap-4">
-  //       <div className="h-[60vh] aspect-square">
-  //         <LoadingLogo />
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  useEffect(() => {
+    if (!userId || !userToken) {
+      return;
+    }
+
+    // @ts-ignore
+    window.Pusher = Pusher;
+
+    const options = {
+      broadcaster: "pusher",
+      key: process.env.NEXT_PUBLIC_PUSHER_KEY,
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+      forceTLS: true,
+      //authEndpoint is your apiUrl + /broadcasting/auth
+      authEndpoint: process.env.NEXT_PUBLIC_BACKEND_URL + "/broadcasting/auth",
+      // As I'm using JWT tokens, I need to manually set up the headers.
+      auth: {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          Accept: "application/json",
+        },
+      },
+    };
+
+    const echo = new Echo(options);
+    echo.private(`App.Models.User.${userId}`).notification((data: any) => {
+      toast.info(
+        { title: data?.title, body: data?.body, action_url: data?.action_url },
+        { id: data?.id }
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.USER_NOTIFICATIONS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.USER_NOTIFICATIONS_COUNT],
+      });
+    });
+
+    const beamsClient = new PusherPushNotifications.Client({
+      instanceId: process.env.NEXT_PUBLIC_BEAM_INSTANCE_ID ?? "",
+    });
+
+    beamsClient
+      .start()
+      .then(() => beamsClient.addDeviceInterest(`App.Models.User.${userId}`))
+      .then(() => {
+        console.log("Successfully registered and subscribed!");
+      })
+      .catch(console.error);
+
+    return () => {
+      // echo.disconnect();
+      // beamsClient.stop();
+    };
+  }, [userId]);
 
   if (layout === "dashboard") {
     return <DashboardLayout>{children}</DashboardLayout>;

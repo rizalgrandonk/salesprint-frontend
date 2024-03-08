@@ -16,6 +16,8 @@ const QueryKeys = {
   STORE_BANNERS: "/stores/banners",
   STORE_CATEGORIES: "/stores/categories",
   LOGISTIC_COST: "/logistic/costs",
+  USER_NOTIFICATIONS: "/notifications",
+  USER_NOTIFICATIONS_COUNT: "/notifications/count",
 };
 
 export default QueryKeys;

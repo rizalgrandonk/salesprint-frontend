@@ -49,16 +49,20 @@ export const ProductCard = forwardRef<HTMLAnchorElement, ProductCardProps>(
           </div>
 
           {!!product.store && (
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+            <div className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
               <RiStoreLine />
-              <div className="h-3 w-full overflow-y-hidden relative text-sm">
-                <div className="absolute left-0 top-0 group-hover:-top-[1.2rem] lg:group-hover:-top-[1.2rem] transition-all duration-300 space-y-1">
-                  <span className="block font-medium leading-none">
-                    {product.store.city}
-                  </span>
-                  <span className="block font-medium leading-none">
-                    {product.store.name}
-                  </span>
+              <div className="h-5 w-full overflow-y-hidden relative text-sm">
+                <div className="absolute left-0 top-0 group-hover:-top-[1.2rem] lg:group-hover:-top-[1.2rem] transition-all duration-300">
+                  <p className="block font-medium leading-tight line-clamp-1">
+                    {product.store.city.length > 15
+                      ? product.store.city.slice(0, 15) + "..."
+                      : product.store.city}
+                  </p>
+                  <p className="block font-medium leading-tight line-clamp-1">
+                    {product.store.name.length > 15
+                      ? product.store.name.slice(0, 15) + "..."
+                      : product.store.name}
+                  </p>
                 </div>
               </div>
             </div>

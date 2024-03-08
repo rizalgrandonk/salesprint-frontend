@@ -41,8 +41,8 @@ const FeaturedProductsItem = ({ product }: FeaturedProductsItemProps) => {
             {formatPrice(product.price)}
           </p>
           <div className="flex flex-col lg:flex-row gap-1 lg:gap-0 lg:items-center lg:divide-x">
-            <div className="flex items-end gap-0.5 lg:gap-2 lg:pr-3">
-              <RiStarFill className="text-base lg:text-xl text-yellow-500" />
+            <div className="flex items-center gap-0.5 lg:gap-2 lg:pr-3">
+              <RiStarFill className="text-base lg:text-xl text-yellow-500 leading-none" />
               <p className="text-sm lg:text-lg font-medium leading-none">
                 {product.average_rating}
                 <span className="text-gray-200 font-light">{` (${

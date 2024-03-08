@@ -3,7 +3,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   MdAccountCircle,
   MdApps,
@@ -13,6 +13,7 @@ import {
   MdLogout,
   MdMenu,
   MdNotifications,
+  MdOutlineInfo,
   MdSearch,
   MdSettings,
   MdShoppingBag,
@@ -22,6 +23,22 @@ import AppLogo from "../utils/AppLogo";
 import DarkModeToggle from "../utils/DarkModeToggle";
 import Redirect from "../utils/Redirect";
 import SearchMenu from "./SearchMenu";
+import { useInView } from "react-intersection-observer";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import QueryKeys from "@/constants/queryKeys";
+import {
+  getUserNotifications,
+  getUserNotificationsCount,
+  markReadUserNotifications,
+} from "@/lib/api/notifications";
+import { formatRelative } from "date-fns/formatRelative";
+import { id } from "date-fns/locale";
+import { twMerge } from "tailwind-merge";
+import { Button } from "../utils/Button";
 
 type DashboardNavProps = {
   mobileSidebarOpen: boolean;
@@ -193,10 +210,92 @@ function UserPanel({ dashboardUrl }: { dashboardUrl: string }) {
 }
 
 function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
+  const { data: session } = useSession();
+  const userToken = session?.user?.access_token;
+  const userId = session?.user?.id;
+
+  const { ref: sectionStartRef, inView: sectionStartInView } = useInView();
+  const { ref: lastItemRef, inView: lastItemInView } = useInView();
+
+  const [queryState, setQueryState] = useState<{
+    type: "read" | "unread" | "all";
+    limit: number;
+  }>({
+    limit: 5,
+    type: "unread",
+  });
+
+  const {
+    data: dataNotifs,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: [QueryKeys.USER_NOTIFICATIONS, { ...queryState, userId }],
+    queryFn: ({ pageParam = 1 }) =>
+      userToken
+        ? getUserNotifications(userToken, { ...queryState, page: pageParam })
+        : null,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage && lastPage.current_page < lastPage.last_page
+        ? lastPage.current_page + 1
+        : null,
+    enabled: !!sectionStartInView && !!userToken,
+  });
+
+  const { data: notifCount } = useQuery({
+    queryKey: [QueryKeys.USER_NOTIFICATIONS_COUNT, userId],
+    queryFn: () =>
+      userToken
+        ? getUserNotificationsCount(userToken, { type: "unread" })
+        : null,
+    enabled: !!userToken,
+  });
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (lastItemInView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [lastItemInView, fetchNextPage, hasNextPage]);
+
+  const handleMarkRead = async () => {
+    if (queryState.type !== "unread") {
+      return;
+    }
+
+    if (!userToken) {
+      return;
+    }
+
+    await markReadUserNotifications(userToken);
+
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.USER_NOTIFICATIONS],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.USER_NOTIFICATIONS_COUNT],
+    });
+
+    setQueryState((prev) => ({
+      ...prev,
+      type: "all",
+    }));
+  };
+
   return (
     <Popover className="relative">
-      <Popover.Button className="text-2xl p-2 text-gray-500 rounded hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none">
+      <Popover.Button className="text-2xl p-2 text-gray-500 rounded hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 outline-none border-none relative">
         <span className="sr-only">Lihat notifikasi</span>
+
+        {!!notifCount?.count && notifCount.count > 0 && (
+          <span className="h-4 w-4 rounded-full flex items-center justify-center bg-red-500 text-white text-xxs absolute right-1 top-1">
+            {notifCount?.count}
+          </span>
+        )}
         <MdNotifications />
       </Popover.Button>
 
@@ -211,47 +310,111 @@ function NotificatiionPanel({ dashboardUrl }: { dashboardUrl: string }) {
       >
         <Popover.Panel
           as="div"
-          className="absolute top-full -right-full lg:right-0 z-50 w-72 lg:w-96 my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
+          className="absolute top-full -right-full lg:right-0 z-50 w-72 lg:w-96 my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-lg dark:divide-gray-600 dark:bg-gray-700"
         >
-          <div className="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            Notifikasi
-          </div>
-          <div>
-            <Link
-              href={`${dashboardUrl}`}
-              className="flex px-4 py-3 border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-600"
-            >
-              <div className="flex-shrink-0">
-                <div className="w-11 h-11 relative">
-                  <Image
-                    src="https://source.unsplash.com/random/?sales person"
-                    alt=""
-                    fill
-                    sizes="2.75rem"
-                    loading="lazy"
-                    className="object-cover rounded-full"
-                  />
-                </div>
-              </div>
-              <div className="w-full pl-3">
-                <div className="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-                  This is notification content
-                </div>
-                <div className="text-xs font-medium text-primary dark:text-primary">
-                  a few moments ago
-                </div>
-              </div>
-            </Link>
-          </div>
-          <Link
-            href={`${dashboardUrl}/notifications`}
-            className="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:hover:underline"
-          >
-            <div className="inline-flex items-center gap-2">
-              <MdVisibility className="text-2xl" />
-              Lihat semua
+          <div className="px-4 py-3 space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="leading-none text-base font-medium text-gray-700 dark:text-gray-400">
+                Notifikasi
+              </p>
+
+              {queryState.type === "unread" && (
+                <span
+                  onClick={() => handleMarkRead()}
+                  className="text-xs text-primary cursor-pointer"
+                >
+                  Tandai sudah dibaca
+                </span>
+              )}
             </div>
-          </Link>
+
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() =>
+                  setQueryState((prev) => ({
+                    ...prev,
+                    type: "all",
+                  }))
+                }
+                size="sm"
+                outline={queryState.type !== "all"}
+                className="px-4 h-6"
+              >
+                Semua
+              </Button>
+              <Button
+                onClick={() =>
+                  setQueryState((prev) => ({
+                    ...prev,
+                    type: "read",
+                  }))
+                }
+                size="sm"
+                outline={queryState.type !== "read"}
+                className="px-4 h-6"
+              >
+                Dibaca
+              </Button>
+              <Button
+                onClick={() =>
+                  setQueryState((prev) => ({
+                    ...prev,
+                    type: "unread",
+                  }))
+                }
+                size="sm"
+                outline={queryState.type !== "unread"}
+                className="px-4 h-6"
+              >
+                Belum Dibaca
+              </Button>
+            </div>
+          </div>
+          <div
+            className="max-h-96 overflow-y-auto divide-y divide-gray-300 dark:divide-gray-600"
+            ref={sectionStartRef}
+          >
+            {!!dataNotifs &&
+            dataNotifs.pages.length > 0 &&
+            dataNotifs.pages[0]?.data &&
+            dataNotifs.pages[0]?.data?.length > 0 ? (
+              dataNotifs?.pages.map((group, idx) =>
+                group?.data.map((notif, i) => (
+                  <div
+                    ref={
+                      dataNotifs?.pages.length === idx + 1 &&
+                      group.data.length === i + 1
+                        ? lastItemRef
+                        : undefined
+                    }
+                    className={twMerge(
+                      "flex-grow flex items-start gap-3 cursor-pointer px-4 py-3",
+                      !notif.read_at ? "bg-primary/5" : ""
+                    )}
+                    key={notif.id}
+                  >
+                    <div className="flex-shrink-0 h-10 w-10 rounded flex items-center justify-center bg-sky-500/20 dark:bg-sky-500/20 text-sky-500">
+                      <MdOutlineInfo className="text-2xl" />
+                    </div>
+
+                    <div className="flex-grow space-y-1.5">
+                      <p className="leading-none">{notif.data.title}</p>
+                      <p className="text-sm leading-snug text-gray-500 dark:text-gray-400">
+                        {notif.data.body}
+                      </p>
+                      <p className="text-xs leading-snug text-gray-600 dark:text-gray-300">
+                        {formatRelative(new Date(notif.created_at), new Date())}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )
+            ) : (
+              <div className="px-4 py-3 text-center text-xl">
+                Belum ada notifikasi
+              </div>
+            )}
+          </div>
         </Popover.Panel>
       </Transition>
     </Popover>
