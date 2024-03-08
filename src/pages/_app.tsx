@@ -14,10 +14,10 @@ import type { AppProps } from "next/app";
 import { Router } from "next/router";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import NProgress from "nprogress";
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
+import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import "react-multi-carousel/lib/styles.css";
 import "@/styles/globals.css";
@@ -98,27 +98,46 @@ function WrapperLayout({
       return;
     }
 
-    // @ts-ignore
-    window.Pusher = Pusher;
+    // // @ts-ignore
+    // window.Pusher = Pusher;
 
-    const options = {
+    // const options = {
+    //   broadcaster: "pusher",
+    //   key: process.env.NEXT_PUBLIC_PUSHER_KEY,
+    //   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+    //   forceTLS: true,
+    //   //authEndpoint is your apiUrl + /broadcasting/auth
+    //   authEndpoint: process.env.NEXT_PUBLIC_BACKEND_URL + "/broadcasting/auth",
+    //   // As I'm using JWT tokens, I need to manually set up the headers.
+    //   auth: {
+    //     headers: {
+    //       Authorization: `Bearer ${userToken}`,
+    //       Accept: "application/json",
+    //     },
+    //   },
+    // };
+
+    const echo = new Echo({
       broadcaster: "pusher",
-      key: process.env.NEXT_PUBLIC_PUSHER_KEY,
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
-      forceTLS: true,
-      //authEndpoint is your apiUrl + /broadcasting/auth
-      authEndpoint: process.env.NEXT_PUBLIC_BACKEND_URL + "/broadcasting/auth",
-      // As I'm using JWT tokens, I need to manually set up the headers.
-      auth: {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-          Accept: "application/json",
+      client: new Pusher(`${process.env.NEXT_PUBLIC_PUSHER_KEY}`, {
+        cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER ?? "ap1",
+        wssPort: 443,
+        wsPort: 80,
+        forceTLS: true,
+        enableStats: false,
+        enabledTransports: ["ws", "wss"],
+        authEndpoint:
+          process.env.NEXT_PUBLIC_BACKEND_URL + "/broadcasting/auth",
+        auth: {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            Accept: "application/json",
+          },
         },
-      },
-    };
-
-    const echo = new Echo(options);
+      }),
+    });
     echo.private(`App.Models.User.${userId}`).notification((data: any) => {
+      console.log("data notif", data);
       toast.info(
         { title: data?.title, body: data?.body, action_url: data?.action_url },
         { id: data?.id }
