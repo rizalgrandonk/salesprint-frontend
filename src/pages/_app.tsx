@@ -124,16 +124,15 @@ function WrapperLayout({
         wssPort: 443,
         wsPort: 80,
         forceTLS: true,
-        enableStats: false,
         enabledTransports: ["ws", "wss"],
-        authEndpoint:
-          process.env.NEXT_PUBLIC_BACKEND_URL + "/broadcasting/auth",
-        auth: {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-            Accept: "application/json",
-          },
-        },
+        // authEndpoint:
+        //   process.env.NEXT_PUBLIC_BACKEND_URL + "/broadcasting/auth",
+        // auth: {
+        //   headers: {
+        //     Authorization: `Bearer ${userToken}`,
+        //     Accept: "application/json",
+        //   },
+        // },
       }),
     });
     const channel = echo.private(`App.Models.User.${userId}`);
