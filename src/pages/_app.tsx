@@ -135,8 +135,13 @@ function WrapperLayout({
         },
       }),
     });
+
     const channel = echo.private(`App.Models.User.${userId}`);
     console.log("channel", { channel });
+
+    channel.error((data: any) => {
+      console.log("error subs", data);
+    });
 
     channel.notification((data: any) => {
       console.log("data notif", data);
