@@ -24,16 +24,6 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
     }
   }
 
-  if (
-    token &&
-    token.user.role &&
-    token.user.role !== "user" &&
-    !pathname.startsWith(`/${token.user.role}`)
-  ) {
-    const url = new URL(`/${token.user.role}`, request.url);
-    return NextResponse.redirect(url);
-  }
-
   const protectedPaths = ["/admin", "/seller", "/user", "/auth/user"];
   const matchesProtectedPath = protectedPaths.some((path) =>
     pathname.startsWith(path)
@@ -48,7 +38,8 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
 
     if (
       (pathname.startsWith("/admin") && token.user.role !== "admin") ||
-      (pathname.startsWith("/seller") && token.user.role !== "seller")
+      (pathname.startsWith("/seller") && token.user.role !== "seller") ||
+      (pathname.startsWith("/user") && token.user.role !== "user")
     ) {
       const url = new URL(`/403`, request.url);
       return NextResponse.rewrite(url);
