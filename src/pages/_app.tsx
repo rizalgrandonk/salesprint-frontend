@@ -136,7 +136,10 @@ function WrapperLayout({
         },
       }),
     });
-    echo.private(`App.Models.User.${userId}`).notification((data: any) => {
+    const channel = echo.private(`App.Models.User.${userId}`);
+    console.log("channel", { channel });
+
+    channel.notification((data: any) => {
       console.log("data notif", data);
       toast.info(
         { title: data?.title, body: data?.body, action_url: data?.action_url },
@@ -149,6 +152,10 @@ function WrapperLayout({
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.USER_NOTIFICATIONS_COUNT],
       });
+    });
+
+    channel.subscribed((data: any) => {
+      console.log("subscribed data", data);
     });
 
     const beamsClient = new PusherPushNotifications.Client({
@@ -164,7 +171,7 @@ function WrapperLayout({
       .catch(console.error);
 
     return () => {
-      // echo.disconnect();
+      echo.disconnect();
       // beamsClient.stop();
     };
   }, [userId]);
