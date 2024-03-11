@@ -98,25 +98,6 @@ function WrapperLayout({
       return;
     }
 
-    // // @ts-ignore
-    // window.Pusher = Pusher;
-
-    // const options = {
-    //   broadcaster: "pusher",
-    //   key: process.env.NEXT_PUBLIC_PUSHER_KEY,
-    //   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
-    //   forceTLS: true,
-    //   //authEndpoint is your apiUrl + /broadcasting/auth
-    //   authEndpoint: process.env.NEXT_PUBLIC_BACKEND_URL + "/broadcasting/auth",
-    //   // As I'm using JWT tokens, I need to manually set up the headers.
-    //   auth: {
-    //     headers: {
-    //       Authorization: `Bearer ${userToken}`,
-    //       Accept: "application/json",
-    //     },
-    //   },
-    // };
-
     const echo = new Echo({
       broadcaster: "pusher",
       client: new Pusher(`${process.env.NEXT_PUBLIC_PUSHER_KEY}`, {
@@ -155,6 +136,18 @@ function WrapperLayout({
       });
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.USER_NOTIFICATIONS_COUNT],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.USER_ORDERS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.STORE_ORDERS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.PAGINATED_USER_ORDERS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.PAGINATED_STORE_ORDERS],
       });
     });
 
