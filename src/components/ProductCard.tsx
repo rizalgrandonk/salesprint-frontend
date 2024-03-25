@@ -44,7 +44,7 @@ export const ProductCard = forwardRef<HTMLAnchorElement, ProductCardProps>(
               rating={product.average_rating}
             />
             <span className="px-1 py-0.5 leading-none text-xs font-semibold bg-primary-light text-primary-dark rounded">
-              {product.average_rating}
+              {product.average_rating.toFixed(1)}
             </span>
           </div>
 

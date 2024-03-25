@@ -38,8 +38,11 @@ export default function Home({
         id="category"
         className="container py-6 lg:py-12 space-y-3 lg:space-y-6"
       >
-        <div className="flex gap-4 items-end">
+        <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <h2 className="text-2xl lg:text-4xl font-semibold">Kategori</h2>
+          <Link href="/categories" className="text-primary">
+            Lihat semua kategori
+          </Link>
         </div>
         <CategoryList categories={categories} />
       </section>

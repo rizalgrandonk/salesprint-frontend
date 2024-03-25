@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import {
+  RiAppsFill,
+  RiAppsLine,
+  RiFileList3Fill,
+  RiFileList3Line,
   RiHome3Fill,
   RiHome3Line,
   RiLayoutMasonryFill,
@@ -56,7 +60,7 @@ export default function Navbar() {
         className={`fixed z-20 w-full h-16 lg:h-20 transition-all bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-sm border-b border-gray-300 dark:border-gray-600`}
       >
         <div className="container h-full mx-auto flex justify-between items-center">
-          <div className="h-full py-3 lg:py-5">
+          <div className="h-full py-4 lg:py-5">
             <Link href="/" className="flex items-center gap-2 h-full">
               <span className="text-primary h-full">
                 <AppLogo />
@@ -156,7 +160,7 @@ export default function Navbar() {
             <span className="block text-xs">Beranda</span>
           </Link>
           <Link
-            href="#"
+            href="/categories"
             className={twMerge(
               "w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2",
               asPath.startsWith("/categories") ? "text-primary" : ""
@@ -194,25 +198,25 @@ export default function Navbar() {
           >
             <span className="text-2xl">
               {asPath.startsWith("/user/orders") ? (
-                <RiStickyNoteFill />
+                <RiFileList3Fill />
               ) : (
-                <RiStickyNoteLine />
+                <RiFileList3Line />
               )}
             </span>
             <span className="block text-xs">Pesanan</span>
           </Link>
           <Link
-            href="/user/profile"
+            href="/auth/menu"
             className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
           >
             <span className="text-2xl">
-              {asPath.startsWith("/user/profile") ? (
-                <RiUserFill />
+              {asPath.startsWith("/auth/menu") ? (
+                <RiAppsFill />
               ) : (
-                <RiUserLine />
+                <RiAppsLine />
               )}
             </span>
-            <span className="block text-xs">Profil</span>
+            <span className="block text-xs">Menu</span>
           </Link>
         </div>
       </nav>
@@ -283,13 +287,22 @@ function UserPanel() {
             </li>
             <li>
               <Link
+                href={"/user/reviews"}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                role="menuitem"
+              >
+                Ulasan
+              </Link>
+            </li>
+            {/* <li>
+              <Link
                 href={`/user/profile`}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Profil
               </Link>
-            </li>
+            </li> */}
             <li>
               <button
                 onClick={() => signOut()}
@@ -380,6 +393,15 @@ function StorePanel() {
                     role="menuitem"
                   >
                     Pesanan
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={"/seller/products"}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                    role="menuitem"
+                  >
+                    Produk
                   </Link>
                 </li>
                 <li>

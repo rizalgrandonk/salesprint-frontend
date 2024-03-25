@@ -57,8 +57,8 @@ export default function OrderPage() {
   return (
     <>
       <Meta title="Pesanan | Salesprint" />
-      <div className="py-4 lg:py-8 container flex gap-6 items-start">
-        <BaseCard className="hidden lg:block p-0 flex-shrink-0 w-80 sticky top-28 divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="py-4 lg:py-8 container flex flex-col lg:flex-row gap-6 lg:items-start">
+        <BaseCard className="p-0 flex-shrink-0 lg:w-80 lg:sticky top-28 divide-y divide-gray-200 dark:divide-gray-700">
           <div className="px-4 py-3 flex items-center gap-4">
             <div className="relative h-14 aspect-square rounded-full overflow-hidden">
               <Image
@@ -816,6 +816,19 @@ function DetailOrderModal({ isOpen, onClose, order }: DetailOrderModalProps) {
                   {order.transaction.payment_type?.replaceAll("_", " ")}
                 </span>
               </div>
+              {order.transaction.payment_code && (
+                <div className="flex items-start justify-between">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Kode Pembayaran
+                  </span>
+                  <span className="font-light uppercase">
+                    {order.transaction.payment_code}
+                  </span>
+                </div>
+              )}
+
+              <div className="w-full py-3" />
+
               <div className="flex items-start justify-between">
                 <span className="text-gray-500 dark:text-gray-400">
                   {`Total Harga (${order.order_items.reduce(

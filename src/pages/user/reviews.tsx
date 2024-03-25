@@ -24,8 +24,8 @@ export default function UserReviewsPage() {
   return (
     <>
       <Meta title="Ulasan | Salesprint" />
-      <div className="py-8 container flex gap-6 items-start">
-        <BaseCard className="hidden lg:block p-0 flex-shrink-0 w-80 sticky top-28 divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="py-4 lg:py-8 container flex flex-col lg:flex-row gap-6 lg:items-start">
+        <BaseCard className="p-0 flex-shrink-0 lg:w-80 lg:sticky top-28 divide-y divide-gray-200 dark:divide-gray-700">
           <div className="px-4 py-3 flex items-center gap-4">
             <div className="relative h-14 aspect-square rounded-full overflow-hidden">
               <Image
