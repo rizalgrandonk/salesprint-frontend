@@ -46,6 +46,7 @@ export default function CategoriesPage({
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {categories.map((category) => (
             <Link
+              key={category.id}
               href={`/categories/${category.slug}`}
               className="border border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center gap-4 rounded-sm group"
             >
