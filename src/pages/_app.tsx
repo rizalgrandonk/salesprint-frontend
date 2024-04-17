@@ -60,7 +60,7 @@ export default function MyApp({
       <SessionProvider
         session={session}
         refetchOnWindowFocus={true}
-        refetchInterval={5 * 60}
+        refetchInterval={60}
       >
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
@@ -171,7 +171,7 @@ function WrapperLayout({
       echo.disconnect();
       // beamsClient.stop();
     };
-  }, [userId]);
+  }, [userId, userToken, queryClient]);
 
   if (layout === "dashboard") {
     return <DashboardLayout>{children}</DashboardLayout>;

@@ -1,6 +1,5 @@
 import AppLogo from "@/components/utils/AppLogo";
 import { Button } from "@/components/utils/Button";
-import DarkModeToggle from "@/components/utils/DarkModeToggle";
 import FormInput from "@/components/utils/FormInput";
 import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
@@ -11,7 +10,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { RiMoonLine, RiSunLine } from "react-icons/ri";
 
 type LoginInputs = {
   email: string;
@@ -39,17 +37,24 @@ export default function LoginPage() {
     console.log("query.callbackUrl", query.callbackUrl);
     console.log("session?.user?.role", session?.user?.role);
 
-    const redirectURL = query.callbackUrl
-      ? query.callbackUrl
-      : session?.user?.role === "admin"
-      ? `/admin`
-      : "/";
+    const userRole = session?.user?.role;
+    const callbackUrl = query.callbackUrl?.toString();
 
-    return (
-      <Redirect
-        to={Array.isArray(redirectURL) ? redirectURL[0] : redirectURL}
-      />
-    );
+    if (!userRole) {
+      return <Redirect to="/" />;
+    }
+
+    if (callbackUrl) {
+      if (userRole !== "user" && !callbackUrl.startsWith(`/${userRole}`)) {
+        return <Redirect to={`/${userRole}`} />;
+      }
+
+      return <Redirect to={callbackUrl} />;
+    }
+
+    const redirectURL = userRole !== "user" ? `/${userRole}` : "/";
+
+    return <Redirect to={redirectURL} />;
   }
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {

@@ -24,6 +24,16 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
     }
   }
 
+  if (
+    !!token &&
+    token.user.role !== "user" &&
+    !pathname.startsWith(`/${token.user.role}`)
+  ) {
+    console.log("Unathorized");
+    const url = new URL(`/403`, request.url);
+    return NextResponse.rewrite(url);
+  }
+
   const protectedPaths = ["/admin", "/seller", "/user", "/auth/user"];
   const matchesProtectedPath = protectedPaths.some((path) =>
     pathname.startsWith(path)
