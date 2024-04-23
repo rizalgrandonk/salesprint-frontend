@@ -11,6 +11,7 @@ const QueryKeys = {
   USER_ORDERS: "/orders/user_orders",
   ALL_CATEGORIES: "/categories",
   USER_STORE: "/users/user_store",
+  USER_PROFILE: "/auth/me",
   PRODUCTS: "/products",
   STORE_GET_PROVINCE: "/stores/get_province",
   STORE_GET_CITES: "/stores/get_cities",

@@ -120,7 +120,9 @@ function RecomendationSection() {
         userToken
       ),
     getNextPageParam: (lastPage, allPages) =>
-      lastPage && lastPage.current_page < lastPage.last_page
+      lastPage &&
+      lastPage.current_page < lastPage.last_page &&
+      lastPage.current_page < 1
         ? lastPage.current_page + 1
         : null,
     enabled: sectionStartInView,
