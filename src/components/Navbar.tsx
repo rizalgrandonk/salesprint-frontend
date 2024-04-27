@@ -42,6 +42,7 @@ export default function Navbar() {
   const { totalItems } = useCart();
 
   const { data: session } = useSession();
+  const userData = session?.user;
 
   const router = useRouter();
 
@@ -65,9 +66,7 @@ export default function Navbar() {
               <span className="text-primary h-full">
                 <AppLogo />
               </span>
-              <span className="text-3xl font-semibold hidden lg:inline">
-                Salesprint
-              </span>
+              <span className="text-3xl font-semibold hidden lg:inline">Salesprint</span>
             </Link>
           </div>
           <div className="flex-grow px-4 lg:px-8">
@@ -97,19 +96,21 @@ export default function Navbar() {
           </div>
 
           <div className="flex justify-between items-center gap-4">
-            <Link
-              href="/cart"
-              className="hidden lg:inline relative p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
-            >
-              <span className="text-2xl">
-                <RiShoppingCartLine />
-              </span>
-              {totalItems > 0 && (
-                <span className="absolute right-0 top-1 block h-5 w-5 text-sm text-center text-white bg-primary rounded-full">
-                  {totalItems}
+            {(!userData?.role || userData.role === "user") && (
+              <Link
+                href="/cart"
+                className="hidden lg:inline relative p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
+              >
+                <span className="text-2xl">
+                  <RiShoppingCartLine />
                 </span>
-              )}
-            </Link>
+                {totalItems > 0 && (
+                  <span className="absolute right-0 top-1 block h-5 w-5 text-sm text-center text-white bg-primary rounded-full">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            )}
 
             <DarkModeToggle className="text-2xl hover:bg-gray-200 dark:hover:bg-gray-800 lg:p-2 rounded">
               {(dark) => (dark ? <RiMoonLine /> : <RiSunLine />)}
@@ -120,20 +121,15 @@ export default function Navbar() {
                 <ButtonLink size="sm" variant="primary" href="/auth/register">
                   Daftar
                 </ButtonLink>
-                <ButtonLink
-                  size="sm"
-                  variant="primary"
-                  outline
-                  href="/auth/login"
-                >
+                <ButtonLink size="sm" variant="primary" outline href="/auth/login">
                   Masuk
                 </ButtonLink>
               </div>
             )}
 
-            {!!session?.user && (
+            {!!userData && (
               <div className="pl-4 border-l border-gray-400 dark:border-gray-500 hidden lg:flex items-center gap-3">
-                <StorePanel />
+                {userData.role !== "admin" && <StorePanel />}
                 <UserPanel />
               </div>
             )}
@@ -154,9 +150,7 @@ export default function Navbar() {
               asPath === "/" ? "text-primary" : ""
             )}
           >
-            <span className="text-2xl">
-              {asPath == "/" ? <RiHome3Fill /> : <RiHome3Line />}
-            </span>
+            <span className="text-2xl">{asPath == "/" ? <RiHome3Fill /> : <RiHome3Line />}</span>
             <span className="block text-xs">Beranda</span>
           </Link>
           <Link
@@ -167,54 +161,44 @@ export default function Navbar() {
             )}
           >
             <span className="text-2xl">
-              {asPath.startsWith("/categories") ? (
-                <RiLayoutMasonryFill />
-              ) : (
-                <RiLayoutMasonryLine />
-              )}
+              {asPath.startsWith("/categories") ? <RiLayoutMasonryFill /> : <RiLayoutMasonryLine />}
             </span>
             <span className="block text-xs">Kategori</span>
           </Link>
 
-          <div className="w-full flex flex-col justify-center items-center">
-            <Link
-              href="/cart"
-              className="w-16 h-16 bg-primary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95"
-            >
-              <span className="text-4xl text-gray-200 relative focus:text-primary hover:text-primary">
-                <RiShoppingCartLine />
-                {totalItems > 0 && (
-                  <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center text-white bg-rose-500 rounded-full">
-                    {totalItems}
-                  </span>
-                )}
-              </span>
-            </Link>
-          </div>
+          {(!userData?.role || userData.role === "user") && (
+            <div className="w-full flex flex-col justify-center items-center">
+              <Link
+                href="/cart"
+                className="w-16 h-16 bg-primary rounded-full flex justify-center items-center absolute bottom-2 left-1/2 -translate-x-1/2 hover:bg-opacity-95 focus:bg-opacity-95"
+              >
+                <span className="text-4xl text-gray-200 relative focus:text-primary hover:text-primary">
+                  <RiShoppingCartLine />
+                  {totalItems > 0 && (
+                    <span className="absolute -right-1 -top-1 px-1.5 py-0.5 text-xs text-center text-white bg-rose-500 rounded-full">
+                      {totalItems}
+                    </span>
+                  )}
+                </span>
+              </Link>
+            </div>
+          )}
 
           <Link
-            href="/user/orders"
+            href="/profile"
             className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
           >
             <span className="text-2xl">
-              {asPath.startsWith("/user/orders") ? (
-                <RiFileList3Fill />
-              ) : (
-                <RiFileList3Line />
-              )}
+              {asPath.startsWith("/profile") ? <RiUserFill /> : <RiUserLine />}
             </span>
-            <span className="block text-xs">Pesanan</span>
+            <span className="block text-xs">Profil</span>
           </Link>
           <Link
             href="/auth/menu"
             className="w-full focus:text-primary hover:text-primary flex flex-col justify-between items-center py-2"
           >
             <span className="text-2xl">
-              {asPath.startsWith("/auth/menu") ? (
-                <RiAppsFill />
-              ) : (
-                <RiAppsLine />
-              )}
+              {asPath.startsWith("/auth/menu") ? <RiAppsFill /> : <RiAppsLine />}
             </span>
             <span className="block text-xs">Menu</span>
           </Link>
@@ -276,33 +260,37 @@ function UserPanel() {
             </p>
           </div>
           <ul className="py-3" role="none">
+            {user.role === "user" && (
+              <>
+                <li>
+                  <Link
+                    href={"/user/orders"}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                    role="menuitem"
+                  >
+                    Pesanan
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={"/user/reviews"}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
+                    role="menuitem"
+                  >
+                    Ulasan
+                  </Link>
+                </li>
+              </>
+            )}
             <li>
               <Link
-                href={"/user/orders"}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                role="menuitem"
-              >
-                Pesanan
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={"/user/reviews"}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                role="menuitem"
-              >
-                Ulasan
-              </Link>
-            </li>
-            {/* <li>
-              <Link
-                href={`/user/profile`}
+                href={`/profile`}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200"
                 role="menuitem"
               >
                 Profil
               </Link>
-            </li> */}
+            </li>
             <li>
               <button
                 onClick={() => signOut()}
@@ -372,10 +360,7 @@ function StorePanel() {
           {store ? (
             <Fragment>
               <div className="px-4 py-3" role="none">
-                <p
-                  className="text-lg text-gray-900 dark:text-gray-200"
-                  role="none"
-                >
+                <p className="text-lg text-gray-900 dark:text-gray-200" role="none">
                   {store.name || ""}
                 </p>
                 <p
@@ -416,14 +401,8 @@ function StorePanel() {
               </ul>
             </Fragment>
           ) : (
-            <div
-              className="px-4 py-3 flex flex-col items-center gap-3"
-              role="none"
-            >
-              <p
-                className="text-sm text-center text-gray-900 dark:text-gray-200"
-                role="none"
-              >
+            <div className="px-4 py-3 flex flex-col items-center gap-3" role="none">
+              <p className="text-sm text-center text-gray-900 dark:text-gray-200" role="none">
                 Anda belum memiliki toko
               </p>
               <ButtonLink href="/auth/user/create-store" variant="primary">

@@ -12,10 +12,7 @@ import {
   getStoreOrder,
   shipOrder,
 } from "@/lib/api/orders";
-import {
-  DEFAULT_STORE_CATEGORY_IMAGE,
-  DEFAULT_USER_IMAGE,
-} from "@/lib/constants";
+import { DEFAULT_STORE_CATEGORY_IMAGE, DEFAULT_USER_IMAGE } from "@/lib/constants";
 import { formatPrice } from "@/lib/formater";
 import toast from "@/lib/toast";
 import { ORDER_STATUS_MAP } from "@/types/Order";
@@ -27,12 +24,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { MdLabelImportant, MdLabelImportantOutline } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
-import {
-  AcceptOrderModal,
-  CancelOrderModal,
-  DeliveredOrderModal,
-  ShipOrderModal,
-} from ".";
+import { AcceptOrderModal, CancelOrderModal, DeliveredOrderModal, ShipOrderModal } from ".";
 
 export default function OrderDetailPage() {
   const { data: session } = useSession();
@@ -53,22 +45,18 @@ export default function OrderDetailPage() {
     queryKey: [QueryKeys.STORE_ORDERS, orderNumber],
     queryFn: () =>
       !!userToken && !!orderNumber
-        ? getStoreOrder<"transaction" | "order_items" | "store" | "user">(
-            userToken,
-            orderNumber,
-            {
-              with: [
-                "transaction",
-                "user",
-                "order_items",
-                "store",
-                "order_items.product",
-                "order_items.product.store",
-                "order_items.product.product_images",
-                "order_items.product_variant.variant_options",
-              ],
-            }
-          )
+        ? getStoreOrder<"transaction" | "order_items" | "store" | "user">(userToken, orderNumber, {
+            with: [
+              "transaction",
+              "user",
+              "order_items",
+              "store",
+              "order_items.product",
+              "order_items.product.store",
+              "order_items.product.product_images",
+              "order_items.product_variant.variant_options",
+            ],
+          })
         : null,
     enabled: !!userToken && !!orderNumber,
   });
@@ -257,8 +245,7 @@ export default function OrderDetailPage() {
             </h1>
 
             <div className="flex items-center gap-2">
-              {(order.order_status === "PAID" ||
-                order.order_status === "PROCESSED") && (
+              {(order.order_status === "PAID" || order.order_status === "PROCESSED") && (
                 <Button
                   type="button"
                   variant="danger"
@@ -313,9 +300,7 @@ export default function OrderDetailPage() {
 
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Nama Pelanggan
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Nama Pelanggan</p>
                   <div className="flex items-center gap-2">
                     <div className="w-10 aspect-square relative rounded-full">
                       <Image
@@ -327,31 +312,23 @@ export default function OrderDetailPage() {
                         className="object-cover rounded-full"
                       />
                     </div>
-                    <span className="text-sm font-medium">
-                      {order.user.name || ""}
-                    </span>
+                    <span className="text-sm font-medium">{order.user.name || ""}</span>
                   </div>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Username Pelanggan
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Username Pelanggan</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {order.user.username}
                   </p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    No. Telepon Pelanggan
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">No. Telepon Pelanggan</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {order.user.phone_number}
                   </p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Email Pelanggan
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Email Pelanggan</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {order.user.email}
                   </p>
@@ -363,46 +340,34 @@ export default function OrderDetailPage() {
 
               <div className="space-y-3">
                 <div className="space-y-0.5">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Nama Penerima
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Nama Penerima</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {order.reciever_name}
                   </p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    No. Telepon Penerima
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">No. Telepon Penerima</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {order.reciever_phone}
                   </p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Alamat
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Alamat</p>
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100 flex flex-col">
                     <span>{order.delivery_address}</span>
-                    <span>
-                      {`${order.delivery_city}, ${order.delivery_province}`}
-                    </span>
+                    <span>{`${order.delivery_city}, ${order.delivery_province}`}</span>
                     <span>{order.delivery_postal_code}</span>
                   </div>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Kurir
-                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Kurir</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 uppercase">
                     {`${order.shipping_courier} - ${order.delivery_service}`}
                   </p>
                 </div>
                 {order.shipping_tracking_number && (
                   <div className="space-y-0.5">
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      No. Resi
-                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">No. Resi</p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {order.shipping_tracking_number}
                     </p>
@@ -422,32 +387,28 @@ export default function OrderDetailPage() {
                 {`${ORDER_STATUS_MAP[order.order_status]} `}
                 <span className="text-sm font-normal">{`(${order.order_items.length} Produk) - `}</span>
                 <span className="text-base text-gray-600 dark:text-gray-400">
-                  {`Waktu Pemesanan: ${format(
-                    new Date(order.created_at),
-                    "dd MMM yyy, HH:mm"
-                  )}`}
+                  {`Waktu Pemesanan: ${format(new Date(order.created_at), "dd MMM yyy, HH:mm")}`}
                 </span>
               </p>
 
               {order.order_status === "PAID" && order.accept_deadline && (
                 <Alerts variant="warning">
                   <RiInformationLine className="text-lg" />
-                  {`Pesanan harus diterima sebelum ${format(
+                  {`Pesanan harus dikonfirmasi sebelum ${format(
                     new Date(order.accept_deadline),
                     "dd-MM-yyyy HH:mm"
                   )}`}
                 </Alerts>
               )}
-              {order.order_status === "PROCESSED" &&
-                order.shipping_deadline && (
-                  <Alerts variant="warning">
-                    <RiInformationLine className="text-lg" />
-                    {`Pesanan harus dikirim sebelum ${format(
-                      new Date(order.shipping_deadline),
-                      "dd-MM-yyyy HH:mm"
-                    )}`}
-                  </Alerts>
-                )}
+              {order.order_status === "PROCESSED" && order.shipping_deadline && (
+                <Alerts variant="warning">
+                  <RiInformationLine className="text-lg" />
+                  {`Pesanan harus dikirim sebelum ${format(
+                    new Date(order.shipping_deadline),
+                    "dd-MM-yyyy HH:mm"
+                  )}`}
+                </Alerts>
+              )}
 
               <div className="bg-white dark:bg-gray-900 p-2 rounded">
                 <DataTable
@@ -461,18 +422,13 @@ export default function OrderDetailPage() {
                       cell: {
                         className: "whitespace-normal align-top text-sm",
                         render: (item) => (
-                          <div
-                            key={item.id}
-                            className="flex gap-2 items-center"
-                          >
+                          <div key={item.id} className="flex gap-2 items-center">
                             <div className="flex-shrink-0 w-12 aspect-square relative rounded-sm overflow-hidden">
                               <Image
                                 src={
-                                  item.product?.product_images?.find(
-                                    (image) => image.main_image
-                                  )?.image_url ||
-                                  item.product?.product_images?.[0]
+                                  item.product?.product_images?.find((image) => image.main_image)
                                     ?.image_url ||
+                                  item.product?.product_images?.[0]?.image_url ||
                                   DEFAULT_STORE_CATEGORY_IMAGE
                                 }
                                 alt={item.product?.name ?? ""}
@@ -482,9 +438,7 @@ export default function OrderDetailPage() {
                                 className="object-cover"
                               />
                             </div>
-                            <span className="line-clamp-2 leading-tight">
-                              {item.product?.name}
-                            </span>
+                            <span className="line-clamp-2 leading-tight">{item.product?.name}</span>
                           </div>
                         ),
                       },
@@ -496,8 +450,7 @@ export default function OrderDetailPage() {
                       },
                       cell: {
                         className: "text-sm",
-                        render: (item) =>
-                          formatPrice(item.product_variant?.price ?? 0),
+                        render: (item) => formatPrice(item.product_variant?.price ?? 0),
                       },
                     },
                     {
@@ -518,9 +471,7 @@ export default function OrderDetailPage() {
                       cell: {
                         className: "text-sm",
                         render: (item) =>
-                          item.product_variant?.variant_options
-                            ?.map((opt) => opt.value)
-                            .join(", "),
+                          item.product_variant?.variant_options?.map((opt) => opt.value).join(", "),
                       },
                     },
                     {
@@ -566,9 +517,7 @@ export default function OrderDetailPage() {
             <BaseCard className="space-y-4 flex-grow">
               <h2 className="text-xl font-semibold">Informasi Pembayaran</h2>
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Metode Pembayaran
-                </span>
+                <span className="text-gray-500 dark:text-gray-400">Metode Pembayaran</span>
                 <span className="font-light uppercase text-primary px-3 py-1 bg-primary/10">
                   {order.transaction.payment_type?.replaceAll("_", " ")}
                 </span>
@@ -584,28 +533,20 @@ export default function OrderDetailPage() {
                   <span className="font-light">
                     {formatPrice(
                       order.order_items.reduce(
-                        (acc, curr) =>
-                          acc +
-                          (curr.product_variant?.price ?? 0) * curr.quantity,
+                        (acc, curr) => acc + (curr.product_variant?.price ?? 0) * curr.quantity,
                         0
                       )
                     )}
                   </span>
                 </div>
                 <div className="flex items-start justify-between">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Total Ongkos Kirim
-                  </span>
-                  <span className="font-light">
-                    {formatPrice(order.delivery_cost)}
-                  </span>
+                  <span className="text-gray-500 dark:text-gray-400">Total Ongkos Kirim</span>
+                  <span className="font-light">{formatPrice(order.delivery_cost)}</span>
                 </div>
                 <div className="h-0.5 bg-gray-500 dark:bg-gray-400" />
                 <div className="text-base flex items-start justify-between">
                   <span className="font-semibold">Total Pesanan</span>
-                  <span className="font-semibold text-base">
-                    {formatPrice(order.total)}
-                  </span>
+                  <span className="font-semibold text-base">{formatPrice(order.total)}</span>
                 </div>
               </div>
             </BaseCard>

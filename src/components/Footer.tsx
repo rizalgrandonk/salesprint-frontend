@@ -9,42 +9,26 @@ export default function Footer() {
   return (
     <>
       <div className="w-full py-14 bg-gray-200 dark:bg-gray-700 border-b border-gray-300 text-gray-900 dark:text-gray-100">
-        <div className="container h-full flex flex-col lg:flex-row space-y-10 lg:space-y-0 justify-between items-start">
-          <div className="w-full lg:w-1/4 flex justify-between items-start">
-            <div>
-              <h4 className="text-xl font-semibold mb-6">Navigasi</h4>
-              <ul>
-                <li className="py-1">
-                  <Link
-                    href="/"
-                    className="hover:text-gray-700 dark:hover:text-gray-300"
-                  >
-                    Beranda
-                  </Link>
-                </li>
-                <li className="py-1">
-                  <Link
-                    href="/"
-                    className="hover:text-gray-700 dark:hover:text-gray-300"
-                  >
-                    Produk
-                  </Link>
-                </li>
-                <li className="py-1">
-                  <Link
-                    href="/"
-                    className="hover:text-gray-700 dark:hover:text-gray-300"
-                  >
-                    Kategori
-                  </Link>
-                </li>
-              </ul>
-            </div>
+        <div className="container h-full flex flex-col lg:flex-row space-y-10 lg:space-y-0 justify-between items-center lg:items-start">
+          <div className="w-full lg:w-1/4">
+            {/* <div> */}
+            <h4 className="text-xl font-semibold mb-6 text-center lg:text-left">Navigasi</h4>
+            <ul>
+              <li className="py-1 text-center lg:text-left">
+                <Link href="/" className="hover:text-gray-700 dark:hover:text-gray-300">
+                  Beranda
+                </Link>
+              </li>
+              <li className="py-1 text-center lg:text-left">
+                <Link href="/categories" className="hover:text-gray-700 dark:hover:text-gray-300">
+                  Kategori
+                </Link>
+              </li>
+            </ul>
+            {/* </div> */}
           </div>
           <div className="w-full lg:w-1/4 text-center lg:text-right">
-            <h3 className="text-2xl font-semibold mb-8">
-              Mojokerto, Jawa Timur, Indonesia
-            </h3>
+            <h3 className="text-2xl font-semibold mb-8">Mojokerto, Jawa Timur, Indonesia</h3>
             <p className="mb-2">contact@grandonkmerch.com</p>
             <p>+6281234567890</p>
           </div>

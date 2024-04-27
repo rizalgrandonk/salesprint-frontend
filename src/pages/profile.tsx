@@ -38,15 +38,8 @@ export default function Profile() {
     success: false,
   });
 
-  const {
-    id,
-    role,
-    image,
-    created_at,
-    updated_at,
-    email_verified_at,
-    ...userInfoData
-  } = profile || {};
+  const { id, role, image, created_at, updated_at, email_verified_at, ...userInfoData } =
+    profile || {};
 
   const formData = useForm<EditUserForm>({
     resolver: zodResolver(editUserSchema),
@@ -69,15 +62,8 @@ export default function Profile() {
       return;
     }
     if (profile) {
-      const {
-        id,
-        role,
-        image,
-        created_at,
-        updated_at,
-        email_verified_at,
-        ...userInfoData
-      } = profile;
+      const { id, role, image, created_at, updated_at, email_verified_at, ...userInfoData } =
+        profile;
       reset({
         ...userInfoData,
       });
@@ -137,9 +123,7 @@ export default function Profile() {
     return;
   };
 
-  const imagePreview = selectedImage
-    ? URL.createObjectURL(selectedImage)
-    : profile?.image || "";
+  const imagePreview = selectedImage ? URL.createObjectURL(selectedImage) : profile?.image || "";
 
   console.log("imagePreview", imagePreview);
   console.log("profile", profile);
@@ -161,9 +145,7 @@ export default function Profile() {
               />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-semibold my-0 leading-none">
-                {userData?.name}
-              </p>
+              <p className="text-sm font-semibold my-0 leading-none">{userData?.name}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 my-0 leading-none">
                 {userData?.email}
               </p>
@@ -244,15 +226,15 @@ function ProfileSection({
 
   return (
     <>
-      <BaseCard className="w-full p-2 lg:p-4 flex items-start gap-8">
+      <BaseCard className="w-full p-2 lg:p-4 flex flex-col lg:flex-row lg:items-start gap-8">
         <ProfileImageUpload {...uploadImageProps} />
         <div className="space-y-3 flex-1">
           <FormInput
             {...register("name")}
             type="text"
             id="name"
-            label="Nama toko"
-            placeholder="Masukan nama toko anda"
+            label="Nama"
+            placeholder="Masukan nama anda"
             error={errors.name?.message}
           />
 
@@ -278,8 +260,8 @@ function ProfileSection({
             {...register("phone_number")}
             type="text"
             id="phone_number"
-            label="Nomor telepon toko"
-            placeholder="Masukan nomor telepon toko anda"
+            label="Nomor telepon"
+            placeholder="Masukan nomor telepon anda"
             error={errors.phone_number?.message}
           />
         </div>
@@ -294,15 +276,9 @@ type ProfileImageUploadProps = {
   name?: string;
 };
 
-function ProfileImageUpload({
-  onFileChange,
-  name,
-  imagePreview,
-}: ProfileImageUploadProps) {
+function ProfileImageUpload({ onFileChange, name, imagePreview }: ProfileImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleFileImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       onFileChange && onFileChange(file);
@@ -327,11 +303,7 @@ function ProfileImageUpload({
         <h2 className="text-xl font-semibold">Foto Profil</h2>
         <p className="text-gray-400 text-sm">JPG, JPEG or PNG. Maksimal 1 MB</p>
         <div className="flex">
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            size="sm"
-            variant="primary"
-          >
+          <Button onClick={() => fileInputRef.current?.click()} size="sm" variant="primary">
             <MdUpload className="text-base" />
             <span>Unggah Foto</span>
           </Button>

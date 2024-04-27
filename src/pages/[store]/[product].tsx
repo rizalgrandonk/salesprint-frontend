@@ -108,6 +108,8 @@ export default function ProductPage({
   storeProducts,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { addItem } = useCart();
+  const { data: session } = useSession();
+  const userData = session?.user;
 
   const { variantsTypeOptions, variantCombinations } = transformProductVariants(
     product.product_variants
@@ -167,6 +169,9 @@ export default function ProductPage({
         });
 
   const addProductToCart = () => {
+    if (!!userData?.role && userData.role !== "user") {
+      return;
+    }
     if (Number(quantityInput) <= 0) {
       return;
     }
@@ -278,63 +283,67 @@ export default function ProductPage({
                   </div>
                 </div>
               ))}
-              <div className="flex items-start">
-                <div className="w-1/4 lg:w-1/5">
-                  <span className="text-gray-500 dark:text-gray-400">Kuantitas</span>
+              {(!userData?.role || userData.role === "user") && (
+                <div className="flex items-start">
+                  <div className="w-1/4 lg:w-1/5">
+                    <span className="text-gray-500 dark:text-gray-400">Kuantitas</span>
+                  </div>
+                  <div className="w-3/4 lg:w-4/5 flex items-center flex-wrap">
+                    <Button
+                      type="button"
+                      className="rounded-r-none"
+                      variant="base"
+                      outline
+                      onClick={() => {
+                        if (Number(quantityInput) > 1) {
+                          setQuantityInput(`${Number(quantityInput) - 1}`);
+                        }
+                      }}
+                    >
+                      -
+                    </Button>
+                    <FormInput
+                      id="quantity"
+                      className="w-16 text-sm h-9 rounded-none text-center"
+                      type="number"
+                      min={1}
+                      value={quantityInput}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value && Number(value) > 0) {
+                          setQuantityInput(value);
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      className="rounded-l-none"
+                      variant="base"
+                      outline
+                      onClick={() => {
+                        setQuantityInput(`${Number(quantityInput) + 1}`);
+                      }}
+                    >
+                      +
+                    </Button>
+                  </div>
                 </div>
-                <div className="w-3/4 lg:w-4/5 flex items-center flex-wrap">
-                  <Button
-                    type="button"
-                    className="rounded-r-none"
-                    variant="base"
-                    outline
-                    onClick={() => {
-                      if (Number(quantityInput) > 1) {
-                        setQuantityInput(`${Number(quantityInput) - 1}`);
-                      }
-                    }}
-                  >
-                    -
-                  </Button>
-                  <FormInput
-                    id="quantity"
-                    className="w-16 text-sm h-9 rounded-none text-center"
-                    type="number"
-                    min={1}
-                    value={quantityInput}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value && Number(value) > 0) {
-                        setQuantityInput(value);
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    className="rounded-l-none"
-                    variant="base"
-                    outline
-                    onClick={() => {
-                      setQuantityInput(`${Number(quantityInput) + 1}`);
-                    }}
-                  >
-                    +
-                  </Button>
-                </div>
-              </div>
+              )}
             </div>
 
-            <Button
-              type="button"
-              variant="primary"
-              size="lg"
-              className="w-full lg:w-auto text-lg h-12"
-              disabled={!isAllVariantSelected}
-              onClick={() => addProductToCart()}
-            >
-              <MdShoppingCart className="text-2xl" />
-              Masukan Keranjang
-            </Button>
+            {(!userData?.role || userData.role === "user") && (
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                className="w-full lg:w-auto text-lg h-12"
+                disabled={!isAllVariantSelected}
+                onClick={() => addProductToCart()}
+              >
+                <MdShoppingCart className="text-2xl" />
+                Masukan Keranjang
+              </Button>
+            )}
           </div>
         </section>
 
@@ -621,7 +630,7 @@ function ReviewsSection({ storeSlug, productSlug, product }: ReviewsSectionProps
           <BaseCard className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8 p-4 lg:p-8">
             <div className="space-y-0.5">
               <p className="text-primary">
-                <span className="text-3xl">{product.average_rating}</span> dari 5
+                <span className="text-3xl">{product.average_rating.toFixed(1)}</span> dari 5
               </p>
               <ProductRating className="text-2xl text-primary" rating={product.average_rating} />
             </div>

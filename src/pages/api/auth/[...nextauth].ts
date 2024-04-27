@@ -14,6 +14,8 @@ export default NextAuth({
         try {
           const result = await loginUser(credentials);
 
+          console.log({ result });
+
           if (!result.success) {
             return null;
           }
@@ -54,15 +56,12 @@ export default NextAuth({
         token.access_token = user.access_token;
       }
 
-      const shouldRefreshTime = Math.round(
-        token.user.token_exp - 9 * 60 * 1000 - Date.now()
-      );
+      const shouldRefreshTime = Math.round(token.user.token_exp - 9 * 60 * 1000 - Date.now());
 
       if (shouldRefreshTime > 0) {
         const data = await getUserInfo(token.user.access_token);
         if (data) {
-          const { created_at, updated_at, email_verified_at, ...userData } =
-            data;
+          const { created_at, updated_at, email_verified_at, ...userData } = data;
           token.user = {
             ...token.user,
             ...userData,
@@ -91,7 +90,7 @@ export default NextAuth({
   theme: {
     brandColor: "#FF5722",
     buttonText: "Login",
-    logo: "/logo.png",
+    logo: "/icons/android-chrome-512x512.png",
   },
   pages: {
     signIn: "/auth/login",

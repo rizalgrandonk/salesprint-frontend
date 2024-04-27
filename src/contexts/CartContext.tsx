@@ -1,12 +1,7 @@
 import { Product } from "@/types/Product";
 import { ProductVariant } from "@/types/Variant";
-import {
-  PropsWithChildren,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { useSession } from "next-auth/react";
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
 
 export type CartItem = {
   product: Product;
@@ -18,16 +13,8 @@ type CartContextValue = {
   items: CartItem[];
   addItem: (item: CartItem) => void;
   removeItem: (productId: string, productVariantId: string) => void;
-  updateItem: (
-    productId: string,
-    productVariantId: string,
-    newItem: CartItem
-  ) => void;
-  updateItemQuantity: (
-    productId: string,
-    productVariantId: string,
-    quantity: number
-  ) => void;
+  updateItem: (productId: string, productVariantId: string, newItem: CartItem) => void;
+  updateItemQuantity: (productId: string, productVariantId: string, quantity: number) => void;
   totalItems: number;
   cartTotal: number;
   inCart: (productId: string, productVariantId: string) => boolean;
@@ -59,6 +46,9 @@ export function useCart() {
 export const CartProvider = ({ children }: PropsWithChildren) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { data: session } = useSession();
+  const userData = session?.user;
+  const userRole = userData?.role;
 
   useEffect(() => {
     const JSONLocalCart = localStorage.getItem("cart");
@@ -70,11 +60,16 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (userRole && userRole !== "user" && items.length > 0) {
+      emptyCart();
+    }
+  }, [userRole, items]);
+
   const addItem: CartContextValue["addItem"] = (item) => {
     const existingItem = items.find(
       (itm) =>
-        itm.product.id === item.product.id &&
-        itm.productVariant.id === item.productVariant.id
+        itm.product.id === item.product.id && itm.productVariant.id === item.productVariant.id
     );
 
     const updated = !!existingItem
@@ -85,8 +80,7 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
           },
           ...items.filter(
             (itm) =>
-              itm.product.id !== item.product.id &&
-              itm.productVariant.id !== item.productVariant.id
+              itm.product.id !== item.product.id && itm.productVariant.id !== item.productVariant.id
           ),
         ]
       : [item, ...items];
@@ -97,14 +91,9 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     localStorage.setItem("cart", stringCart);
   };
 
-  const removeItem: CartContextValue["removeItem"] = (
-    productId,
-    productVariantId
-  ) => {
+  const removeItem: CartContextValue["removeItem"] = (productId, productVariantId) => {
     const filtered = items.filter(
-      (item) =>
-        item.product.id !== productId &&
-        item.productVariant.id !== productVariantId
+      (item) => item.product.id !== productId && item.productVariant.id !== productVariantId
     );
     setItems(filtered);
 
@@ -118,10 +107,7 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     quantity
   ) => {
     const updated = items.map((item) => {
-      if (
-        item.product.id === productId &&
-        item.productVariant.id === productVariantId
-      ) {
+      if (item.product.id === productId && item.productVariant.id === productVariantId) {
         return { ...item, quantity };
       }
       return item;
@@ -133,16 +119,9 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     localStorage.setItem("cart", stringCart);
   };
 
-  const updateItem: CartContextValue["updateItem"] = (
-    productId,
-    productVariantId,
-    newItem
-  ) => {
+  const updateItem: CartContextValue["updateItem"] = (productId, productVariantId, newItem) => {
     const updated = items.map((item) => {
-      if (
-        item.product.id === productId &&
-        item.productVariant.id === productVariantId
-      ) {
+      if (item.product.id === productId && item.productVariant.id === productVariantId) {
         return newItem;
       }
       return item;
@@ -156,9 +135,7 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
 
   const inCart: CartContextValue["inCart"] = (productId, productVariantId) => {
     return items.some(
-      (item) =>
-        item.product.id === productId &&
-        item.productVariant.id === productVariantId
+      (item) => item.product.id === productId && item.productVariant.id === productVariantId
     );
   };
 
