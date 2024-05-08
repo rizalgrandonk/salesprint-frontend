@@ -2,6 +2,7 @@ import { Product, Review } from "./Product";
 import { Store } from "./Store";
 import { User } from "./User";
 import { ProductVariant } from "./Variant";
+import { Withdraw } from "./Withdraw";
 
 export const ORDER_STATUS_MAP = {
   UNPAID: "Belum Dibayar",
@@ -74,6 +75,7 @@ export type Order = {
   user?: User;
   store?: Store;
   transaction?: Transaction;
+  withdraw?: Withdraw;
   order_items?: OrderItem[];
 };
 

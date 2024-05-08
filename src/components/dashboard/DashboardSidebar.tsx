@@ -8,11 +8,14 @@ import {
   MdChevronRight,
   MdKeyboardArrowDown,
   MdOutlineArticle,
+  MdOutlineBalance,
   MdOutlineCategory,
   MdOutlineDashboardCustomize,
   MdOutlineDns,
   MdOutlineInventory2,
   MdOutlineLayers,
+  MdOutlineMoney,
+  MdOutlineMoneyOff,
   MdOutlinePerson,
   MdOutlineStore,
   MdOutlineStorefront,
@@ -166,6 +169,14 @@ export default function DashboardSidebar({
                         isExpand={isExpand}
                       />
                     </li>
+                    <li>
+                      <MenuItem
+                        title="Withdraws"
+                        icon={MdOutlineMoney}
+                        href="/seller/withdraws"
+                        isExpand={isExpand}
+                      />
+                    </li>
                   </>
                 )}
               </ul>
@@ -257,12 +268,7 @@ type MenuDropdownProps = {
   isExpand?: boolean;
 };
 
-function MenuDropdown({
-  title,
-  childs,
-  icon: Icon,
-  isExpand,
-}: MenuDropdownProps) {
+function MenuDropdown({ title, childs, icon: Icon, isExpand }: MenuDropdownProps) {
   const { pathname } = useRouter();
 
   const isActive = childs.some((child) => pathname === child.href);
@@ -288,14 +294,9 @@ function MenuDropdown({
             )}
             {isExpand && (
               <>
-                <span className="flex-1 ml-3 text-left whitespace-nowrap">
-                  {title}
-                </span>
+                <span className="flex-1 ml-3 text-left whitespace-nowrap">{title}</span>
                 <MdKeyboardArrowDown
-                  className={twMerge(
-                    "text-2xl transition duration-75",
-                    open ? "rotate-90" : ""
-                  )}
+                  className={twMerge("text-2xl transition duration-75", open ? "rotate-90" : "")}
                 />
               </>
             )}

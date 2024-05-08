@@ -50,12 +50,10 @@ import {
 import { Listbox, Transition } from "@headlessui/react";
 import { getUserStore } from "@/lib/api/stores";
 import Image from "next/image";
-import {
-  DEFAULT_STORE_CATEGORY_IMAGE,
-  DEFAULT_USER_IMAGE,
-} from "@/lib/constants";
+import { DEFAULT_STORE_CATEGORY_IMAGE, DEFAULT_USER_IMAGE } from "@/lib/constants";
 import { IconType } from "react-icons";
 import Link from "next/link";
+import { ButtonLink } from "@/components/utils/Button";
 
 const MONTHS = [
   "Januari",
@@ -208,11 +206,7 @@ export default function SellerDashboard() {
                       : "text-emerald-500 dark:text-emerald-500"
                   )}
                 >
-                  {summarySales.difference < 0 ? (
-                    <MdTrendingDown />
-                  ) : (
-                    <MdTrendingUp />
-                  )}
+                  {summarySales.difference < 0 ? <MdTrendingDown /> : <MdTrendingUp />}
                 </span>
                 <span
                   className={twMerge(
@@ -236,9 +230,7 @@ export default function SellerDashboard() {
           </p>
           {summaryOrder && (
             <div className="space-y-4">
-              <p className="leading-none text-3xl font-semibold">
-                {summaryOrder.current_month}
-              </p>
+              <p className="leading-none text-3xl font-semibold">{summaryOrder.current_month}</p>
               <div className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
                 <span
                   className={twMerge(
@@ -248,11 +240,7 @@ export default function SellerDashboard() {
                       : "text-emerald-500 dark:text-emerald-500"
                   )}
                 >
-                  {summaryOrder.difference < 0 ? (
-                    <MdTrendingDown />
-                  ) : (
-                    <MdTrendingUp />
-                  )}
+                  {summaryOrder.difference < 0 ? <MdTrendingDown /> : <MdTrendingUp />}
                 </span>
                 <span
                   className={twMerge(
@@ -286,12 +274,8 @@ export default function SellerDashboard() {
                 <span
                   className={twMerge(
                     "text-xl text-sky-500 dark:text-sky-500",
-                    summaryRating.difference < -0.1
-                      ? "text-rose-500 dark:text-rose-500"
-                      : "",
-                    summaryRating.difference > 0.1
-                      ? "text-emerald-500 dark:text-emerald-500"
-                      : ""
+                    summaryRating.difference < -0.1 ? "text-rose-500 dark:text-rose-500" : "",
+                    summaryRating.difference > 0.1 ? "text-emerald-500 dark:text-emerald-500" : ""
                   )}
                 >
                   {summaryRating.difference < -0.1 ? (
@@ -305,12 +289,8 @@ export default function SellerDashboard() {
                 <span
                   className={twMerge(
                     "text-sky-500 dark:text-sky-500",
-                    summaryRating.difference < -0.1
-                      ? "text-rose-500 dark:text-rose-500"
-                      : "",
-                    summaryRating.difference > 0.1
-                      ? "text-emerald-500 dark:text-emerald-500"
-                      : ""
+                    summaryRating.difference < -0.1 ? "text-rose-500 dark:text-rose-500" : "",
+                    summaryRating.difference > 0.1 ? "text-emerald-500 dark:text-emerald-500" : ""
                   )}
                 >
                   {`${
@@ -328,7 +308,22 @@ export default function SellerDashboard() {
         </BaseCard>
       </div>
 
-      <BaseCard className="space-y-4 lg:space-y-8">
+      <BaseCard className="space-y-4 lg:space-y-8 pb-4 lg:pb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
+          <p className="leading-none text-xl font-medium">Total Saldo Toko</p>
+          <ButtonLink href="/seller/withdraws" className="hidden lg:flex">
+            Withdraw Saldo
+          </ButtonLink>
+        </div>
+        <p className="leading-none text-4xl lg:text-7xl font-semibold text-center text-primary">
+          {formatPrice(store.total_balance)}
+        </p>
+        <ButtonLink href="/seller/withdraws" className="w-full lg:hidden">
+          Withdraw Saldo
+        </ButtonLink>
+      </BaseCard>
+
+      <BaseCard className="space-y-4 lg:space-y-8 pb-4 lg:pb-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
           <p className="leading-none text-xl font-medium">Ringkasan Pesanan</p>
           <Link
@@ -339,7 +334,7 @@ export default function SellerDashboard() {
             <MdChevronRight className="text-lg" />
           </Link>
         </div>
-        <div className="flex items-start justify-between lg:px-4 pb-4 lg:pb-6 gap-2">
+        <div className="flex items-start justify-between lg:px-4 gap-2">
           {formattedStatusOrder.map((item, index) => (
             <Link
               href={`/seller/orders?status=${item.order_status}`}
@@ -352,9 +347,9 @@ export default function SellerDashboard() {
                     {item.count}
                   </span>
                 )}
-                <item.Icon className="text-2xl lg:text-4xl text-gray-600 dark:text-gray-300 group-hover:text-white dark:group-hover:text-white" />
+                <item.Icon className="text-2xl lg:text-4xl text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white" />
               </div>
-              <span className="leading-none text-xxs lg:text-sm text-gray-500 dark:text-gray-400 group-hover:text-white dark:group-hover:text-white text-center">
+              <span className="leading-none text-xxs lg:text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white text-center">
                 {item.statusText}
               </span>
             </Link>
@@ -394,9 +389,7 @@ function SalesChart({ className }: { className?: string }) {
     <BaseCard className={twMerge("space-y-8", className)}>
       <div className="flex items-start justify-between">
         <div className="space-y-1.5">
-          <p className="leading-none text-xl font-medium">
-            Ringkasan Pendapatan
-          </p>
+          <p className="leading-none text-xl font-medium">Ringkasan Pendapatan</p>
           <p className="leading-none text-sm text-gray-500 dark:text-gray-400 font-light">
             Data pendapatan tahunan toko
           </p>
@@ -407,10 +400,7 @@ function SalesChart({ className }: { className?: string }) {
             <Listbox.Button className="bg-inherit text-left text-sm text-gray-700 dark:text-gray-300 block w-full px-3 py-2 placeholder-gray-400 border border-gray-400 rounded dark:placeholder-gray-500 dark:border-gray-500 focus:border-primary dark:focus:border-primary focus:ring-primary focus:outline-none focus:ring focus:ring-opacity-40 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:text-gray-500 dark:disabled:bg-gray-800 cursor-pointer disabled:cursor-not-allowed">
               <span className="block truncate">{selectedYears.join(", ")}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <MdKeyboardArrowDown
-                  className="h-5 w-5 text-gray-400"
-                  aria-hidden="true"
-                />
+                <MdKeyboardArrowDown className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </span>
             </Listbox.Button>
             <Transition
@@ -425,9 +415,7 @@ function SalesChart({ className }: { className?: string }) {
                     key={yearIdx}
                     className={({ active }) =>
                       `relative cursor-default text-sm select-none py-2 pl-10 pr-4 ${
-                        active
-                          ? "bg-primary/40 text-white"
-                          : "text-gray-900 dark:text-white"
+                        active ? "bg-primary/40 text-white" : "text-gray-900 dark:text-white"
                       }`
                     }
                     value={year}
@@ -435,9 +423,7 @@ function SalesChart({ className }: { className?: string }) {
                     {({ selected }) => (
                       <>
                         <span
-                          className={`block truncate ${
-                            selected ? "font-medium" : "font-normal"
-                          }`}
+                          className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
                         >
                           {year}
                         </span>
@@ -533,9 +519,7 @@ function SalesChart({ className }: { className?: string }) {
                               style={{ borderColor: p.stroke }}
                             ></span>
                             <span className="flex-grow w-24">{p.dataKey}</span>
-                            <span>
-                              {formatPrice(p.value ? Number(p.value) : 0)}
-                            </span>
+                            <span>{formatPrice(p.value ? Number(p.value) : 0)}</span>
                           </p>
                         );
                       })}
@@ -545,11 +529,7 @@ function SalesChart({ className }: { className?: string }) {
               }}
               cursor={{ fill: "currentColor" }}
             />
-            <Legend
-              iconType="square"
-              verticalAlign="bottom"
-              wrapperStyle={{ paddingTop: 16 }}
-            />
+            <Legend iconType="square" verticalAlign="bottom" wrapperStyle={{ paddingTop: 16 }} />
             {selectedYears.map((year, index) => (
               <Area
                 id={`chart_area_${year}`}
@@ -596,13 +576,14 @@ function ProvinceChart({ className }: { className?: string }) {
         {/* <ResponsiveContainer className="w-full" height={350}> */}
         {provinces ? (
           <BarChart
+            layout="vertical"
             data={provinces}
             margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
             className="text-gray-200 dark:text-gray-700"
-            height={350}
+            height={500}
             width={700}
           >
-            <XAxis
+            <YAxis
               axisLine={false}
               tickLine={false}
               dataKey="delivery_province"
@@ -613,32 +594,26 @@ function ProvinceChart({ className }: { className?: string }) {
 
                 return (
                   <g transform={`translate(${x},${y})`}>
-                    <text
-                      x={0}
-                      y={0}
-                      dy={12}
-                      textAnchor="end"
-                      fill="current"
-                      transform="rotate(-45)"
-                    >
+                    <text x={0} y={0} dy={6} textAnchor="end" fill="current">
                       {match ? match[1] : payload.value}
                     </text>
                   </g>
                 );
               }}
-              height={105}
-              tickMargin={4}
+              // height={105}
+              tickMargin={10}
               interval={0}
+              width={160}
+              type="category"
             />
-            <YAxis
+            <XAxis
               tickLine={false}
               axisLine={false}
               className="fill-gray-500 dark:fill-gray-400 text-xs"
               tick={{ fill: "current" }}
-              width={35}
               type="number"
-              tickCount={6}
-              tickMargin={8}
+              tickCount={10}
+              // tickMargin={8}
             />
             <Tooltip
               content={({ active, payload, label }) => {
@@ -703,8 +678,7 @@ function TopProductsSection({ className }: { className?: string }) {
             <div className="flex-shrink-0 h-12 aspect-square bg-cover bg-center relative rounded overflow-hidden">
               <Image
                 src={
-                  product?.product_images?.find((image) => image.main_image)
-                    ?.image_url ||
+                  product?.product_images?.find((image) => image.main_image)?.image_url ||
                   product?.product_images?.[0]?.image_url ||
                   DEFAULT_STORE_CATEGORY_IMAGE
                 }
@@ -717,17 +691,13 @@ function TopProductsSection({ className }: { className?: string }) {
             </div>
             <div className="flex-grow space-y-2">
               <p className="leading-tight truncate">
-                {product.name.length > 20
-                  ? `${product.name.slice(0, 20)}...`
-                  : product.name}
+                {product.name.length > 20 ? `${product.name.slice(0, 20)}...` : product.name}
               </p>
               <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
                 {`${product.order_count} pesanan`}
               </p>
             </div>
-            <div className="font-semibold">
-              {formatPriceAcro(product.total_orders)}
-            </div>
+            <div className="font-semibold">{formatPriceAcro(product.total_orders)}</div>
           </div>
         ))}
       </div>
@@ -777,9 +747,7 @@ function TopCustomersSection({ className }: { className?: string }) {
                 {`${customer.order_count} pesanan`}
               </p>
             </div>
-            <div className="font-semibold">
-              {formatPriceAcro(customer.total_orders)}
-            </div>
+            <div className="font-semibold">{formatPriceAcro(customer.total_orders)}</div>
           </div>
         ))}
       </div>
@@ -801,9 +769,7 @@ function formatSalesChartData(
       month: curr,
     };
     data.forEach((item) => {
-      const selectedMonthData = item.data.find(
-        (val) => val.period === index + 1
-      );
+      const selectedMonthData = item.data.find((val) => val.period === index + 1);
       newData[`${item.year}`] = selectedMonthData?.total ?? 0;
     });
     return [...acc, newData];

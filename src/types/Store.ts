@@ -15,6 +15,7 @@ export type Store = {
   status: "approved" | "on_review" | "rejected";
   image?: string;
   store_description?: string;
+  total_balance: number;
   created_at: string;
   updated_at: string;
 
