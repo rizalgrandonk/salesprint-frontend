@@ -94,9 +94,8 @@ export async function publicRequest<T = any>(
 
     return response.data;
   } catch (err) {
-    console.log(err);
-
     if (!isAxiosError(err)) {
+      console.log(err);
       return {
         success: false,
         message: "Service Error",

@@ -10,9 +10,13 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   const { pathname } = request.nextUrl;
   const token = await getToken({ req: request });
 
-  if (pathname.startsWith("/auth/login") || pathname.startsWith("/auth/register")) {
+  if (
+    pathname.startsWith("/auth/login") ||
+    pathname.startsWith("/auth/register")
+  ) {
+    console.log("Middleware goes here");
     if (token && !token.user.error) {
-      if (token.user.role) {
+      if (token.user.role && token.user.role !== "user") {
         const url = new URL(`/${token.user.role}`, request.url);
         return NextResponse.redirect(url);
       }
@@ -22,7 +26,9 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   }
 
   const userPublicPath = ["/cart"];
-  const matchesUserPublicPath = userPublicPath.some((path) => pathname.startsWith(path));
+  const matchesUserPublicPath = userPublicPath.some((path) =>
+    pathname.startsWith(path)
+  );
 
   if (!!token && token.user.role !== "user" && matchesUserPublicPath) {
     console.log("Unathorized");
@@ -30,8 +36,16 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
     return NextResponse.rewrite(url);
   }
 
-  const protectedPaths = ["/admin", "/seller", "/user", "/auth/user", "/profile"];
-  const matchesProtectedPath = protectedPaths.some((path) => pathname.startsWith(path));
+  const protectedPaths = [
+    "/admin",
+    "/seller",
+    "/user",
+    "/auth/user",
+    "/profile",
+  ];
+  const matchesProtectedPath = protectedPaths.some((path) =>
+    pathname.startsWith(path)
+  );
 
   if (matchesProtectedPath) {
     if (!token || token.user.error) {

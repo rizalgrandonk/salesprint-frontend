@@ -1,4 +1,3 @@
-import BaseCard from "@/components/utils/BaseCard";
 import ToastComponent from "@/components/utils/Toast";
 import HotToast from "react-hot-toast";
 

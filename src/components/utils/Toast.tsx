@@ -64,7 +64,10 @@ export default function ToastComponent({
 
           toast.dismiss(t.id);
         }}
-        className="flex-grow flex items-start gap-6 cursor-pointer"
+        className={twMerge(
+          "flex-grow flex gap-6 cursor-pointer",
+          typeof message === "string" ? "items-center" : "items-start"
+        )}
       >
         <div
           className={twMerge(

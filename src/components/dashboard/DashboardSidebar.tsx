@@ -96,6 +96,14 @@ export default function DashboardSidebar({
                     </li>
                     <li>
                       <MenuItem
+                        title="Withdraws"
+                        icon={MdOutlineMoney}
+                        href="/admin/withdraws"
+                        isExpand={isExpand}
+                      />
+                    </li>
+                    <li>
+                      <MenuItem
                         title="Daftar Kategori"
                         icon={MdOutlineCategory}
                         href="/admin/categories"
@@ -268,7 +276,12 @@ type MenuDropdownProps = {
   isExpand?: boolean;
 };
 
-function MenuDropdown({ title, childs, icon: Icon, isExpand }: MenuDropdownProps) {
+function MenuDropdown({
+  title,
+  childs,
+  icon: Icon,
+  isExpand,
+}: MenuDropdownProps) {
   const { pathname } = useRouter();
 
   const isActive = childs.some((child) => pathname === child.href);
@@ -294,9 +307,14 @@ function MenuDropdown({ title, childs, icon: Icon, isExpand }: MenuDropdownProps
             )}
             {isExpand && (
               <>
-                <span className="flex-1 ml-3 text-left whitespace-nowrap">{title}</span>
+                <span className="flex-1 ml-3 text-left whitespace-nowrap">
+                  {title}
+                </span>
                 <MdKeyboardArrowDown
-                  className={twMerge("text-2xl transition duration-75", open ? "rotate-90" : "")}
+                  className={twMerge(
+                    "text-2xl transition duration-75",
+                    open ? "rotate-90" : ""
+                  )}
                 />
               </>
             )}

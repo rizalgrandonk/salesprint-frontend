@@ -12,3 +12,16 @@ export async function createStoreWithdraw(
     data,
   });
 }
+
+export async function payWithdraw(
+  withdrawId: string,
+  data: FormData,
+  token: string
+) {
+  return await protectedRequest<Withdraw>({
+    method: "POST",
+    path: `/withdraws/pay_withdraw/${withdrawId}`,
+    token,
+    data,
+  });
+}

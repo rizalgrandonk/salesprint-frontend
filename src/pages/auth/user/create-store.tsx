@@ -19,13 +19,22 @@ import { useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function CreateStore() {
-  const { data: session, update: updateSession } = useSession();
+  const { 
+    data: session, 
+    update: updateSession, 
+    status: sessionStatus 
+  } = useSession();
+
+  const isSessionLoading = sessionStatus === "loading"
+
   const router = useRouter();
 
   const [requestState, setRequestState] = useState({
     isLoading: false,
     error: "",
   });
+
+  const [host, setHost] = useState("")
 
   const {
     register,
@@ -81,6 +90,7 @@ export default function CreateStore() {
 
   useEffect(() => {
     router.prefetch("/seller/store");
+    setHost(window?.location?.host ?? "")
   }, [router]);
 
   useEffect(() => {
@@ -116,11 +126,11 @@ export default function CreateStore() {
     setValue("postal_code", city.postal_code);
   }, [currentCityId, setValue, cityList]);
 
-  if (!session?.user || session?.user?.error) {
+  if (!isSessionLoading && (!session?.user || session?.user?.error)) {
     return <Redirect to="/auth/login" />;
   }
 
-  if (session.user?.role === "seller") {
+  if (!isSessionLoading && session?.user?.role === "seller") {
     return <Redirect to="/seller/store" />;
   }
 
@@ -136,7 +146,12 @@ export default function CreateStore() {
       return;
     }
 
-    const result = await createStore(data, session.user.access_token);
+    if (!session?.user?.access_token) {
+      setRequestState({ isLoading: false, error: "Invalid User" });
+      return;
+    }
+
+    const result = await createStore(data, session?.user?.access_token);
     if (!result.success) {
       setRequestState({ isLoading: false, error: result.message });
       return;
@@ -146,8 +161,6 @@ export default function CreateStore() {
     setRequestState((prev) => ({ ...prev, isLoading: false }));
     router.push("/seller/store");
   };
-
-  const host = window.location.host;
 
   const provinceOptions = (provinceList || []).map((item) => ({
     title: item.province,
@@ -208,7 +221,7 @@ export default function CreateStore() {
                 placeholder="Masukan domain toko anda"
                 info={
                   <div className="text-gray-500 text-sm flex items-center py-1">
-                    <span>{`cth: ${host}/`}</span>
+                    <span>{`contoh: ${host}/`}</span>
                     <span className="text-gray-900 dark:text-gray-100 font-bold">
                       {`domain-toko`}
                     </span>

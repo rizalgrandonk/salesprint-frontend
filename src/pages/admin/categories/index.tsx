@@ -576,7 +576,7 @@ function CategoryFormModal({
             <div className="w-full h-48 bg-cover bg-center relative rounded overflow-hidden">
               <Image
                 src={imagePreviewUrl}
-                alt="New Banner"
+                alt="New Category"
                 fill
                 loading="lazy"
                 className="object-cover group-hover:scale-105 transition-all duration-200"

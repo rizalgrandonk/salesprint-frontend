@@ -1,4 +1,5 @@
 import { Order } from "./Order";
+import { Store } from "./Store";
 
 export type Withdraw = {
   id: string;
@@ -15,6 +16,7 @@ export type Withdraw = {
   updated_at: string;
 
   orders?: Order[];
+  store?: Store;
 
   orders_count?: number;
 };

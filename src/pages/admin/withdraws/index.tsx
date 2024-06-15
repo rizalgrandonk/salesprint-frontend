@@ -10,7 +10,7 @@ import LoadingSpinner from "@/components/utils/LoadingSpinner";
 import QueryKeys from "@/constants/queryKeys";
 import useDataTable from "@/hooks/useDataTable";
 import { getUserStore } from "@/lib/api/stores";
-import { createStoreWithdraw } from "@/lib/api/withdraws";
+import { payWithdraw } from "@/lib/api/withdraws";
 import { formatPrice } from "@/lib/formater";
 import toast from "@/lib/toast";
 import { Withdraw } from "@/types/Withdraw";
@@ -20,8 +20,15 @@ import { format } from "date-fns/format";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { MdChevronLeft, MdChevronRight, MdRefresh } from "react-icons/md";
+import { useRef, useState } from "react";
+import {
+  MdChevronLeft,
+  MdChevronRight,
+  MdFilePresent,
+  MdFileUpload,
+  MdRefresh,
+  MdSend,
+} from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
 import { z } from "zod";
 
@@ -77,48 +84,47 @@ export default function WithdrawsPage() {
     setLimit,
     refetch,
     isFetching,
-  } = useDataTable<MakePropertiesRequired<Withdraw, "orders_count">>(
-    QueryKeys.PAGINATED_STORE_WITHDRAWS,
+  } = useDataTable<MakePropertiesRequired<Withdraw, "orders_count" | "store">>(
+    QueryKeys.PAGINATED_WITHDRAWS,
     {
       orderBy: {
         field: "created_at",
         value: "desc",
       },
-      // with: [],
+      with: ["store"],
       withCount: ["orders"],
     },
     {
       enabled: !!userToken,
       token: userToken,
-      queryKey: [QueryKeys.PAGINATED_STORE_WITHDRAWS, userToken],
+      queryKey: [QueryKeys.PAGINATED_WITHDRAWS, userToken],
     }
   );
 
-  const { data: store, refetch: refetchStore } = useQuery({
-    queryKey: [QueryKeys.USER_STORE, userId],
-    queryFn: () => getUserStore(userToken),
-    enabled: !!userId && !!userToken,
-  });
-
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  const handleCreateWithdraw = async (data: WithdrawForm) => {
+  const handlePayWithdraw = async (data: PayForm) => {
     if (!userToken) {
       toast.error("Unauthorize");
       return false;
     }
+    if (!selectedItem) {
+      toast.error("Pilih withdraw terlebih dahulu");
+      return false;
+    }
 
-    const result = await createStoreWithdraw(data, userToken);
+    const formData = new FormData();
+
+    formData.append("receipt", data.image);
+
+    const result = await payWithdraw(selectedItem.id, formData, userToken);
 
     if (!result.success) {
       toast.error(result.message);
       return false;
     }
 
-    toast.success("Berhasil Membuat Permintaan Withdraw");
-    setIsCreateModalOpen(false);
+    toast.success("Berhasil Menyelesaikan Pembayaran Withdraw");
+    setSelectedItem(null);
     refetch();
-    refetchStore();
 
     return true;
   };
@@ -148,11 +154,11 @@ export default function WithdrawsPage() {
             navList={[
               {
                 title: "Beranda",
-                href: "/seller",
+                href: "/admin",
               },
               {
                 title: "Daftar Pesanan",
-                href: "/seller/orders",
+                href: "/admin/orders",
               },
             ]}
           />
@@ -161,20 +167,9 @@ export default function WithdrawsPage() {
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
               Daftar Withdraw
             </h1>
-
-            <div className="">
-              <h2 className="text-sm">Saldo saat ini</h2>
-              <p className="font-semibold text-lg">
-                {formatPrice(store?.total_balance || 0)}
-              </p>
-            </div>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-2 lg:items-center justify-between lg:flex-wrap">
-            <Button onClick={() => setIsCreateModalOpen(true)}>
-              Withdraw Saldo
-            </Button>
-
             <div className="flex gap-2 items-center lg:justify-between">
               <Button onClick={() => refetch()} variant="base" outline>
                 <MdRefresh className="text-base" />
@@ -224,7 +219,37 @@ export default function WithdrawsPage() {
                 render: "Jumlah Pesanan",
               },
               cell: {
+                className: "text-gray-500 dark:text-gray-400",
                 render: (item) => item.orders_count,
+              },
+            },
+            {
+              id: "store",
+              header: {
+                render: "Toko",
+              },
+              cell: {
+                className: "text-sm",
+                render: (item) =>
+                  item.store.name.length < 13
+                    ? item.store.name
+                    : item.store.name.slice(0, 10) + "...",
+              },
+            },
+            {
+              id: "bank_account_number",
+              header: {
+                render: "Rekening Penerima",
+              },
+              cell: {
+                render: (item) => (
+                  <div className="space-y-1 text-sm">
+                    <p className="leading-none text-gray-500 dark:text-gray-400">
+                      {item.bank_name}
+                    </p>
+                    <p className="leading-none">{item.bank_account_number}</p>
+                  </div>
+                ),
               },
             },
             {
@@ -246,6 +271,7 @@ export default function WithdrawsPage() {
               cell: {
                 render: (item) => (
                   <Badge
+                    size="sm"
                     className="rounded-full"
                     variant={WITHDRAW_STATUS_COLOR_MAP[item.status]}
                   >
@@ -289,6 +315,16 @@ export default function WithdrawsPage() {
                   }
                   return (
                     <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => {
+                          setSelectedItem(item);
+                        }}
+                        size="sm"
+                        variant="primary"
+                        outline
+                      >
+                        Selesaikan Pembayaran
+                      </Button>
                       <Button
                         onClick={() => {
                           setSelectedItem(item);
@@ -349,52 +385,69 @@ export default function WithdrawsPage() {
         </div>
       </div>
 
-      <CreateWithdrawModal
-        isOpen={isCreateModalOpen}
-        onClose={() => {
-          setIsCreateModalOpen(false);
-        }}
-        onSubmit={handleCreateWithdraw}
-      />
+      {!!selectedItem && (
+        <PayFormModal
+          isOpen={!!selectedItem}
+          onClose={() => {
+            setSelectedItem(null);
+          }}
+          onSubmit={handlePayWithdraw}
+          withdraw={selectedItem}
+        />
+      )}
     </>
   );
 }
 
-const withdrawSchema = z.object({
-  bank_name: z
-    .string({ required_error: "Nama Bank harus diisi" })
-    .min(1, "Nama Bank harus diisi"),
-  bank_account_number: z
-    .string({ required_error: "Nomor Rekening harus diisi" })
-    .min(1, "Nomor Rekening harus diisi"),
-  bank_account_name: z
-    .string({ required_error: "Atas Nama harus diisi" })
-    .min(1, "Atas Nama harus diisi"),
+const paySchema = z.object({
+  image:
+    typeof window === "undefined"
+      ? z.string()
+      : z.instanceof(File, { message: "Gambar harus diisi" }),
 });
 
-type WithdrawForm = z.infer<typeof withdrawSchema>;
+type PayForm = z.infer<typeof paySchema>;
 
-type CreateWithdrawModalProps = {
+type PayFormModalProps = {
   isOpen: boolean;
+  withdraw: Withdraw;
   onClose: () => void;
-  onSubmit: (data: WithdrawForm) => boolean | Promise<boolean>;
+  onSubmit: (data: PayForm) => boolean | Promise<boolean>;
 };
 
-function CreateWithdrawModal({
+const defaultValue = {
+  name: undefined,
+  image: undefined,
+};
+
+function PayFormModal({
   isOpen,
+  withdraw,
   onClose,
   onSubmit,
-}: CreateWithdrawModalProps) {
-  const [formData, setFormData] = useState<Partial<WithdrawForm>>({});
-
+}: PayFormModalProps) {
+  const [formData, setFormData] = useState<Partial<PayForm>>(defaultValue);
   const [isLoading, setIsLoading] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, image: file }));
+  };
 
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const validation = withdrawSchema.safeParse(formData);
+    const validation = paySchema.safeParse(formData);
     if (!validation.success) {
-      toast.error(validation.error.message);
+      toast.error(validation.error.issues[0].message);
       setIsLoading(false);
       return;
     }
@@ -404,12 +457,17 @@ function CreateWithdrawModal({
     const isSuccess = await onSubmit(data);
 
     if (isSuccess) {
-      setFormData({});
+      setFormData(defaultValue);
       onClose();
     }
 
     setIsLoading(false);
   };
+
+  const imagePreviewUrl =
+    formData.image instanceof File
+      ? URL.createObjectURL(formData.image)
+      : formData.image;
 
   return (
     <BaseModal
@@ -419,50 +477,72 @@ function CreateWithdrawModal({
     >
       <div className="pb-2">
         <h3 className="text-2xl font-medium leading-6">
-          Informasi Transfer Withdraw Saldo
+          Selesaikan Pembayaran
         </h3>
       </div>
       <div className="py-4 space-y-4">
-        <FormInput
-          id="bank_name"
-          label="Nama Bank"
-          placeholder="Masukan nama bank"
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, bank_name: e.target.value }))
-          }
-          value={formData.bank_name}
-        />
-        <FormInput
-          id="bank_account_number"
-          label="Nomor Rekening"
-          placeholder="Masukan nomor rekening"
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              bank_account_number: e.target.value,
-            }))
-          }
-          value={formData.bank_account_number}
-        />
-        <FormInput
-          id="bank_account_name"
-          label="Atas Nama"
-          placeholder="Masukan rekening atas nama"
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              bank_account_name: e.target.value,
-            }))
-          }
-          value={formData.bank_account_name}
-        />
+        <div className="space-y-1">
+          <p className="leading-none text-sm text-gray-500 dark:text-gray-400">
+            Informasi Rekening Pembayaran
+          </p>
+          <p className="leading-none">{withdraw.bank_name}</p>
+          <p className="leading-none">{withdraw.bank_account_number}</p>
+          <p className="leading-none">{withdraw.bank_account_name}</p>
+        </div>
+        <div className="space-y-1">
+          <span className="text-base">Upload bukti pembayaran</span>
+          {imagePreviewUrl ? (
+            <div className="w-full h-48 bg-cover bg-center relative rounded overflow-hidden">
+              <Image
+                src={imagePreviewUrl}
+                alt="New Category"
+                fill
+                loading="lazy"
+                className="object-cover group-hover:scale-105 transition-all duration-200"
+                sizes="(max-width: 768px) 25vw, 25vw"
+              />
+            </div>
+          ) : (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full h-64 relative rounded overflow-hidden flex justify-center items-center gap-4 flex-col border border-gray-400 dark:border-gray-500 cursor-pointer text-gray-400 dark:text-gray-500"
+            >
+              <MdFilePresent className="text-6xl" />
+              <span>Pilih File</span>
+            </div>
+          )}
+          <p className="text-gray-400 text-xs">
+            JPG, JPEG or PNG. Maksimal 1 MB
+          </p>
+          <div className="flex">
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              size="sm"
+              variant="primary"
+              isLoading={isLoading}
+            >
+              <MdFileUpload className="text-base" />
+              <span>Pilih File</span>
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end">
-        <Button onClick={handleSubmit} variant="primary" isLoading={isLoading}>
+        <Button onClick={handleSubmit} variant="primary">
+          <MdSend className="text-base" />
           <span>Submit</span>
         </Button>
       </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        name="file-image"
+        id="file-image"
+        hidden
+        onChange={handleFileImageChange}
+      />
     </BaseModal>
   );
 }
