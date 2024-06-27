@@ -20,7 +20,9 @@ import { useEffect } from "react";
 import { MdOutlineDelete, MdStore } from "react-icons/md";
 import { useInView } from "react-intersection-observer";
 
-const MAX_RECOMENDATION_PAGE = Number(process.env.NEXT_PUBLIC_MAX_RECOMENDATION_PAGE ?? 5);
+const MAX_RECOMENDATION_PAGE = Number(
+  process.env.NEXT_PUBLIC_MAX_RECOMENDATION_PAGE ?? 5
+);
 
 export default function CartPage() {
   const { cartTotal, totalItems, items, emptyCart } = useCart();
@@ -45,12 +47,20 @@ export default function CartPage() {
                 <p className="font-semibold text-sm lg:text-base">
                   {`Jumlah barang (${totalItems})`}
                 </p>
-                <Button variant="primary" size="sm" outline onClick={() => emptyCart()}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  outline
+                  onClick={() => emptyCart()}
+                >
                   Hapus Semua
                 </Button>
               </BaseCard>
               {itemGroups.map((group) => (
-                <BaseCard key={group.store.id} className="space-y-2 lg:space-y-4">
+                <BaseCard
+                  key={group.store.id}
+                  className="space-y-2 lg:space-y-4"
+                >
                   <div className="flex items-center gap-2">
                     <MdStore className="text-xl" />
                     <p className="font-semibold">{group.store.name}</p>
@@ -67,7 +77,9 @@ export default function CartPage() {
               <p className="font-semibold text-xl">Ringkasan Belanja</p>
               <div className="flex items-center justify-between">
                 <span>Total</span>
-                <span className="font-semibold text-lg">{formatPrice(cartTotal)}</span>
+                <span className="font-semibold text-lg">
+                  {formatPrice(cartTotal)}
+                </span>
               </div>
               <Button
                 onClick={() => router.push("/user/checkout")}
@@ -96,13 +108,18 @@ function CartItemCard({ item }: { item: CartItem }) {
   return (
     <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-2">
       <Link
-        href={item.product.store?.slug ? `${item.product.store.slug}/${item.product.slug}` : "#"}
+        href={
+          item.product.store?.slug
+            ? `${item.product.store.slug}/${item.product.slug}`
+            : "#"
+        }
         className="flex items-start gap-2"
       >
         <div className="flex-shrink-0 h-20 aspect-square bg-cover bg-center relative rounded overflow-hidden">
           <Image
             src={
-              item.product.product_images?.find((image) => image.main_image)?.image_url ||
+              item.product.product_images?.find((image) => image.main_image)
+                ?.image_url ||
               item.product.product_images?.[0]?.image_url ||
               DEFAULT_STORE_CATEGORY_IMAGE
             }
@@ -151,7 +168,11 @@ function CartItemCard({ item }: { item: CartItem }) {
               outline
               onClick={() => {
                 if (item.quantity > 1) {
-                  updateItemQuantity(item.product.id, item.productVariant.id, item.quantity - 1);
+                  updateItemQuantity(
+                    item.product.id,
+                    item.productVariant.id,
+                    item.quantity - 1
+                  );
                 } else {
                   removeItem(item.product.id, item.productVariant.id);
                 }
@@ -168,7 +189,11 @@ function CartItemCard({ item }: { item: CartItem }) {
               onChange={(e) => {
                 const value = e.target.value;
                 if (value && Number(value) > 0) {
-                  updateItemQuantity(item.product.id, item.productVariant.id, Number(value));
+                  updateItemQuantity(
+                    item.product.id,
+                    item.productVariant.id,
+                    Number(value)
+                  );
                 }
               }}
             />
@@ -179,7 +204,11 @@ function CartItemCard({ item }: { item: CartItem }) {
               size="sm"
               outline
               onClick={() => {
-                updateItemQuantity(item.product.id, item.productVariant.id, item.quantity + 1);
+                updateItemQuantity(
+                  item.product.id,
+                  item.productVariant.id,
+                  item.quantity + 1
+                );
               }}
             >
               +
@@ -199,28 +228,35 @@ function RecomendationSection() {
 
   const { ref: sectionStartRef, inView: sectionStartInView } = useInView();
   const { ref: lastItemRef, inView: lastItemInView } = useInView();
-  const { data, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfiniteQuery({
-      queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
-      queryFn: ({ pageParam = 1 }) =>
-        getPaginatedData<Product>(
-          QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
-          queryStateToQueryString<Product>({
-            limit: 12,
-            page: pageParam,
-            with: ["product_images", "category", "store"],
-            withCount: ["reviews", "order_items"],
-          }),
-          userToken
-        ),
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage &&
-        lastPage.current_page < lastPage.last_page &&
-        lastPage.current_page < MAX_RECOMENDATION_PAGE
-          ? lastPage.current_page + 1
-          : null,
-      enabled: sectionStartInView,
-    });
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
+    queryFn: ({ pageParam = 1 }) =>
+      getPaginatedData<Product>(
+        QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
+        queryStateToQueryString<Product>({
+          alg: "jaccard",
+          limit: 12,
+          page: pageParam,
+          with: ["product_images", "category", "store"],
+          withCount: ["reviews", "order_items"],
+        }),
+        userToken
+      ),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage &&
+      lastPage.current_page < lastPage.last_page &&
+      lastPage.current_page < MAX_RECOMENDATION_PAGE
+        ? lastPage.current_page + 1
+        : null,
+    enabled: sectionStartInView,
+  });
 
   useEffect(() => {
     if (lastItemInView && hasNextPage) {

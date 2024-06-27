@@ -89,6 +89,9 @@ export function queryStringify(
 export function queryStateToQueryString<T>(state: Partial<QueryState<T>>) {
   const queryObject: QueryStringifyParam = {};
 
+  if (state.alg) {
+    queryObject["alg"] = state.alg;
+  }
   if (state.limit) {
     queryObject["limit"] = state.limit;
   }

@@ -29,6 +29,7 @@ export type QueryState<T> = {
     field: keyof T;
     value: string;
   };
+  alg?: "jaccard" | "cosine"
 
   page: number;
 };
