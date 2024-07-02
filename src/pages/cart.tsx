@@ -185,6 +185,7 @@ function CartItemCard({ item }: { item: CartItem }) {
               className="w-12 text-sm h-8 rounded-none text-center"
               type="number"
               min={1}
+              max={item.productVariant.stok ?? item.product.stok}
               value={item.quantity}
               onChange={(e) => {
                 const value = e.target.value;
@@ -203,6 +204,7 @@ function CartItemCard({ item }: { item: CartItem }) {
               variant="base"
               size="sm"
               outline
+              disabled={item.quantity >= item.productVariant.stok}
               onClick={() => {
                 updateItemQuantity(
                   item.product.id,

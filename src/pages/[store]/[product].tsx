@@ -13,7 +13,10 @@ import useDataTable from "@/hooks/useDataTable";
 import { getPaginatedData } from "@/lib/api/data";
 import { getProduct, getStoreProducts } from "@/lib/api/products";
 import { getStoreBySlug } from "@/lib/api/stores";
-import { DEFAULT_STORE_CATEGORY_IMAGE, DEFAULT_USER_IMAGE } from "@/lib/constants";
+import {
+  DEFAULT_STORE_CATEGORY_IMAGE,
+  DEFAULT_USER_IMAGE,
+} from "@/lib/constants";
 import {
   formatPrice,
   generatePaginationArray,
@@ -47,7 +50,9 @@ import {
 import { useInView } from "react-intersection-observer";
 import { twMerge } from "tailwind-merge";
 
-const MAX_RECOMENDATION_PAGE = Number(process.env.NEXT_PUBLIC_MAX_RECOMENDATION_PAGE ?? 5);
+const MAX_RECOMENDATION_PAGE = Number(
+  process.env.NEXT_PUBLIC_MAX_RECOMENDATION_PAGE ?? 5
+);
 
 export const getServerSideProps = (async (ctx) => {
   const storeSlug = ctx.query.store?.toString();
@@ -56,20 +61,34 @@ export const getServerSideProps = (async (ctx) => {
   const [product, store, storeProducts] = await Promise.all([
     storeSlug && productSlug
       ? getProduct<
-          "product_images" | "product_variants" | "category" | "reviews_count" | "order_items_count"
+          | "product_images"
+          | "product_variants"
+          | "category"
+          | "reviews_count"
+          | "order_items_count"
         >(storeSlug, productSlug, {
-          with: ["product_images", "product_variants.variant_options.variant_type", "category"],
+          with: [
+            "product_images",
+            "product_variants.variant_options.variant_type",
+            "category",
+          ],
           withCount: ["reviews", "order_items"],
         })
       : null,
     storeSlug
-      ? getStoreBySlug<"reviews_count" | "order_items_count" | "products_count">(storeSlug, {
+      ? getStoreBySlug<
+          "reviews_count" | "order_items_count" | "products_count"
+        >(storeSlug, {
           withCount: ["reviews", "order_items", "products"],
         })
       : null,
     storeSlug
       ? getStoreProducts<
-          "product_images" | "category" | "reviews_count" | "order_items_count" | "store"
+          | "product_images"
+          | "category"
+          | "reviews_count"
+          | "order_items_count"
+          | "store"
         >(storeSlug, {
           with: ["product_images", "category", "store"],
           withCount: ["reviews", "order_items"],
@@ -122,12 +141,16 @@ export default function ProductPage({
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const selectedVariants = findSelectedVariants(variantsTypeOptions, searchParams);
+  const selectedVariants = findSelectedVariants(
+    variantsTypeOptions,
+    searchParams
+  );
 
   const selectVariant = (type: string, option: string) => {
     const selectedVariantTypeOption = variantsTypeOptions.find(
       (vars) =>
-        vars.variant_type.name === type && vars.variant_options.some((opt) => opt.value === option)
+        vars.variant_type.name === type &&
+        vars.variant_options.some((opt) => opt.value === option)
     );
     if (!selectedVariantTypeOption) {
       return;
@@ -146,9 +169,13 @@ export default function ProductPage({
       return;
     });
 
-    router.push(`/${store.slug}/${product.slug}?${queryStrings.join("&")}`, undefined, {
-      shallow: true,
-    });
+    router.push(
+      `/${store.slug}/${product.slug}?${queryStrings.join("&")}`,
+      undefined,
+      {
+        shallow: true,
+      }
+    );
   };
 
   const isAllVariantSelected = !variantsTypeOptions.some(
@@ -195,6 +222,8 @@ export default function ProductPage({
     setIsCartModalOpen(true);
   };
 
+  const selectedProductVariantStock = selectedProductVariant?.stok;
+
   return (
     <>
       <Meta
@@ -202,7 +231,8 @@ export default function ProductPage({
         description={htmlToPlainText(product.description)}
         keywords={`${product.category?.name}, ${store.name}`}
         shareImage={
-          product.product_images?.find((image) => image.main_image)?.image_url ||
+          product.product_images?.find((image) => image.main_image)
+            ?.image_url ||
           product.product_images?.[0]?.image_url ||
           DEFAULT_STORE_CATEGORY_IMAGE
         }
@@ -215,16 +245,27 @@ export default function ProductPage({
             <h1 className="text-2xl lg:text-3xl font-medium">{product.name}</h1>
             <div className="flex items-center divide-x divide-gray-500">
               <div className="flex items-center gap-1 pr-4">
-                <span className="font-semibold">{product.average_rating.toFixed(1)}</span>
-                <ProductRating className="text-base" rating={product.average_rating} />
+                <span className="font-semibold">
+                  {product.average_rating.toFixed(1)}
+                </span>
+                <ProductRating
+                  className="text-base"
+                  rating={product.average_rating}
+                />
               </div>
               <div className="flex items-center gap-1 px-4">
                 <span className="font-semibold">{product.reviews_count}</span>
-                <span className="text-gray-500 dark:text-gray-400">Reviews</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  Reviews
+                </span>
               </div>
               <div className="flex items-center gap-1 pl-4">
-                <span className="font-semibold">{product.order_items_count}</span>
-                <span className="text-gray-500 dark:text-gray-400">Terjual</span>
+                <span className="font-semibold">
+                  {product.order_items_count}
+                </span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  Terjual
+                </span>
               </div>
             </div>
             <div className="w-full h-1 bg-gray-200 dark:bg-gray-700" />
@@ -235,7 +276,9 @@ export default function ProductPage({
             <div className="py-6 lg:py-8 space-y-3 lg:space-y-5">
               <div className="flex items-start">
                 <div className="w-1/4 lg:w-1/5">
-                  <span className="text-gray-500 dark:text-gray-400">Kategory</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Kategory
+                  </span>
                 </div>
                 <div className="w-3/4 lg:w-4/5">
                   <Link
@@ -251,12 +294,15 @@ export default function ProductPage({
                   <span className="text-gray-500 dark:text-gray-400">Stok</span>
                 </div>
                 <div className="w-3/4 lg:w-4/5">
-                  <span>{product.stok}</span>
+                  <span>{selectedProductVariantStock ?? product.stok}</span>
                 </div>
               </div>
 
               {variantsTypeOptions.map((variantsTypeOption) => (
-                <div key={variantsTypeOption.variant_type.id} className="flex items-start">
+                <div
+                  key={variantsTypeOption.variant_type.id}
+                  className="flex items-start"
+                >
                   <div className="w-1/4 lg:w-1/5">
                     <span className="text-gray-500 dark:text-gray-400">
                       {variantsTypeOption.variant_type.name}
@@ -266,12 +312,17 @@ export default function ProductPage({
                     {variantsTypeOption.variant_options.map((option) => (
                       <Button
                         onClick={() =>
-                          selectVariant(variantsTypeOption.variant_type.name, option.value)
+                          selectVariant(
+                            variantsTypeOption.variant_type.name,
+                            option.value
+                          )
                         }
                         type="button"
                         key={option.id}
                         variant={
-                          selectedVariants[variantsTypeOption.variant_type.name] === option.value
+                          selectedVariants[
+                            variantsTypeOption.variant_type.name
+                          ] === option.value
                             ? "primary"
                             : "base"
                         }
@@ -286,7 +337,9 @@ export default function ProductPage({
               {(!userData?.role || userData.role === "user") && (
                 <div className="flex items-start">
                   <div className="w-1/4 lg:w-1/5">
-                    <span className="text-gray-500 dark:text-gray-400">Kuantitas</span>
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Kuantitas
+                    </span>
                   </div>
                   <div className="w-3/4 lg:w-4/5 flex items-center flex-wrap">
                     <Button
@@ -294,6 +347,7 @@ export default function ProductPage({
                       className="rounded-r-none"
                       variant="base"
                       outline
+                      disabled={Number(quantityInput) <= 0}
                       onClick={() => {
                         if (Number(quantityInput) > 1) {
                           setQuantityInput(`${Number(quantityInput) - 1}`);
@@ -307,6 +361,9 @@ export default function ProductPage({
                       className="w-16 text-sm h-9 rounded-none text-center"
                       type="number"
                       min={1}
+                      max={
+                        selectedProductVariantStock ?? product.stok ?? undefined
+                      }
                       value={quantityInput}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -320,6 +377,10 @@ export default function ProductPage({
                       className="rounded-l-none"
                       variant="base"
                       outline
+                      disabled={
+                        +quantityInput >=
+                        +(selectedProductVariantStock ?? product.stok ?? 0)
+                      }
                       onClick={() => {
                         setQuantityInput(`${Number(quantityInput) + 1}`);
                       }}
@@ -337,7 +398,11 @@ export default function ProductPage({
                 variant="primary"
                 size="lg"
                 className="w-full lg:w-auto text-lg h-12"
-                disabled={!isAllVariantSelected}
+                disabled={
+                  !isAllVariantSelected ||
+                  +quantityInput >
+                    +(selectedProductVariantStock ?? product.stok ?? 0)
+                }
                 onClick={() => addProductToCart()}
               >
                 <MdShoppingCart className="text-2xl" />
@@ -385,19 +450,25 @@ export default function ProductPage({
 
               <div className="flex items-start lg:items-center flex-col lg:flex-row lg:gap-8">
                 <div className="flex flex-row-reverse lg:flex-col gap-2 lg:gap-0 items-center lg:items-end justify-start">
-                  <span className="text-gray-500 dark:text-gray-400">Review</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Review
+                  </span>
                   <span className="text-primary font-semibold text-2xl lg:text-4xl">
                     {store.reviews_count}
                   </span>
                 </div>
                 <div className="flex flex-row-reverse lg:flex-col gap-2 lg:gap-0 items-center lg:items-end justify-start">
-                  <span className="text-gray-500 dark:text-gray-400">Penjualan</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Penjualan
+                  </span>
                   <span className="text-primary font-semibold text-2xl lg:text-4xl">
                     {store.order_items_count}
                   </span>
                 </div>
                 <div className="flex flex-row-reverse lg:flex-col gap-2 lg:gap-0 items-center lg:items-end justify-start">
-                  <span className="text-gray-500 dark:text-gray-400">Produk</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Produk
+                  </span>
                   <span className="text-primary font-semibold text-2xl lg:text-4xl">
                     {store.products_count}
                   </span>
@@ -419,7 +490,9 @@ export default function ProductPage({
                 className="text-primary text-sm bg-transparent outline-none flex items-center gap-1 hover:text-primary/90 transition-all"
                 onClick={() => setIsDescriptionExpand((prev) => !prev)}
               >
-                {`Tampilkan lebih ${isDescriptionExpand ? "sedikit" : "banyak"}`}
+                {`Tampilkan lebih ${
+                  isDescriptionExpand ? "sedikit" : "banyak"
+                }`}
                 <MdKeyboardArrowDown
                   className={twMerge(
                     "text-lg transition-all",
@@ -431,7 +504,11 @@ export default function ProductPage({
 
             <section className="space-y-4 lg:space-y-6">
               <h3 className="font-semibold text-2xl">Review</h3>
-              <ReviewsSection product={product} storeSlug={store.slug} productSlug={product.slug} />
+              <ReviewsSection
+                product={product}
+                storeSlug={store.slug}
+                productSlug={product.slug}
+              />
             </section>
           </div>
 
@@ -468,7 +545,9 @@ export default function ProductPage({
         className="w-full max-w-2xl overflow-hidden transition-all"
       >
         <div className="pb-2 flex items-center justify-between">
-          <h3 className="text-xl font-medium leading-6">Berhasil menambah ke keranjang</h3>
+          <h3 className="text-xl font-medium leading-6">
+            Berhasil menambah ke keranjang
+          </h3>
           <MdClose
             onClick={() => setIsCartModalOpen(false)}
             className="text-xl cursor-pointer opacity-80 hover:opacity-100"
@@ -479,7 +558,8 @@ export default function ProductPage({
             <div className="flex-shrink-0 h-24 aspect-square bg-cover bg-center relative rounded overflow-hidden">
               <Image
                 src={
-                  product.product_images?.find((image) => image.main_image)?.image_url ||
+                  product.product_images?.find((image) => image.main_image)
+                    ?.image_url ||
                   product.product_images?.[0]?.image_url ||
                   DEFAULT_STORE_CATEGORY_IMAGE
                 }
@@ -491,7 +571,9 @@ export default function ProductPage({
               />
             </div>
             <div className="space-y-1">
-              <p className="leading-tight text-sm lg:text-base line-clamp-2">{product.name}</p>
+              <p className="leading-tight text-sm lg:text-base line-clamp-2">
+                {product.name}
+              </p>
               <div className="flex items-center gap-2">
                 {selectedProductVariant?.variant_options?.map((opt) => (
                   <span
@@ -577,7 +659,11 @@ type ReviewsSectionProps = {
   product: Product;
 };
 
-function ReviewsSection({ storeSlug, productSlug, product }: ReviewsSectionProps) {
+function ReviewsSection({
+  storeSlug,
+  productSlug,
+  product,
+}: ReviewsSectionProps) {
   const path = `/paginated/products/${storeSlug}/${productSlug}/reviews`;
 
   const { ref, inView } = useInView();
@@ -630,9 +716,15 @@ function ReviewsSection({ storeSlug, productSlug, product }: ReviewsSectionProps
           <BaseCard className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8 p-4 lg:p-8">
             <div className="space-y-0.5">
               <p className="text-primary">
-                <span className="text-3xl">{product.average_rating.toFixed(1)}</span> dari 5
+                <span className="text-3xl">
+                  {product.average_rating.toFixed(1)}
+                </span>{" "}
+                dari 5
               </p>
-              <ProductRating className="text-2xl text-primary" rating={product.average_rating} />
+              <ProductRating
+                className="text-2xl text-primary"
+                rating={product.average_rating}
+              />
             </div>
             <div className="flex items-center flex-wrap gap-2">
               <Button
@@ -749,7 +841,9 @@ function ReviewsSection({ storeSlug, productSlug, product }: ReviewsSectionProps
                     />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs my-0 leading-none">{review.user.username}</p>
+                    <p className="text-xs my-0 leading-none">
+                      {review.user.username}
+                    </p>
                     <ProductRating className="text-xs" rating={review.rating} />
                     <p className="text-xs my-0 leading-none text-gray-500 dark:text-gray-400">
                       {format(new Date(review.created_at), "yyyy-MM-dd HH:mm")}
@@ -819,35 +913,41 @@ function RecomendationSection({ product }: RecomendationSectionProps) {
 
   const { ref: sectionStartRef, inView: sectionStartInView } = useInView();
   const { ref: lastItemRef, inView: lastItemInView } = useInView();
-  const { data, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfiniteQuery({
-      queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
-      queryFn: ({ pageParam = 1 }) =>
-        getPaginatedData<Product>(
-          QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
-          queryStateToQueryString<Product>({
-            limit: 12,
-            page: pageParam,
-            with: ["product_images", "category", "store"],
-            withCount: ["reviews", "order_items"],
-            filters: [
-              {
-                field: "slug_with_store",
-                operator: "!=",
-                value: product.slug_with_store,
-              },
-            ],
-          }),
-          userToken
-        ),
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage &&
-        lastPage.current_page < lastPage.last_page &&
-        lastPage.current_page < MAX_RECOMENDATION_PAGE
-          ? lastPage.current_page + 1
-          : null,
-      enabled: sectionStartInView,
-    });
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
+    queryFn: ({ pageParam = 1 }) =>
+      getPaginatedData<Product>(
+        QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
+        queryStateToQueryString<Product>({
+          limit: 12,
+          page: pageParam,
+          with: ["product_images", "category", "store"],
+          withCount: ["reviews", "order_items"],
+          filters: [
+            {
+              field: "slug_with_store",
+              operator: "!=",
+              value: product.slug_with_store,
+            },
+          ],
+        }),
+        userToken
+      ),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage &&
+      lastPage.current_page < lastPage.last_page &&
+      lastPage.current_page < MAX_RECOMENDATION_PAGE
+        ? lastPage.current_page + 1
+        : null,
+    enabled: sectionStartInView,
+  });
 
   useEffect(() => {
     if (lastItemInView && hasNextPage) {
@@ -896,7 +996,8 @@ function findSelectedVariants(
   variantsTypeOptions.forEach((vars) => {
     const selectedOption = searchParams.get(vars.variant_type.name);
     selectedVariants[vars.variant_type.name] =
-      selectedOption && vars.variant_options.some((opt) => opt.value === selectedOption)
+      selectedOption &&
+      vars.variant_options.some((opt) => opt.value === selectedOption)
         ? selectedOption
         : null;
   });
@@ -928,14 +1029,19 @@ function transformProductVariants(productVariants?: ProductVariant[]) {
 
   productVariants.forEach((product) => {
     product.variant_options?.forEach((option) => {
-      if (!variantsTypeOptionMap.has(option.variant_type_id) && option.variant_type) {
+      if (
+        !variantsTypeOptionMap.has(option.variant_type_id) &&
+        option.variant_type
+      ) {
         variantsTypeOptionMap.set(option.variant_type_id, {
           variant_type: option.variant_type,
           variant_options: [],
         });
       }
 
-      const variantsTypeOption = variantsTypeOptionMap.get(option.variant_type_id);
+      const variantsTypeOption = variantsTypeOptionMap.get(
+        option.variant_type_id
+      );
       if (
         variantsTypeOption &&
         !variantsTypeOption.variant_options.some((opt) => opt.id === option.id)
@@ -951,7 +1057,9 @@ function transformProductVariants(productVariants?: ProductVariant[]) {
     };
 
     product.variant_options?.forEach((option) => {
-      const variantsTypeOption = variantsTypeOptionMap.get(option.variant_type_id);
+      const variantsTypeOption = variantsTypeOptionMap.get(
+        option.variant_type_id
+      );
       if (variantsTypeOption) {
         comb[variantsTypeOption.variant_type.name] = option.value;
       }
