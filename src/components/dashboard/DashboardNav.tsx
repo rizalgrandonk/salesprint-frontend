@@ -75,7 +75,7 @@ export default function DashboardNav({
               href={dashboardUrl}
               className="flex items-center gap-2 ml-2 lg:mr-24"
             >
-              <div className="h-8 lg:h-10 text-primary">
+              <div className="h-8 w-8 lg:h-10 lg:w-10 text-primary">
                 <AppLogo />
               </div>
               <span className="font-semibold text-2xl hidden lg:inline">

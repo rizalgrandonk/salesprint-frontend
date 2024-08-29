@@ -223,7 +223,10 @@ export default function CheckoutPage() {
             quantity: item.quantity,
           })),
         })),
-        shipping_detail: data,
+        shipping_detail: {
+          ...data,
+          reciever_phone: `62${data.reciever_phone}`,
+        },
       });
 
       if (!tokenResult.success) {
