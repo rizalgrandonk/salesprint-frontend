@@ -21,7 +21,9 @@ import { useEffect } from "react";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { useInView } from "react-intersection-observer";
 
-const MAX_RECOMENDATION_PAGE = Number(process.env.NEXT_PUBLIC_MAX_RECOMENDATION_PAGE ?? 5);
+const MAX_RECOMENDATION_PAGE = Number(
+  process.env.NEXT_PUBLIC_MAX_RECOMENDATION_PAGE ?? 5
+);
 
 export default function Home({
   featuredProducts,
@@ -36,7 +38,10 @@ export default function Home({
         <FeaturedProductsCarousel products={featuredProducts} />
       </section>
 
-      <section id="category" className="container py-6 lg:py-12 space-y-3 lg:space-y-6">
+      <section
+        id="category"
+        className="container py-6 lg:py-12 space-y-3 lg:space-y-6"
+      >
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <h2 className="text-2xl lg:text-4xl font-semibold">Kategori</h2>
           <Link href="/categories" className="text-primary">
@@ -50,7 +55,7 @@ export default function Home({
         <div className="relative w-5/6 lg:w-1/2 aspect-[4/3] bg-primary">
           <div className="absolute w-[95%] h-[95%] -right-[5%] -bottom-[5%]">
             <Image
-              src="https://source.unsplash.com/random/?mall"
+              src="/images/banner-mall.jpg"
               alt=""
               fill
               loading="lazy"
@@ -69,13 +74,21 @@ export default function Home({
         </div>
       </section>
 
-      <section id="latest-product" className="container py-6 lg:py-12 space-y-3 lg:space-y-6">
+      <section
+        id="latest-product"
+        className="container py-6 lg:py-12 space-y-3 lg:space-y-6"
+      >
         <h2 className="text-2xl lg:text-4xl font-semibold">Produk Terbaru</h2>
         <LatestProductsCarousel products={latestProducts} />
       </section>
 
-      <section id="for-you" className="container py-6 lg:py-12 space-y-3 lg:space-y-6">
-        <h2 className="text-2xl lg:text-4xl font-semibold">Produk Rekomendasi</h2>
+      <section
+        id="for-you"
+        className="container py-6 lg:py-12 space-y-3 lg:space-y-6"
+      >
+        <h2 className="text-2xl lg:text-4xl font-semibold">
+          Produk Rekomendasi
+        </h2>
         <RecomendationSection />
       </section>
     </>
@@ -90,28 +103,34 @@ function RecomendationSection() {
 
   const { ref: sectionStartRef, inView: sectionStartInView } = useInView();
   const { ref: lastItemRef, inView: lastItemInView } = useInView();
-  const { data, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfiniteQuery({
-      queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
-      queryFn: ({ pageParam = 1 }) =>
-        getPaginatedData<Product>(
-          QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
-          queryStateToQueryString<Product>({
-            limit: 12,
-            page: pageParam,
-            with: ["product_images", "category", "store"],
-            withCount: ["reviews", "order_items"],
-          }),
-          userToken
-        ),
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage &&
-        lastPage.current_page < lastPage.last_page &&
-        lastPage.current_page < MAX_RECOMENDATION_PAGE
-          ? lastPage.current_page + 1
-          : null,
-      enabled: sectionStartInView,
-    });
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: [QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION, userId],
+    queryFn: ({ pageParam = 1 }) =>
+      getPaginatedData<Product>(
+        QueryKeys.PAGINATED_PRODUCTS_RECOMENDATION,
+        queryStateToQueryString<Product>({
+          limit: 12,
+          page: pageParam,
+          with: ["product_images", "category", "store"],
+          withCount: ["reviews", "order_items"],
+        }),
+        userToken
+      ),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage &&
+      lastPage.current_page < lastPage.last_page &&
+      lastPage.current_page < MAX_RECOMENDATION_PAGE
+        ? lastPage.current_page + 1
+        : null,
+    enabled: sectionStartInView,
+  });
 
   useEffect(() => {
     if (lastItemInView && hasNextPage) {

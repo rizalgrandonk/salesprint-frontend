@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: PropsWithChildren) {
   return (
     <div className="h-screen relative">
       <Image
-        src="https://source.unsplash.com/random/?mall"
+        src="/images/banner-shop.jpg"
         alt=""
         fill
         loading="lazy"

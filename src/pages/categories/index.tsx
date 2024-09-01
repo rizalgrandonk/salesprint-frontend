@@ -29,7 +29,7 @@ export default function CategoriesPage({
       <div className="container py-8 space-y-8">
         <section className="w-full h-[50vh] relative rounded overflow-hidden block transition-all duration-500 transform group bg-cover bg-center">
           <Image
-            src="https://source.unsplash.com/random/?mall"
+            src="/images/banner-shopping.jpg"
             alt="Kategori"
             fill
             sizes="100vw"
