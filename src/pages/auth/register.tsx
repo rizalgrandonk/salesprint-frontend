@@ -1,13 +1,12 @@
 import AppLogo from "@/components/utils/AppLogo";
 import { Button } from "@/components/utils/Button";
-import DarkModeToggle from "@/components/utils/DarkModeToggle";
 import FormInput from "@/components/utils/FormInput";
 import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
 import QueryKeys from "@/constants/queryKeys";
 import { registerUser } from "@/lib/api/auth";
 import { useQueryClient } from "@tanstack/react-query";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -38,30 +37,37 @@ export default function RegisterPage() {
 
   const queryClient = useQueryClient();
 
+  console.log({ session });
+
   if (session && !session?.user?.error) {
     console.log("query.callbackUrl", query.callbackUrl);
     console.log("session?.user?.role", session?.user?.role);
 
-    const redirectURL = query.callbackUrl
-      ? query.callbackUrl
-      : session?.user?.role === "admin"
-      ? `/admin`
-      : "/";
+    const userRole = session?.user?.role;
+    const callbackUrl = query.callbackUrl?.toString();
 
-    console.log("redirectURL", redirectURL);
+    if (!userRole) {
+      return <Redirect to="/" />;
+    }
 
-    return (
-      <Redirect
-        to={Array.isArray(redirectURL) ? redirectURL[0] : redirectURL}
-      />
-    );
+    if (callbackUrl) {
+      if (userRole !== "user" && !callbackUrl.startsWith(`/${userRole}`)) {
+        return <Redirect to={`/${userRole}`} />;
+      }
+
+      return <Redirect to={callbackUrl} />;
+    }
+
+    const redirectURL = userRole !== "user" ? `/${userRole}` : "/";
+
+    return <Redirect to={redirectURL} />;
   }
 
   const onSubmit: SubmitHandler<RegisterInputs> = async (data) => {
     setIsLoading(true);
 
     const result = await registerUser(data);
-    console.log(result);
+    console.log({ result });
 
     if (!result.success) {
       setIsLoading(false);
@@ -73,6 +79,8 @@ export default function RegisterPage() {
       password: data.password,
       redirect: false,
     });
+
+    console.log({ loginResult });
 
     queryClient.invalidateQueries({
       queryKey: [QueryKeys.USER_STORE],
