@@ -1,4 +1,4 @@
-import { City, Province } from "@/types/Store";
+import { City, District, Province } from "@/types/Store";
 import { publicRequest } from ".";
 
 export async function getProvince() {
@@ -23,6 +23,24 @@ export async function getCities(provinceId?: string) {
     method: "GET",
     path: `/logistic/city`,
     params: { province_id: provinceId },
+  });
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data;
+}
+
+export async function getDistricts(cityId?: string) {
+  if (!cityId) {
+    return null;
+  }
+
+  const result = await publicRequest<District[]>({
+    method: "GET",
+    path: `/logistic/district`,
+    params: { city_id: cityId },
   });
 
   if (!result.success) {

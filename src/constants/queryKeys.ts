@@ -17,6 +17,7 @@ const QueryKeys = {
   PRODUCTS: "/products",
   STORE_GET_PROVINCE: "/stores/get_province",
   STORE_GET_CITES: "/stores/get_cities",
+  STORE_GET_DISTRICTS: "/stores/get_districts",
   STORE_BANNERS: "/stores/banners",
   STORE_CATEGORIES: "/stores/categories",
   LOGISTIC_COST: "/logistic/costs",

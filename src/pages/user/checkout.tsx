@@ -7,7 +7,7 @@ import Meta from "@/components/utils/Meta";
 import Spinner from "@/components/utils/Spinner";
 import QueryKeys from "@/constants/queryKeys";
 import { CartItem, useCart } from "@/contexts/CartContext";
-import { getCities, getCosts, getProvince } from "@/lib/api/logistic";
+import { getCities, getCosts, getDistricts, getProvince } from "@/lib/api/logistic";
 import {
   getTransactionToken,
   updateTransactionByToken,
@@ -63,6 +63,16 @@ export const addressSchema = z.object({
     .trim()
     .min(1, "Provinsi harus diisi")
     .max(50, "Provinsi tidak boleh lebih dari 50 karakter"),
+  delivery_district_id: z
+    .string({ required_error: "Kecamatan harus diisi" })
+    .trim()
+    .min(1, "Kecamatan harus diisi")
+    .max(10, "Kecamatan tidak boleh lebih dari 10 karakter"),
+  delivery_district: z
+    .string({ required_error: "Kecamatan harus diisi" })
+    .trim()
+    .min(1, "Kecamatan harus diisi")
+    .max(150, "Kecamatan tidak boleh lebih dari 50 karakter"),
   delivery_postal_code: z
     .string({ required_error: "Kode pos harus diisi" })
     .trim()
@@ -449,6 +459,7 @@ function AddressForm({
   const {
     delivery_province_id: currentProvinceId,
     delivery_city_id: currentCityId,
+    delivery_district_id: currentDistrictId,
   } = watch();
 
   const { data: provinceList } = useQuery({
@@ -460,6 +471,12 @@ function AddressForm({
     queryKey: [QueryKeys.STORE_GET_CITES, currentProvinceId],
     queryFn: () => getCities(currentProvinceId),
     enabled: !!currentProvinceId,
+  });
+  
+  const { data: districtList, isLoading: loadingDistrict } = useQuery({
+    queryKey: [QueryKeys.STORE_GET_DISTRICTS, currentDistrictId],
+    queryFn: () => getDistricts(currentDistrictId),
+    enabled: !!currentDistrictId,
   });
 
   useEffect(() => {
@@ -488,17 +505,36 @@ function AddressForm({
     }
 
     setValue("delivery_city", city.city_name);
-    setValue("delivery_postal_code", city.postal_code);
   }, [currentCityId, setValue, cityList]);
+
+  useEffect(() => {
+    if (!currentDistrictId) {
+      return;
+    }
+
+    const district = districtList?.find(
+      (item) => item.district_id === currentDistrictId
+    );
+    if (!district) {
+      return;
+    }
+
+    setValue("delivery_district", district.district_name);
+  }, [currentDistrictId, setValue, districtList]);
+  
 
   const provinceOptions = (provinceList || []).map((item) => ({
     title: item.province,
     value: item.province_id,
   }));
   const cityOptions = (cityList || []).map((item) => ({
-    title: `${item.type} ${item.city_name}`,
+    title: item.city_name,
     value: item.city_id,
   }));
+  const districtOptions = (districtList || []).map((item) => ({
+    title: item.district_name,
+    value: item.district_id,
+  }))
 
   return (
     <div className="space-y-2">
@@ -548,6 +584,20 @@ function AddressForm({
           disabled={loadingCities}
           placeholder={loadingCities ? "Loading..." : "Pilih kota"}
           options={cityOptions}
+        />
+      </div>
+      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
+        <FormSelect
+          {...register("delivery_district_id")}
+          id="delivery_district_id"
+          label="Kecamatan"
+          classNameContainer="w-full"
+          className="text-sm w-full px-2 py-1.5"
+          classNameLabel="text-sm"
+          classNameError="text-xs"
+          disabled={loadingDistrict}
+          placeholder={loadingDistrict ? "Loading..." : "Pilih kota"}
+          options={districtOptions}
         />
         <FormInput
           {...register("delivery_postal_code")}

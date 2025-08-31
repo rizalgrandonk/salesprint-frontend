@@ -43,6 +43,8 @@ type GetTokenData = {
     delivery_province: string;
     delivery_city_id: string;
     delivery_city: string;
+    delivery_district_id: string;
+    delivery_district: string;
     delivery_postal_code: string;
     delivery_address: string;
   };

@@ -11,6 +11,8 @@ export type Store = {
   city_id: string;
   province: string;
   province_id: string;
+  district_id: string;
+  district: string;
   postal_code: string;
   status: "approved" | "on_review" | "rejected";
   image?: string;
@@ -77,6 +79,16 @@ export const createStoreSchema = z.object({
     .trim()
     .min(1, "Provinsi harus diisi")
     .max(50, "Provinsi tidak boleh lebih dari 50 karakter"),
+  district_id: z
+    .string({ required_error: "Kecamatan harus diisi" })
+    .trim()
+    .min(1, "Kecamatan harus diisi")
+    .max(10, "Kecamatan tidak boleh lebih dari 10 karakter"),
+  district: z
+    .string({ required_error: "Kecamatan harus diisi" })
+    .trim()
+    .min(1, "Kecamatan harus diisi")
+    .max(50, "Kecamatan tidak boleh lebih dari 50 karakter"),
   postal_code: z
     .string({ required_error: "Kode pos harus diisi" })
     .trim()
@@ -123,7 +135,16 @@ export type City = {
   city_id: string;
   province_id: string;
   province: string;
+  city_name: string;
+};
+
+export type District = {
+  city_id: string;
+  province_id: string;
+  province: string;
   type: string;
   city_name: string;
+  district_id: string;
+  district_name: string;
   postal_code: string;
 };

@@ -7,7 +7,7 @@ import Meta from "@/components/utils/Meta";
 import Redirect from "@/components/utils/Redirect";
 import QueryKeys from "@/constants/queryKeys";
 import useDebounce from "@/hooks/useDebounce";
-import { getCities, getProvince } from "@/lib/api/logistic";
+import { getCities, getDistricts, getProvince } from "@/lib/api/logistic";
 import { createStore, getStoreBySlug } from "@/lib/api/stores";
 import { CreateStoreInputs, createStoreSchema } from "@/types/Store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,6 +55,7 @@ export default function CreateStore() {
     slug: currentSlug,
     province_id: currentProvinceId,
     city_id: currentCityId,
+    district_id: currentDistrictId
   } = watch();
 
   const { data: provinceList } = useQuery({
@@ -66,6 +67,12 @@ export default function CreateStore() {
     queryKey: [QueryKeys.STORE_GET_CITES, currentProvinceId],
     queryFn: () => getCities(currentProvinceId),
     enabled: !!currentProvinceId,
+  });
+  
+  const { data: districtList, isLoading: loadingDistricts } = useQuery({
+    queryKey: [QueryKeys.STORE_GET_DISTRICTS, currentCityId],
+    queryFn: () => getDistricts(currentCityId),
+    enabled: !!currentCityId,
   });
 
   const debouncedSlug = useDebounce(currentSlug, 2000);
@@ -123,8 +130,20 @@ export default function CreateStore() {
     }
 
     setValue("city", city.city_name);
-    setValue("postal_code", city.postal_code);
   }, [currentCityId, setValue, cityList]);
+  
+  useEffect(() => {
+    if (!currentDistrictId) {
+      return;
+    }
+
+    const district = districtList?.find((item) => item.district_id === currentDistrictId);
+    if (!district) {
+      return;
+    }
+
+    setValue("district", district.district_name);
+  }, [currentDistrictId, setValue, districtList]);
 
   if (!isSessionLoading && (!session?.user || session?.user?.error)) {
     return <Redirect to="/auth/login" />;
@@ -169,6 +188,10 @@ export default function CreateStore() {
   const cityOptions = (cityList || []).map((item) => ({
     title: item.city_name,
     value: item.city_id,
+  }));
+  const districtOption = (districtList || []).map((item) => ({
+    title: item.district_name,
+    value: item.district_id,
   }));
 
   return (
@@ -245,6 +268,15 @@ export default function CreateStore() {
                 placeholder={loadingCities ? "Loading..." : "Pilih kota"}
                 error={errors.city_id?.message || errors.city?.message}
                 options={cityOptions}
+              />
+              <FormSelect
+                {...register("district_id")}
+                id="district_id"
+                label="Kecamatan"
+                disabled={loadingDistricts}
+                placeholder={loadingDistricts ? "Loading..." : "Pilih kecamatan"}
+                error={errors.district_id?.message || errors.district?.message}
+                options={districtOption}
               />
               <FormInput
                 {...register("address")}
