@@ -7,7 +7,7 @@ import FormArea from "@/components/utils/FormArea";
 import FormInput from "@/components/utils/FormInput";
 import FormSelect from "@/components/utils/FormSelect";
 import QueryKeys from "@/constants/queryKeys";
-import { getCities, getProvince } from "@/lib/api/logistic";
+import { getCities, getDistricts, getProvince } from "@/lib/api/logistic";
 import {
   createStoreBanner,
   deleteStoreBanner,
@@ -243,7 +243,11 @@ function StoreInfoForm({ formData }: StoreInfoFormProps) {
     setValue,
   } = formData;
 
-  const { province_id: currentProvinceId, city_id: currentCityId } = watch();
+  const { 
+    province_id: currentProvinceId, 
+    city_id: currentCityId,
+    district_id: currentDistrictId
+  } = watch();
 
   const { data: provinceList } = useQuery({
     queryKey: [QueryKeys.STORE_GET_PROVINCE],
@@ -254,6 +258,12 @@ function StoreInfoForm({ formData }: StoreInfoFormProps) {
     queryKey: [QueryKeys.STORE_GET_CITES, currentProvinceId],
     queryFn: () => getCities(currentProvinceId),
     enabled: !!currentProvinceId,
+  });
+  
+  const { data: districtList, isLoading: loadingDistrict } = useQuery({
+    queryKey: [QueryKeys.STORE_GET_DISTRICTS, currentCityId],
+    queryFn: () => getDistricts(currentCityId),
+    enabled: !!currentCityId,
   });
 
   useEffect(() => {
@@ -284,8 +294,23 @@ function StoreInfoForm({ formData }: StoreInfoFormProps) {
 
     setValue("city", city.city_name);
     setValue("city_id", city.city_id);
-    setValue("postal_code", city.postal_code);
   }, [currentCityId, setValue, cityList]);
+  
+  useEffect(() => {
+    if (!currentDistrictId) {
+      return;
+    }
+
+    const district = districtList?.find(
+      (item) => item.district_id === currentDistrictId
+    );
+    if (!district) {
+      return;
+    }
+
+    setValue("district", district.district_name);
+    setValue("district_id", district.district_id);
+  }, [currentDistrictId, setValue, districtList]);
 
   const provinceOptions = (provinceList || []).map((item) => ({
     title: item.province,
@@ -295,6 +320,10 @@ function StoreInfoForm({ formData }: StoreInfoFormProps) {
     title: item.city_name,
     value: item.city_id,
   }));
+  const districtOptions = (districtList || []).map((item) => ({
+    title: item.district_name,
+    value: item.district_id,
+  }))
 
   return (
     <BaseCard className="space-y-4 flex-grow">
@@ -344,6 +373,16 @@ function StoreInfoForm({ formData }: StoreInfoFormProps) {
           placeholder={loadingCities ? "Loading..." : "Pilih kota"}
           error={errors.city_id?.message || errors.city?.message}
           options={cityOptions}
+        />
+
+        <FormSelect
+          {...register("district_id")}
+          id="district_id"
+          label="Kecamatan"
+          disabled={loadingDistrict}
+          placeholder={loadingDistrict ? "Loading..." : "Pilih kecamatan"}
+          error={errors.district_id?.message || errors.district?.message}
+          options={districtOptions}
         />
 
         <FormInput

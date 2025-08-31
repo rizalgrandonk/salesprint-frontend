@@ -112,7 +112,7 @@ function ProductSection() {
     if (keywordQuery) {
       setSearchKey({ field: "name", value: keywordQuery });
     }
-  }, [keywordQuery]);
+  }, [keywordQuery, setSearchKey]);
 
   const paginationButtons = generatePaginationArray(
     queryState.page,
@@ -227,7 +227,7 @@ function StoreSection() {
     if (keywordQuery) {
       setSearchKey({ field: "name", value: keywordQuery });
     }
-  }, [keywordQuery]);
+  }, [keywordQuery, setSearchKey]);
 
   const paginationButtons = generatePaginationArray(
     queryState.page,

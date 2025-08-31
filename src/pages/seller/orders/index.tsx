@@ -127,7 +127,7 @@ export default function OrlderListPage() {
     setFilter([
       { field: "order_status", operator: "=", value: statusParam ?? null },
     ]);
-  }, [statusParam]);
+  }, [statusParam, setFilter]);
 
   const statusFilter = queryState.filters?.find(
     (fil) => fil.field === "order_status"
